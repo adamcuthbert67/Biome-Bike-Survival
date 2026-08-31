@@ -38,6 +38,7 @@
   }
   .menu-card{
     width:min(620px,94vw);
+    margin:12px auto 28px;
     background:rgba(10,15,30,.92);
     border:1px solid #2b3763;
     border-radius:22px;
@@ -132,13 +133,16 @@
   min-height:100vh;
   width:100%;
   display:flex;
-  align-items:center;
+  align-items:flex-start;
   justify-content:center;
   padding:24px;
   position:fixed;
   inset:0;
   z-index:50;
-  overflow:hidden;
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
   background:#4dc9ff;
   image-rendering:pixelated;
 }
@@ -576,6 +580,20 @@
 .share-note{text-align:center;color:#bae6fd;font-size:10px;margin-bottom:14px}.lobby-player-title{font-size:10px;font-weight:1000;letter-spacing:1.2px;color:#cbd5e1;margin-bottom:6px}
 @media(max-width:700px){.multiplayer-hero{grid-template-columns:1fr}.multi-divider{min-height:24px}.mode-card{grid-template-columns:45px 1fr 22px}.room-code-display{flex-direction:column}}
 
+/* ACCOUNTS + GLOBAL LEADERBOARD */
+.account-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.account-main-btn{min-height:44px;border:3px solid #18374f;border-radius:6px;background:#f7d154;color:#1f3441;font-weight:1000;letter-spacing:.7px;cursor:pointer;box-shadow:inset 0 -4px 0 rgba(0,0,0,.15)}
+.account-main-btn.secondary{background:#b9e7ff}.account-main-btn:hover{filter:brightness(1.05)}
+.account-status-strip{margin:8px 0 2px;padding:8px 10px;border:2px solid #244661;border-radius:5px;background:#071827;color:#dbeafe;font-size:11px;font-weight:900;text-align:center}
+.account-status-strip.logged{border-color:#4ade80;color:#bbf7d0}
+.auth-panel{max-width:760px}.auth-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.auth-box{background:#091827;border:3px solid #294e69;border-radius:7px;padding:16px}.auth-box h3{margin:0 0 6px;color:#fff1a8}.auth-box p{margin:0 0 12px;color:#cbd5e1;font-size:11px;line-height:1.5}
+.auth-input{width:100%;box-sizing:border-box;margin:5px 0 9px;padding:12px;border:3px solid #244661;border-radius:5px;background:#06121d;color:#fff;font:800 14px monospace;outline:none}.auth-input:focus{border-color:#60a5fa}
+.auth-action{width:100%;min-height:44px;border:0;border-radius:5px;background:#75ed7b;color:#143022;font-weight:1000;cursor:pointer}.auth-action.alt{background:#5cc8ff;color:#102b3b}
+.auth-message{min-height:20px;margin-top:10px;color:#fde68a;font-size:11px;font-weight:900;text-align:center}.account-info-card{display:none;margin-top:14px;padding:14px;border:3px solid #4ade80;border-radius:7px;background:#08251a;text-align:center}.account-info-card b{color:#bbf7d0}.account-info-card button{margin-top:10px}
+.leaderboard-panel{max-width:760px}.leaderboard-meta{text-align:center;color:#bae6fd;font-size:11px;margin:8px 0 12px}.leaderboard-list{display:grid;gap:6px}.leader-row{display:grid;grid-template-columns:56px 1fr 110px;gap:8px;align-items:center;padding:10px 12px;border:2px solid #244661;border-radius:5px;background:#071827;font-weight:900}.leader-row.me{border-color:#facc15;background:#2b2308}.leader-rank{color:#facc15}.leader-score{text-align:right;color:#bbf7d0;font-family:monospace}.leader-empty{text-align:center;padding:24px;color:#94a3b8}
+@media(max-width:700px){.account-actions,.auth-grid{grid-template-columns:1fr}.leader-row{grid-template-columns:46px 1fr 84px}.auth-panel,.leaderboard-panel{width:min(96vw,760px)}}
+
 </style>
 </head>
 <body>
@@ -601,6 +619,12 @@
     <label class="name-label" for="usernameInput">PLAYER NAME</label>
     <input id="usernameInput" class="username-input" maxlength="16"
            placeholder="Type your name" autocomplete="off" spellcheck="false">
+
+    <div id="accountStatusStrip" class="account-status-strip">👤 Playing as guest — create an account to sync progress everywhere.</div>
+    <div class="account-actions">
+      <button id="openAccountBtn" class="account-main-btn" type="button">👤 ACCOUNT / SIGN IN</button>
+      <button id="openLeaderboardBtn" class="account-main-btn secondary" type="button">🏆 GLOBAL LEADERBOARD</button>
+    </div>
 
 
     <div class="difficulty-wrap">
@@ -667,6 +691,48 @@
 
 
 
+<div id="accountScreen" class="overlay-screen" aria-hidden="true">
+  <div class="overlay-panel auth-panel">
+    <div class="overlay-head">
+      <div><h2>👤 PLAYER ACCOUNT</h2><div>Unique username • cloud-saved progression • one identity on the global leaderboard</div></div>
+      <button id="closeAccountBtn" class="close-overlay" type="button">✕ BACK</button>
+    </div>
+    <div id="accountLoggedCard" class="account-info-card">
+      Signed in as <b id="accountLoggedName">Player</b><br>
+      <span id="accountCloudStatus">Progress synced.</span><br>
+      <button id="logoutBtn" class="auth-action alt" type="button">SIGN OUT</button>
+    </div>
+    <div id="authForms" class="auth-grid">
+      <div class="auth-box">
+        <h3>CREATE ACCOUNT</h3>
+        <p>Usernames are unique. Your wallet, Battle Pass, Locker and best score are saved to this account.</p>
+        <input id="registerUsername" class="auth-input" maxlength="16" placeholder="Unique username" autocomplete="username">
+        <input id="registerPassword" class="auth-input" type="password" maxlength="100" placeholder="Password (6+ characters)" autocomplete="new-password">
+        <button id="registerBtn" class="auth-action" type="button">CREATE ACCOUNT</button>
+      </div>
+      <div class="auth-box">
+        <h3>SIGN IN</h3>
+        <p>Log in on another device and your saved progression will load automatically.</p>
+        <input id="loginUsername" class="auth-input" maxlength="16" placeholder="Username" autocomplete="username">
+        <input id="loginPassword" class="auth-input" type="password" maxlength="100" placeholder="Password" autocomplete="current-password">
+        <button id="loginBtn" class="auth-action alt" type="button">SIGN IN</button>
+      </div>
+    </div>
+    <div id="authMessage" class="auth-message"></div>
+  </div>
+</div>
+
+<div id="leaderboardScreen" class="overlay-screen" aria-hidden="true">
+  <div class="overlay-panel leaderboard-panel">
+    <div class="overlay-head">
+      <div><h2>🏆 GLOBAL LEADERBOARD</h2><div>Highest all-time score from every registered player</div></div>
+      <button id="closeLeaderboardBtn" class="close-overlay" type="button">✕ BACK</button>
+    </div>
+    <div id="leaderboardMeta" class="leaderboard-meta">Loading...</div>
+    <div id="leaderboardList" class="leaderboard-list"></div>
+  </div>
+</div>
+
 <div id="multiplayerScreen" class="overlay-screen multiplayer-screen" aria-hidden="true">
   <div class="overlay-panel multiplayer-panel">
     <div class="overlay-head">
@@ -713,11 +779,11 @@
 <div id="battlePassScreen" class="overlay-screen" aria-hidden="true">
   <div class="overlay-panel">
     <div class="overlay-head">
-      <div><h2>BATTLE PASS</h2><div>50 levels • exclusive rides, trails and a new world every 10 levels</div></div>
+      <div><h2>BATTLE PASS</h2><div>50 harder-earned levels • exclusive rides, trails and a new world every 10 levels</div></div>
       <button id="closeBattlePassBtn" class="close-overlay" type="button">✕ BACK</button>
     </div>
     <div class="bp-progress">
-      <b>LEVEL <span id="bpLevel">1</span> / 50</b> · <span id="bpXpText">0 / 100 XP</span>
+      <b>LEVEL <span id="bpLevel">1</span> / 50</b> · <span id="bpXpText">0 / 250 XP</span>
       <div class="bp-bar"><div id="bpFill" class="bp-fill"></div></div>
     </div>
     <div id="battlePassGrid" class="bp-grid"></div>
@@ -803,6 +869,16 @@ const openBattlePassBtn=document.getElementById("openBattlePassBtn");
 const openLockerBtn=document.getElementById("openLockerBtn");
 const closeBattlePassBtn=document.getElementById("closeBattlePassBtn");
 const closeLockerBtn=document.getElementById("closeLockerBtn");
+const accountScreen=document.getElementById("accountScreen");
+const leaderboardScreen=document.getElementById("leaderboardScreen");
+const accountStatusStrip=document.getElementById("accountStatusStrip");
+const accountLoggedCard=document.getElementById("accountLoggedCard");
+const accountLoggedName=document.getElementById("accountLoggedName");
+const accountCloudStatus=document.getElementById("accountCloudStatus");
+const authForms=document.getElementById("authForms");
+const authMessage=document.getElementById("authMessage");
+const leaderboardMeta=document.getElementById("leaderboardMeta");
+const leaderboardList=document.getElementById("leaderboardList");
 
 let playerName="Guest";
 
@@ -836,7 +912,10 @@ function pickupLaneWidth(){return Math.max(20,canvas.width-218)}
 
 
 
-const SAVE_KEY="biomeBikeProfileV3";
+const SAVE_KEY="biomeBikeProfileV4";
+const LEGACY_SAVE_KEY="biomeBikeProfileV3";
+const BEST_KEY="biomeBikeBestV1";
+const PASS_XP_PER_LEVEL=250;
 const DEFAULT_PROFILE={
   wallet:0,
   passXp:0,
@@ -851,7 +930,7 @@ const DEFAULT_PROFILE={
 function cloneDefault(){return JSON.parse(JSON.stringify(DEFAULT_PROFILE))}
 function loadProfile(){
   try{
-    const raw=localStorage.getItem(SAVE_KEY);
+    const raw=localStorage.getItem(SAVE_KEY)||localStorage.getItem(LEGACY_SAVE_KEY);
     if(!raw)return cloneDefault();
     const p=Object.assign(cloneDefault(),JSON.parse(raw));
     for(const k of ["claimed","ownedCharacters","ownedBikes","ownedTrails"])if(!Array.isArray(p[k]))p[k]=cloneDefault()[k];
@@ -864,9 +943,9 @@ function loadProfile(){
   }catch(e){return cloneDefault()}
 }
 let profile=loadProfile();
-function saveProfile(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(profile))}catch(e){}}
-function passLevel(){return Math.max(1,Math.min(50,1+Math.floor(profile.passXp/100)))}
-function xpIntoLevel(){return passLevel()>=50?100:profile.passXp%100}
+function saveProfile(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(profile))}catch(e){} scheduleCloudSave();}
+function passLevel(){return Math.max(1,Math.min(50,1+Math.floor(profile.passXp/PASS_XP_PER_LEVEL)))}
+function xpIntoLevel(){return passLevel()>=50?PASS_XP_PER_LEVEL:profile.passXp%PASS_XP_PER_LEVEL}
 function requiredPassForWorld(i){return i===27?10:i===28?20:i===29?30:i===30?40:i===31?50:0}
 function worldUnlocked(i){return requiredPassForWorld(i)<=passLevel()}
 function unlockedWorldIndexes(){return BIOMES.map((_,i)=>i).filter(worldUnlocked)}
@@ -994,15 +1073,15 @@ function updateAccountUI(){
   if(lockerCoins)lockerCoins.textContent=profile.wallet;
   if(passLevelMain)passLevelMain.textContent=lvl;
   if(bpLevelEl)bpLevelEl.textContent=lvl;
-  if(bpXpText)bpXpText.textContent=(lvl>=50?"MAX LEVEL":xpIntoLevel()+" / 100 XP");
-  if(bpFill)bpFill.style.width=(lvl>=50?100:xpIntoLevel())+"%";
+  if(bpXpText)bpXpText.textContent=(lvl>=50?"MAX LEVEL":xpIntoLevel()+" / "+PASS_XP_PER_LEVEL+" XP");
+  if(bpFill)bpFill.style.width=(lvl>=50?100:(xpIntoLevel()/PASS_XP_PER_LEVEL)*100)+"%";
 }
 function addWalletCoins(n){
   profile.wallet+=Math.max(0,Math.floor(n||0));saveProfile();updateAccountUI();
 }
 function addPassXp(n){
   const old=passLevel();
-  profile.passXp=Math.min(4999,profile.passXp+Math.max(0,Math.floor(n||0)));
+  profile.passXp=Math.min(PASS_XP_PER_LEVEL*50-1,profile.passXp+Math.max(0,Math.floor(n||0)));
   claimAvailablePassRewards();saveProfile();updateAccountUI();renderWorldSelect();
   const now=passLevel();
   if(now>old){noticeText="BATTLE PASS LEVEL "+now+"!";noticeUntil=performance.now()+1500;}
@@ -1011,8 +1090,98 @@ let runBanked=false;
 function bankRunProgress(){
   if(runBanked||!Number.isFinite(score)||score<=0)return;
   runBanked=true;
-  addPassXp(Math.max(10,Math.floor(score/5)));
+  addPassXp(Math.max(5,Math.floor(score/10)));
 }
+
+let authToken="";
+let authAccount=null;
+let cloudSaveTimer=0;
+let cloudSyncPaused=false;
+try{authToken=localStorage.getItem("biomeBikeAuthToken")||"";}catch(e){}
+
+async function apiRequest(url,options={}){
+  const headers=Object.assign({"Content-Type":"application/json"},options.headers||{});
+  if(authToken)headers.Authorization="Bearer "+authToken;
+  const res=await fetch(url,Object.assign({},options,{headers}));
+  let data={};try{data=await res.json();}catch(e){}
+  if(!res.ok)throw new Error(data.error||("Request failed ("+res.status+")"));
+  return data;
+}
+function setAuthMessage(msg,isError=false){if(authMessage){authMessage.textContent=msg||"";authMessage.style.color=isError?"#fca5a5":"#fde68a";}}
+function renderAuthState(){
+  const logged=!!authAccount;
+  if(accountStatusStrip){accountStatusStrip.classList.toggle("logged",logged);accountStatusStrip.textContent=logged?"✅ Signed in as "+authAccount.username+" — progress is cloud synced.":"👤 Playing as guest — create an account to sync progress everywhere.";}
+  if(accountLoggedCard)accountLoggedCard.style.display=logged?"block":"none";
+  if(authForms)authForms.style.display=logged?"none":"grid";
+  if(accountLoggedName&&logged)accountLoggedName.textContent=authAccount.username;
+  if(logged){usernameInput.value=authAccount.username;usernameInput.disabled=true;playerName=authAccount.username;if(playerNameEl)playerNameEl.textContent=playerName;}
+  else usernameInput.disabled=false;
+}
+function applyAccountData(account){
+  if(!account)return;
+  cloudSyncPaused=true;
+  authAccount=account;
+  profile=Object.assign(cloneDefault(),account.profile||{});
+  best=Math.max(0,Math.floor(Number(account.bestScore)||0));
+  try{localStorage.setItem(SAVE_KEY,JSON.stringify(profile));}catch(e){}
+  if(bestEl)bestEl.textContent=best;
+  try{localStorage.setItem(BEST_KEY,String(best));}catch(e){}
+  ensurePassOwnership();updateAccountUI();renderWorldSelect();
+  cloudSyncPaused=false;renderAuthState();
+}
+function scheduleCloudSave(){
+  if(cloudSyncPaused||!authToken||!authAccount)return;
+  clearTimeout(cloudSaveTimer);cloudSaveTimer=setTimeout(()=>flushCloudSave(),500);
+}
+async function flushCloudSave(){
+  if(cloudSyncPaused||!authToken||!authAccount)return;
+  clearTimeout(cloudSaveTimer);cloudSaveTimer=0;
+  try{
+    if(accountCloudStatus)accountCloudStatus.textContent="Saving...";
+    const d=await apiRequest("/api/progress",{method:"POST",body:JSON.stringify({profile,bestScore:best})});
+    authAccount=d.account||authAccount;
+    if(accountCloudStatus)accountCloudStatus.textContent="Progress saved to your account.";
+  }catch(e){if(accountCloudStatus)accountCloudStatus.textContent="Save issue: "+e.message;}
+}
+async function restoreAccount(){
+  if(!authToken){renderAuthState();return;}
+  try{const d=await apiRequest("/api/me");applyAccountData(d.account);}
+  catch(e){authToken="";authAccount=null;try{localStorage.removeItem("biomeBikeAuthToken");}catch(_){}renderAuthState();}
+}
+function openAccount(){accountScreen.style.display="flex";accountScreen.style.pointerEvents="auto";accountScreen.setAttribute("aria-hidden","false");renderAuthState();setAuthMessage("");}
+function closeAccount(){accountScreen.style.display="none";accountScreen.style.pointerEvents="none";accountScreen.setAttribute("aria-hidden","true");}
+async function registerAccount(){
+  const username=document.getElementById("registerUsername").value.trim(),password=document.getElementById("registerPassword").value;
+  setAuthMessage("Creating account...");
+  try{
+    const localBefore=JSON.parse(JSON.stringify(profile));const localBest=best;
+    const d=await apiRequest("/api/register",{method:"POST",body:JSON.stringify({username,password})});
+    authToken=d.token;try{localStorage.setItem("biomeBikeAuthToken",authToken);}catch(e){}
+    authAccount=d.account;profile=localBefore;best=localBest;renderAuthState();await flushCloudSave();
+    const me=await apiRequest("/api/me");applyAccountData(me.account);setAuthMessage("Account created. Your current progress is now saved.");
+  }catch(e){setAuthMessage(e.message,true);}
+}
+async function loginAccount(){
+  const username=document.getElementById("loginUsername").value.trim(),password=document.getElementById("loginPassword").value;
+  setAuthMessage("Signing in...");
+  try{const d=await apiRequest("/api/login",{method:"POST",body:JSON.stringify({username,password})});authToken=d.token;try{localStorage.setItem("biomeBikeAuthToken",authToken);}catch(e){}applyAccountData(d.account);setAuthMessage("Signed in. Saved progress loaded.");}
+  catch(e){setAuthMessage(e.message,true);}
+}
+async function logoutAccount(){
+  try{await flushCloudSave();await apiRequest("/api/logout",{method:"POST",body:"{}"});}catch(e){}
+  authToken="";authAccount=null;try{localStorage.removeItem("biomeBikeAuthToken");}catch(e){}renderAuthState();setAuthMessage("Signed out.");
+}
+async function openLeaderboard(){
+  leaderboardScreen.style.display="flex";leaderboardScreen.style.pointerEvents="auto";leaderboardScreen.setAttribute("aria-hidden","false");
+  leaderboardMeta.textContent="Loading global scores...";leaderboardList.innerHTML="";
+  try{
+    const d=await apiRequest("/api/leaderboard",{method:"GET"});leaderboardMeta.textContent=(d.totalPlayers||0)+" registered player"+((d.totalPlayers||0)===1?"":"s")+" • top 100 shown";
+    if(!d.leaders||!d.leaders.length){leaderboardList.innerHTML='<div class="leader-empty">No scores yet. Be the first.</div>';return;}
+    leaderboardList.innerHTML=d.leaders.map(x=>'<div class="leader-row '+(authAccount&&x.username.toLowerCase()===authAccount.username.toLowerCase()?"me":"")+'"><span class="leader-rank">#'+x.rank+'</span><span>'+escapeHtml(x.username)+'</span><span class="leader-score">'+Math.floor(x.bestScore).toLocaleString()+'</span></div>').join("");
+  }catch(e){leaderboardMeta.textContent="Could not load leaderboard: "+e.message;}
+}
+function closeLeaderboard(){leaderboardScreen.style.display="none";leaderboardScreen.style.pointerEvents="none";leaderboardScreen.setAttribute("aria-hidden","true");}
+
 let lockerTab="characters";
 function openBattlePass(){
   try{
@@ -1160,7 +1329,7 @@ const BIOMES=[
 
 const keys={left:false,right:false,up:false,down:false};
 
-let player,obstacles,pickups,score,coins=0,best=0,running=false,last=0,raf=0,gameTimer=0;
+let player,obstacles,pickups,score,coins=0,best=Math.max(0,Math.floor(Number(localStorage.getItem(BEST_KEY))||0)),running=false,last=0,raf=0,gameTimer=0;
 let biomeOrder=[];
 let biomeOrderPos=0;
 let nextBiomeScore=200;
@@ -2401,6 +2570,7 @@ function draw(){
 function gameOver(){
   if(!running)return;
   bankRunProgress();
+  flushCloudSave();
   running=false;
   stopRetroMusic();
   if(gameTimer){clearInterval(gameTimer);gameTimer=0;}
@@ -2473,7 +2643,7 @@ function loop(now,fromTimer){
     soundBiome();
   }
 
-  if(s>best){best=s;bestEl.textContent=best}
+  if(s>best){best=s;bestEl.textContent=best;try{localStorage.setItem(BEST_KEY,String(best));}catch(e){}scheduleCloudSave();}
   if(!highScoreAnnounced&&runStartingBest>0&&s>runStartingBest){highScoreAnnounced=true;noticeText="NEW HIGH SCORE!";noticeUntil=now+1000;soundHigh()}
 
   sendLocalPlayerState(dt);
@@ -2513,6 +2683,17 @@ document.querySelectorAll(".ctrl").forEach(btn=>{
   const up=e=>{e.preventDefault();keys[k]=false};
   btn.addEventListener("pointerdown",down);btn.addEventListener("pointerup",up);btn.addEventListener("pointerleave",up);btn.addEventListener("pointercancel",up);
 });
+
+document.getElementById("openAccountBtn").addEventListener("click",openAccount);
+document.getElementById("closeAccountBtn").addEventListener("click",closeAccount);
+document.getElementById("registerBtn").addEventListener("click",registerAccount);
+document.getElementById("loginBtn").addEventListener("click",loginAccount);
+document.getElementById("logoutBtn").addEventListener("click",logoutAccount);
+document.getElementById("openLeaderboardBtn").addEventListener("click",openLeaderboard);
+document.getElementById("closeLeaderboardBtn").addEventListener("click",closeLeaderboard);
+document.getElementById("registerPassword").addEventListener("keydown",e=>{if(e.key==="Enter")registerAccount();});
+document.getElementById("loginPassword").addEventListener("keydown",e=>{if(e.key==="Enter")loginAccount();});
+restoreAccount();
 
 usernameInput.addEventListener("keydown",e=>{
   if(e.key==="Enter"){e.preventDefault();startGame();}

@@ -1,31 +1,30 @@
-BIOME BIKE ONLINE — SEPARATE SINGLE PLAYER + MULTIPLAYER
+BIOME BIKE SURVIVAL — ACCOUNT + LEADERBOARD BUILD
 
-HOME PAGE
-- SINGLE PLAYER launches the normal game.
-- ONLINE MULTIPLAYER opens a separate multiplayer lobby.
+Run locally:
+1. Install Node.js 18+
+2. npm install
+3. npm start
+4. Open http://localhost:3000
 
-MULTIPLAYER
-- CREATE NEW ROOM generates a fresh 4-character code every time.
-- JOIN ROOM uses the 4-character code from the host.
-- Up to 8 players.
-- Host starts the online run.
-- If the host leaves, host transfers to another player.
-- NEW ROOM CODE lets the host discard the current room and generate another fresh code.
+Render commands:
+Build Command: npm install
+Start Command: npm start
+Root Directory: leave blank
 
-RUN LOCALLY
-1. Install Node.js 18+.
-2. Open a terminal in this folder.
-3. Run: npm install
-4. Run: npm start
-5. Open http://localhost:3000
+NEW IN THIS BUILD
+- Unique player accounts (username + password)
+- Passwords are salted + hashed with Node scrypt; plain passwords are never stored
+- Login sessions persist for 30 days in the account database
+- Wallet, Battle Pass XP, claimed rewards, owned/equipped cosmetics and best score sync to the logged-in account
+- Global all-time highest-score leaderboard for registered players who have completed a scored run
+- Battle Pass is substantially slower: 250 XP per level and run XP is roughly score / 10 (minimum 5)
+- Existing local profile is carried into a newly-created account
+- Local save remains as a fallback on the same browser
 
-REAL INTERNET PLAY
-Deploy this entire folder to a Node.js hosting provider. All players must visit the same deployed site.
-The site automatically switches to secure WebSockets (wss://) when hosted over HTTPS.
-
-MULTIPLAYER MAP SIZE
-- Single Player remains 700 x 430 exactly as before.
-- Online Multiplayer uses 1000 x 430 for extra horizontal riding room.
-- Every multiplayer biome uses the same 1000 x 430 size.
-- Existing biome artwork is preserved and extended to the wider canvas.
-- Extra biome-matched scenery appears along the wider side areas.
+IMPORTANT — PERMANENT SERVER STORAGE ON RENDER
+Account/progress data is stored in data/accounts.json by default.
+That is durable on your own computer/server, but Render's normal filesystem may be replaced on a redeploy/restart.
+For truly permanent live accounts on Render, attach persistent storage and set environment variable:
+DATA_DIR=/var/data
+(or set DATA_DIR to the mount path you choose).
+Without persistent server storage, the game still saves locally in each browser, but the global account database/leaderboard can be lost if Render replaces the instance.
