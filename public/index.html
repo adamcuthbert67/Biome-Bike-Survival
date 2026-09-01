@@ -768,6 +768,7 @@
       <div class="lobby-player-title">PLAYERS IN ROOM</div>
       <div id="playerList" class="player-list"></div>
       <div class="lobby-actions">
+        <button id="readyBtn" class="online-btn" type="button">✓ READY</button>
         <button id="hostStartBtn" class="online-btn start-online" type="button" style="display:none">▶ START ONLINE RUN</button>
         <button id="newRoomBtn" class="online-btn host" type="button">↻ NEW ROOM CODE</button>
         <button id="leaveRoomBtn" class="online-btn leave" type="button">✕ LEAVE ROOM</button>
@@ -3199,6 +3200,7 @@ const joinRoomBtn=document.getElementById("joinRoomBtn");
 const roomCodeInput=document.getElementById("roomCodeInput");
 const roomCodeLabel=document.getElementById("roomCodeLabel");
 const playerList=document.getElementById("playerList");
+const readyBtn=document.getElementById("readyBtn");
 const hostStartBtn=document.getElementById("hostStartBtn");
 const leaveRoomBtn=document.getElementById("leaveRoomBtn");
 const newRoomBtn=document.getElementById("newRoomBtn");
@@ -3214,6 +3216,7 @@ let netRoom=null;
 let netPlayerId=null;
 let netIsHost=false;
 let netStarting=false;
+let netReady=false;
 let netPlayers=new Map();
 let netStarted=false;
 let netRoundId=0;
@@ -3319,13 +3322,13 @@ function beginOnlineRunFromServer(m={}){
   const round=Number(m.roundId)||0;
   if(round&&round<netLastStartedRound)return;
   if(m.difficulty&&DIFFICULTIES[m.difficulty])selectedDifficulty=m.difficulty;
-  if(Number.isInteger(m.startWorld))selectedStartWorld=m.startWorld;
+  if(Number.isInteger(m.startWorld))selectedStartBiome=(m.startWorld>=0&&m.startWorld<BIOMES.length&&worldUnlocked(m.startWorld))?m.startWorld:null;
   netStarted=true;netRoundId=round||netRoundId;
-  const delay=Math.max(0,Math.min(1200,(Number(m.startAt)||Date.now())-Date.now()));
-  setOnlineStatus("Starting all players...");
+  if(round)netLastStartedRound=Math.max(netLastStartedRound,round);
+  const delay=Math.max(0,Math.min(600,(Number(m.startAt)||Date.now())-Date.now()));
+  setOnlineStatus("GO — launching all players...");
   setTimeout(()=>{
     if(round&&round<netLastStartedRound)return;
-    netLastStartedRound=Math.max(netLastStartedRound,round);
     multiplayerEliminated=false;multiplayerRespawnAt=0;multiplayerDeathFlashUntil=0;multiplayerRoundEnding=false;
     activeGameMode="multi";applyGameModeLayout();closeBattlePass();closeLocker();closeMultiplayerMenu();
     startGame();
@@ -3341,39 +3344,20 @@ function handleOnlineMessage(m){
   }else if(m.type==="room_joined"){
     netRoom=m.roomCode;netPlayerId=m.playerId;netIsHost=!!m.isHost;netStarted=!!m.started;netRoundId=Number(m.roundId)||0;
     netPlayers=new Map((m.players||[]).map(p=>[p.id,p]));
+    netReady=!!(netPlayers.get(netPlayerId)&&netPlayers.get(netPlayerId).ready);
     showOnlineLobby();
+    if(netStarted){beginOnlineRunFromServer({roundId:netRoundId,difficulty:m.difficulty,startWorld:m.startWorld,startAt:Date.now()+150});}
   }else if(m.type==="room_state"){
     if(!netPlayerId)return;
     netIsHost=m.hostId===netPlayerId;netStarted=!!m.started;netStarting=!!m.starting;netRoundId=Number(m.roundId)||netRoundId;
     netPlayers=new Map((m.players||[]).map(p=>[p.id,p]));
-    if(!running)showOnlineLobby();else renderOnlinePlayers();
+    netReady=!!(netPlayers.get(netPlayerId)&&netPlayers.get(netPlayerId).ready);
+    if(netStarted && (!running || activeGameMode!=="multi") && netRoundId>netLastStartedRound){
+      beginOnlineRunFromServer({roundId:netRoundId,difficulty:m.difficulty,startWorld:m.startWorld,startAt:Number(m.startAt)||Date.now()+100});
+    }else if(!running)showOnlineLobby();else renderOnlinePlayers();
   }else if(m.type==="start_countdown"){
-    // The server has already validated the HOST and the 2-3 player room.
-    // Every client starts from this ONE message, so there is no second WebSocket
-    // message/timer that can leave players stuck in the lobby.
-    netStarting=true; netStarted=true;
-    if(m.difficulty&&DIFFICULTIES[m.difficulty])selectedDifficulty=m.difficulty;
-    if(Number.isInteger(m.startWorld))selectedStartWorld=m.startWorld;
-    const thisRound=Number(m.roundId)||((netRoundId||0)+1);
-    netRoundId=thisRound;
-    if(hostStartBtn)hostStartBtn.disabled=true;
-    let left=3;
-    setOnlineStatus("MULTIPLAYER STARTING IN 3...");
-    const countdown=setInterval(()=>{
-      left--;
-      if(left>0){setOnlineStatus("MULTIPLAYER STARTING IN "+left+"...");return;}
-      clearInterval(countdown);
-      setOnlineStatus("GO!");
-      netStarting=false;
-      multiplayerEliminated=false;multiplayerRespawnAt=0;multiplayerDeathFlashUntil=0;multiplayerRoundEnding=false;
-      activeGameMode="multi";
-      applyGameModeLayout();
-      closeBattlePass();closeLocker();closeMultiplayerMenu();
-      startGame();
-      keys.left=keys.right=keys.up=keys.down=false;
-      setTimeout(()=>{try{canvas.focus();}catch(e){}},40);
-      setOnlineStatus("ONLINE RUN LIVE — "+netPlayers.size+" players connected.");
-    },1000);
+    // Backward-compatible fallback if an older server is still finishing a deploy.
+    beginOnlineRunFromServer({roundId:Number(m.roundId)||netRoundId,difficulty:m.difficulty,startWorld:m.startWorld,startAt:Date.now()+150});
   }else if(m.type==="start_cancelled"){
     netStarted=false;netStarting=false;if(hostStartBtn)hostStartBtn.disabled=!netIsHost;setOnlineStatus(m.message||"Start cancelled.");renderOnlinePlayers();
   }else if(m.type==="game_start"){
@@ -3424,11 +3408,13 @@ function showOnlineLobby(){
   hostStartBtn.style.display=netIsHost?"block":"none";
   renderOnlinePlayers();
   const count=netPlayers.size;
+  const allReady=count>=2&&count<=3&&[...netPlayers.values()].every(p=>p.ready===true);
   if(count<2)setOnlineStatus("Room "+netRoom+" ready — waiting for player 2.");
-  else setOnlineStatus(count+" players connected — press START and everybody will begin together.");
+  else if(!allReady)setOnlineStatus(count+" players connected — EVERYONE press READY.");
+  else setOnlineStatus("Everyone is READY — HOST press START to launch all players.");
 }
 function resetOnlineRoomUI(){
-  netRoom=null;netPlayerId=null;netIsHost=false;netStarted=false;netStarting=false;netRoundId=0;netLastStartedRound=0;netPlayers.clear();
+  netRoom=null;netPlayerId=null;netIsHost=false;netStarted=false;netStarting=false;netReady=false;netRoundId=0;netLastStartedRound=0;netPlayers.clear();
   multiplayerEliminated=false;multiplayerRespawnAt=0;multiplayerDeathFlashUntil=0;multiplayerRoundEnding=false;
   if(onlineJoinControls)onlineJoinControls.style.display="grid";
   onlineLobby.style.display="none";onlineHud.style.display="none";roomCodeLabel.textContent="----";renderOnlinePlayers();
@@ -3441,15 +3427,21 @@ function renderOnlinePlayers(){
     const row=document.createElement("div");row.className="player-row";
     const out=p.alive===false;const respawnLeft=out&&p.respawnAt?Math.max(0,Math.ceil((p.respawnAt-Date.now())/1000)):0;
     row.style.borderColor=out?"#ef4444":"";row.style.background=out?"rgba(127,29,29,.35)":"";
-    row.innerHTML='<span class="player-dot" style="background:'+(out?'#ef4444':'#22c55e')+'"></span><b>'+escapeHtml(p.name||"Player")+'</b>'+(p.id===netPlayerId?' <span>(YOU)</span>':'')+(p.isHost?'<span class="player-host">HOST</span>':'')+(out?'<span style="color:#fca5a5;font-weight:900"> OUT'+(respawnLeft?' • '+respawnLeft+'s':'')+'</span>':'');
+    row.innerHTML='<span class="player-dot" style="background:'+(out?'#ef4444':(p.ready?'#22c55e':'#f59e0b'))+'"></span><b>'+escapeHtml(p.name||"Player")+'</b>'+(p.id===netPlayerId?' <span>(YOU)</span>':'')+(p.isHost?'<span class="player-host">HOST</span>':'')+(p.ready?'<span style="color:#86efac;font-weight:900"> READY</span>':'<span style="color:#fcd34d;font-weight:900"> NOT READY</span>')+(out?'<span style="color:#fca5a5;font-weight:900"> OUT'+(respawnLeft?' • '+respawnLeft+'s':'')+'</span>':'');
     playerList.appendChild(row);
   });
   if(onlineCountHud)onlineCountHud.textContent=list.length;
+  if(readyBtn&&netRoom){
+    readyBtn.style.display=netStarted?"none":"block";
+    readyBtn.disabled=!!netStarted;
+    readyBtn.textContent=netReady?"✓ READY — CLICK TO UNREADY":"✓ READY";
+  }
   if(hostStartBtn&&netRoom){
     const count=list.length;
+    const allReady=count>=2&&count<=3&&list.every(p=>p.ready===true);
     hostStartBtn.style.display=netIsHost?"block":"none";
-    hostStartBtn.disabled=!netIsHost||!!netStarted||!!netStarting||count<2||count>3;
-    hostStartBtn.textContent=netStarted?"RUN IN PROGRESS":(count<2?"WAITING FOR PLAYER 2":"▶ HOST START — "+count+" PLAYERS");
+    hostStartBtn.disabled=!netIsHost||!!netStarted||!!netStarting||!allReady;
+    hostStartBtn.textContent=netStarted?"RUN IN PROGRESS":(!allReady?"WAITING FOR EVERYONE TO READY":"▶ HOST START — "+count+" PLAYERS");
   }
 }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]))}
@@ -3474,14 +3466,25 @@ function leaveOnlineRoom(){
   try{if(netSocket)netSocket.close();}catch(e){}netSocket=null;
   resetOnlineRoomUI();setOnlineStatus("Left room.");
 }
+function toggleOnlineReady(){
+  if(!netRoom||netStarted)return;
+  if(!netSocket||netSocket.readyState!==WebSocket.OPEN){setOnlineStatus("Multiplayer connection is not open. Rejoin the room.");return;}
+  netReady=!netReady;
+  if(readyBtn)readyBtn.textContent=netReady?"✓ READY — CLICK TO UNREADY":"✓ READY";
+  sendOnline("set_ready",{ready:netReady});
+  setOnlineStatus(netReady?"You are READY — waiting for the others.":"You are NOT READY.");
+}
+
 function startOnlineRun(){
   if(!netRoom){setOnlineStatus("Create or join a room first.");return;}
   if(!netIsHost){setOnlineStatus("Only the HOST can start the multiplayer run.");return;}
   if(!netSocket||netSocket.readyState!==WebSocket.OPEN){setOnlineStatus("Multiplayer connection is not open. Refresh and rejoin the room.");return;}
-  const count=netPlayers.size;
+  const list=[...netPlayers.values()];
+  const count=list.length;
   if(count<2||count>3){setOnlineStatus("Wait until 2 or 3 players are connected.");return;}
-  hostStartBtn.disabled=true;setOnlineStatus("Starting countdown for all "+count+" players...");
-  if(!sendOnline("start_game",{difficulty:selectedDifficulty,startWorld:selectedStartWorld})){
+  if(!list.every(p=>p.ready===true)){setOnlineStatus("Everyone must press READY first.");return;}
+  hostStartBtn.disabled=true;setOnlineStatus("Launching multiplayer for all "+count+" players...");
+  if(!sendOnline("start_game",{difficulty:selectedDifficulty,startWorld:selectedStartBiome})){
     hostStartBtn.disabled=false;setOnlineStatus("Start failed because the server connection closed. Rejoin the room.");
   }
 }
@@ -3568,6 +3571,7 @@ createRoomBtn.addEventListener("click",createOnlineRoom);
 joinRoomBtn.addEventListener("click",joinOnlineRoom);
 leaveRoomBtn.addEventListener("click",leaveOnlineRoom);
 newRoomBtn.addEventListener("click",createOnlineRoom);
+readyBtn.addEventListener("click",toggleOnlineReady);
 hostStartBtn.addEventListener("click",startOnlineRun);
 copyRoomBtn.addEventListener("click",async()=>{
   if(!netRoom)return;

@@ -101,10 +101,10 @@ function roomCode(){
   return crypto.randomBytes(3).toString("hex").slice(0,4).toUpperCase();
 }
 function send(ws,obj){if(ws&&ws.readyState===WebSocket.OPEN)ws.send(JSON.stringify(obj));}
-function publicPlayer(p){return {id:p.id,name:p.name,isHost:p.isHost,x:p.x,y:p.y,w:p.w,h:p.h,score:p.score,coins:p.coins,biome:p.biome,equippedCharacter:p.equippedCharacter,equippedBike:p.equippedBike,alive:p.alive!==false,respawnAt:p.respawnAt||0,deathFlashUntil:p.deathFlashUntil||0};}
+function publicPlayer(p){return {id:p.id,name:p.name,isHost:p.isHost,ready:!!p.ready,x:p.x,y:p.y,w:p.w,h:p.h,score:p.score,coins:p.coins,biome:p.biome,equippedCharacter:p.equippedCharacter,equippedBike:p.equippedBike,alive:p.alive!==false,respawnAt:p.respawnAt||0,deathFlashUntil:p.deathFlashUntil||0};}
 function broadcast(room,obj,except=null){for(const p of room.players.values())if(p.ws&&p.ws!==except)send(p.ws,obj);}
 function broadcastRoomState(room){
-  broadcast(room,{type:"room_state",roomCode:room.code,hostId:room.hostId,started:room.started,starting:!!room.starting,difficulty:room.difficulty||"normal",startWorld:Number.isInteger(room.startWorld)?room.startWorld:-1,roundId:room.roundId||0,players:[...room.players.values()].map(publicPlayer)});
+  broadcast(room,{type:"room_state",roomCode:room.code,hostId:room.hostId,started:room.started,starting:!!room.starting,difficulty:room.difficulty||"normal",startWorld:Number.isInteger(room.startWorld)?room.startWorld:-1,roundId:room.roundId||0,startAt:room.startAt||0,players:[...room.players.values()].map(publicPlayer)});
 }
 function scheduleEmptyRoomCleanup(room){
   if(room.cleanupTimer)clearTimeout(room.cleanupTimer);
@@ -115,7 +115,7 @@ function detachPlayer(player,{keepEmptyRoom=true}={}){
   if(!player)return;
   const oldCode=player.roomCode;
   if(player.respawnTimer){clearTimeout(player.respawnTimer);player.respawnTimer=null;}
-  player.roomCode=null;player.isHost=false;player.alive=true;player.respawnAt=0;player.deathFlashUntil=0;
+  player.roomCode=null;player.isHost=false;player.ready=false;player.alive=true;player.respawnAt=0;player.deathFlashUntil=0;
   if(!oldCode)return;
   const room=rooms.get(oldCode);if(!room)return;
   room.players.delete(player.id);
@@ -135,7 +135,7 @@ function addPlayerToRoom(room,player,name,clientKey){
   // Replace a stale connection from the same browser session instead of consuming another slot.
   const same=[...room.players.values()].find(p=>clientKey&&p.clientKey===clientKey&&p.id!==player.id);
   if(same){try{send(same.ws,{type:"replaced_connection"});same.ws&&same.ws.close();}catch(e){}room.players.delete(same.id);}
-  player.name=safeName(name);player.clientKey=safeClientKey(clientKey);player.roomCode=room.code;player.alive=true;player.respawnAt=0;player.deathFlashUntil=0;
+  player.name=safeName(name);player.clientKey=safeClientKey(clientKey);player.roomCode=room.code;player.ready=false;player.alive=true;player.respawnAt=0;player.deathFlashUntil=0;
   room.players.set(player.id,player);
   if(!room.hostId||!room.players.has(room.hostId)){room.hostId=player.id;}
   for(const p of room.players.values())p.isHost=p.id===room.hostId;
@@ -146,7 +146,7 @@ const server=http.createServer(async(req,res)=>{
   const pathname=req.url.split("?")[0];
   try{
     if(pathname==="/api/health"&&req.method==="GET"){
-      return json(res,200,{ok:true,accounts:true,multiplayer:true,version:"multiplayer-stable-v5"});
+      return json(res,200,{ok:true,accounts:true,multiplayer:true,version:"multiplayer-ready-v8"});
     }
     if(pathname==="/api/register"&&req.method==="POST"){
       const b=await readJson(req), username=String(b.username||"").trim(), password=String(b.password||"");
@@ -209,8 +209,8 @@ const wss=new WebSocket.Server({server});
 
 function endRound(room, reason="ROUND_ENDED"){
   if(!room)return;
-  room.started=false;
-  for(const p of room.players.values()){
+  room.started=false;room.startAt=0;
+  for(const p of room.players.values()){p.ready=false;
     if(p.respawnTimer){clearTimeout(p.respawnTimer);p.respawnTimer=null;}
     p.alive=true;p.respawnAt=0;p.deathFlashUntil=0;
   }
@@ -221,8 +221,8 @@ function endRound(room, reason="ROUND_ENDED"){
 wss.on("connection",ws=>{
   ws.isAlive=true;
   ws.on("pong",()=>{ws.isAlive=true;});
-  const player={id:crypto.randomUUID(),ws,name:"Guest",roomCode:null,isHost:false,x:null,y:null,w:44,h:52,score:0,coins:0,biome:0,equippedCharacter:"rider",equippedBike:"classic",alive:true,respawnAt:0,deathFlashUntil:0,respawnTimer:null};
-  send(ws,{type:"hello",playerId:player.id,serverVersion:"multiplayer-stable-v5",maxPlayers:MAX_ROOM_PLAYERS});
+  const player={id:crypto.randomUUID(),ws,name:"Guest",roomCode:null,isHost:false,ready:false,x:null,y:null,w:44,h:52,score:0,coins:0,biome:0,equippedCharacter:"rider",equippedBike:"classic",alive:true,respawnAt:0,deathFlashUntil:0,respawnTimer:null};
+  send(ws,{type:"hello",playerId:player.id,serverVersion:"multiplayer-ready-v8",maxPlayers:MAX_ROOM_PLAYERS});
 
   ws.on("message",raw=>{
     let m;try{m=JSON.parse(raw.toString());}catch{return;}
@@ -232,9 +232,9 @@ wss.on("connection",ws=>{
     if(m.type==="create_room"){
       detachPlayer(player,{keepEmptyRoom:false});
       const code=roomCode();
-      const room={code,hostId:player.id,started:false,difficulty:"normal",startWorld:-1,roundId:0,players:new Map(),cleanupTimer:null};
+      const room={code,hostId:player.id,started:false,starting:false,difficulty:"normal",startWorld:-1,roundId:0,startAt:0,players:new Map(),cleanupTimer:null};
       rooms.set(code,room);
-      player.name=safeName(m.name);player.clientKey=safeClientKey(m.clientKey);player.roomCode=code;player.isHost=true;player.alive=true;
+      player.name=safeName(m.name);player.clientKey=safeClientKey(m.clientKey);player.roomCode=code;player.isHost=true;player.ready=false;player.alive=true;
       room.players.set(player.id,player);
       send(ws,{type:"room_joined",roomCode:code,playerId:player.id,isHost:true,started:false,difficulty:room.difficulty,startWorld:room.startWorld,roundId:0,players:[...room.players.values()].map(publicPlayer)});
       broadcastRoomState(room);
@@ -257,7 +257,7 @@ wss.on("connection",ws=>{
         if(room.started)send(ws,{type:"game_start",difficulty:room.difficulty,startWorld:room.startWorld,roundId:room.roundId,playerCount:room.players.size,startAt:Date.now()+350,rejoin:true});
         return;
       }
-      player.name=safeName(m.name);player.clientKey=safeClientKey(m.clientKey);player.roomCode=code;player.isHost=false;player.alive=true;player.respawnAt=0;player.deathFlashUntil=0;
+      player.name=safeName(m.name);player.clientKey=safeClientKey(m.clientKey);player.roomCode=code;player.isHost=false;player.ready=false;player.alive=true;player.respawnAt=0;player.deathFlashUntil=0;
       room.players.set(player.id,player);
       if(!room.hostId||!room.players.has(room.hostId))room.hostId=player.id;
       for(const p of room.players.values())p.isHost=p.id===room.hostId;
@@ -278,23 +278,32 @@ wss.on("connection",ws=>{
       return;
     }
 
+    if(m.type==="set_ready"){
+      if(room.started){send(ws,{type:"error",code:"ROUND_RUNNING",message:"The round is already running."});return;}
+      player.ready=!!m.ready;
+      broadcastRoomState(room);
+      return;
+    }
+
     if(m.type==="start_game"){
       const count=room.players.size;
       if(player.id!==room.hostId){send(ws,{type:"error",code:"HOST_ONLY",message:"Only the room host can start the multiplayer run."});return;}
       if(count<2||count>3){send(ws,{type:"error",code:"NEED_PLAYERS",message:"Multiplayer needs 2 or 3 connected players before the host can start."});broadcastRoomState(room);return;}
       if(room.started||room.starting){send(ws,{type:"error",code:"ALREADY_STARTING",message:"The multiplayer round is already starting or running."});return;}
+      const allReady=[...room.players.values()].every(p=>p.ready===true);
+      if(!allReady){send(ws,{type:"error",code:"NOT_READY",message:"Every player must press READY before the host can start."});broadcastRoomState(room);return;}
       room.starting=false; room.started=true;
       room.difficulty=String(m.difficulty||"normal");
       room.startWorld=Number.isInteger(m.startWorld)?m.startWorld:-1;
       room.roundId=(room.roundId||0)+1;
+      room.startAt=Date.now()+250;
       for(const p of room.players.values()){
         if(p.respawnTimer){clearTimeout(p.respawnTimer);p.respawnTimer=null;}
         p.alive=true;p.respawnAt=0;p.deathFlashUntil=0;
       }
-      // ONE authoritative start broadcast. Clients all run the same 3-second countdown
-      // and enter gameplay themselves. This removes the old second delayed game_start
-      // message which could leave the lobby stuck on "Starting all players...".
-      broadcast(room,{type:"start_countdown",seconds:3,roundId:room.roundId,playerCount:count,difficulty:room.difficulty,startWorld:room.startWorld});
+      // Immediate authoritative launch. room_state also carries started/roundId/startAt,
+      // so clients have a built-in fallback even if this one broadcast is missed.
+      broadcast(room,{type:"game_start",roundId:room.roundId,playerCount:count,difficulty:room.difficulty,startWorld:room.startWorld,startAt:room.startAt});
       broadcastRoomState(room);
       return;
     }
@@ -306,8 +315,8 @@ wss.on("connection",ws=>{
       broadcastRoomState(room);
       const everyoneOut=[...room.players.values()].every(p=>p.alive===false);
       if(everyoneOut){
-        room.started=false;
-        for(const p of room.players.values()){
+        room.started=false;room.startAt=0;
+        for(const p of room.players.values()){p.ready=false;
           if(p.respawnTimer){clearTimeout(p.respawnTimer);p.respawnTimer=null;}
           p.respawnAt=0;
         }
