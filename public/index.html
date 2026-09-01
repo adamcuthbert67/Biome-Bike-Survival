@@ -1354,8 +1354,7 @@ const BIOMES=[
 "Jungle","Wild West","Candyland","Haunted","Medieval","Sky","Cyber Grid",
 "Swamp","Ancient Egypt","Pirate Cove","Dinosaur","Moon","Underworld",
 "Toy World","Crystal Cavern","Samurai Province","Frozen Viking Fjord","Enchanted Forest","Steampunk Empire","Alien Jungle",
-"Dragon Peak","Sunken Ruins","Celestial Temple","Voidstorm Citadel","The Eternal Nexus",
-"Meteor Crater","Coral Kingdom","Bamboo Highlands","Radioactive Wasteland","Thunder Plains"
+"Dragon Peak","Sunken Ruins","Celestial Temple","Voidstorm Citadel","The Eternal Nexus"
 ];
 
 const keys={left:false,right:false,up:false,down:false};
@@ -1549,6 +1548,7 @@ function startGame(){
     deathAnimating=false;
     keys.left=keys.right=keys.up=keys.down=false;
     resetGame();
+    if(activeGameMode==="multi"){multiplayerEliminated=false;multiplayerRespawnAt=0;multiplayerDeathFlashUntil=0;multiplayerRoundEnding=false;}
     if(playerNameEl)playerNameEl.textContent=playerName;
     running=true;
     startBtn.textContent="Restart";
@@ -2539,7 +2539,7 @@ function drawObstacle(o){
     }
     return;
   }
-  // Expansion worlds: these MUST have visible, recognisable hazards.
+  // Retired expansion-world renderer kept unreachable for compatibility; active world list ends at The Eternal Nexus.
   if(b===32){ // Meteor Crater
     if(o.type==="meteorite"){
       ctx.save();
@@ -2987,13 +2987,15 @@ function draw(){
   drawMultiplayerExtraScenery();
   for(const p of pickups)drawPickup(p);
   for(const o of obstacles)drawObstacle(o);
-  drawPlayer();
+  if(!multiplayerEliminated || Date.now()<multiplayerDeathFlashUntil)drawPlayer();
   drawRemotePlayers();
+  drawMultiplayerLifeOverlay();
   drawNotice();
 }
 
 function gameOver(){
   if(!running)return;
+  if(activeGameMode==="multi"&&netRoom){multiplayerEliminate();return;}
   bankRunProgress();
   flushCloudSave();
   running=false;
@@ -3018,8 +3020,10 @@ function loop(now,fromTimer){
   if(!running)return;
   const dt=Math.min((now-last)/1000,.04);last=now;
 
-  if(keys.left)player.x-=player.speed*dt;if(keys.right)player.x+=player.speed*dt;if(keys.up)player.y-=player.speed*dt;if(keys.down)player.y+=player.speed*dt;
-  player.x=Math.max(playLeft(),Math.min(playRight(),player.x));player.y=Math.max(8,Math.min(374,player.y));
+  if(!multiplayerEliminated){
+    if(keys.left)player.x-=player.speed*dt;if(keys.right)player.x+=player.speed*dt;if(keys.up)player.y-=player.speed*dt;if(keys.down)player.y+=player.speed*dt;
+    player.x=Math.max(playLeft(),Math.min(playRight(),player.x));player.y=Math.max(8,Math.min(374,player.y));
+  }
 
   spawnT+=dt;pickupT+=dt;
   const dc=difficultyCfg();
@@ -3030,7 +3034,7 @@ function loop(now,fromTimer){
   const ph=playerHitbox();
   for(const o of obstacles){
     o.y+=o.speed*dt;
-    if(collide(ph,obstacleHitbox(o))){
+    if(!multiplayerEliminated&&collide(ph,obstacleHitbox(o))){
       if(now<invincibleUntil){o.y=520;noticeText="SHIELD BLOCK!";noticeUntil=now+500;}
       else {gameOver();return}
     }
@@ -3041,7 +3045,7 @@ function loop(now,fromTimer){
 
   for(let i=pickups.length-1;i>=0;i--){
     const p=pickups[i];p.y+=p.speed*dt;
-    if(collide(ph,{x:p.x,y:p.y,w:p.w,h:p.h})){
+    if(!multiplayerEliminated&&collide(ph,{x:p.x,y:p.y,w:p.w,h:p.h})){
       if(p.type==="chest"){
         const earned=3+Math.floor(Math.random()*6);
         coins+=earned;score+=100;coinsEl.textContent=coins;addWalletCoins(earned);
@@ -3068,8 +3072,10 @@ function loop(now,fromTimer){
   }
 
   obstacles=obstacles.filter(o=>o.y<510);pickups=pickups.filter(p=>p.y<470);
-  score+=dt*10;
-  if(now<doubleXpUntil)runBonusXp+=dt; // normal run rate gives about 1 BP XP/sec; this adds the doubled half.
+  if(!multiplayerEliminated){
+    score+=dt*10;
+    if(now<doubleXpUntil)runBonusXp+=dt; // normal run rate gives about 1 BP XP/sec; this adds the doubled half.
+  }
   const s=Math.floor(score);scoreEl.textContent=s;
 
   if(s>=nextBiomeScore){
@@ -3094,31 +3100,37 @@ function loop(now,fromTimer){
   if(!fromTimer && running && window.requestAnimationFrame) raf=requestAnimationFrame(loop);
 }
 
+function gameplayInputActive(){
+  // Multiplayer guests can have menu/overlay state arrive in a different order to the host.
+  // Movement must depend on the RUN itself, not on whichever menu happened to be open before it.
+  return !!running && gameScreen && gameScreen.style.display!=="none";
+}
+function setMoveKey(raw,pressed){
+  const k=String(raw||"").toLowerCase();
+  if(k==="arrowleft"||k==="a"){keys.left=pressed;return true;}
+  if(k==="arrowright"||k==="d"){keys.right=pressed;return true;}
+  if(k==="arrowup"||k==="w"){keys.up=pressed;return true;}
+  if(k==="arrowdown"||k==="s"){keys.down=pressed;return true;}
+  return false;
+}
 document.addEventListener("keydown",e=>{
-  if(menuScreen.style.display!=="none"){
-    if(e.target===usernameInput){
-      if(e.key==="Enter"){e.preventDefault();startGame();}
-      return;
-    }
+  if(gameplayInputActive()){
+    ensureAudio();
+    if(setMoveKey(e.key,true)){e.preventDefault();return;}
+    if(e.key==="Escape"){e.preventDefault();showMenu();return;}
     return;
   }
-  ensureAudio();
-  const k=e.key.toLowerCase();
-  if(k==="arrowleft"||k==="a")keys.left=true;
-  if(k==="arrowright"||k==="d")keys.right=true;
-  if(k==="arrowup"||k==="w")keys.up=true;
-  if(k==="arrowdown"||k==="s")keys.down=true;
-  if(k==="escape"){showMenu();return;}
-  if(k===" "&&!running&&menuScreen.style.display==="none")startGame();
-  if(["arrowleft","arrowright","arrowup","arrowdown"," "].includes(k))e.preventDefault();
+  if(menuScreen.style.display!=="none"){
+    if(e.target===usernameInput && e.key==="Enter"){e.preventDefault();startGame();}
+    return;
+  }
+  if(e.key===" "&&!running){e.preventDefault();startGame();}
 });
 document.addEventListener("keyup",e=>{
-  const k=e.key.toLowerCase();
-  if(k==="arrowleft"||k==="a")keys.left=false;
-  if(k==="arrowright"||k==="d")keys.right=false;
-  if(k==="arrowup"||k==="w")keys.up=false;
-  if(k==="arrowdown"||k==="s")keys.down=false;
+  if(setMoveKey(e.key,false))e.preventDefault();
 });
+window.addEventListener("blur",()=>{keys.left=keys.right=keys.up=keys.down=false;});
+canvas.addEventListener("pointerdown",()=>{try{canvas.focus();}catch(e){}});
 
 document.querySelectorAll(".ctrl").forEach(btn=>{
   const k=btn.dataset.k;
@@ -3203,6 +3215,10 @@ let netIsHost=false;
 let netPlayers=new Map();
 let netStarted=false;
 let netSendAccumulator=0;
+let multiplayerEliminated=false;
+let multiplayerRespawnAt=0;
+let multiplayerDeathFlashUntil=0;
+let multiplayerRoundEnding=false;
 
 
 function openMultiplayerMenu(){
@@ -3267,16 +3283,40 @@ function handleOnlineMessage(m){
     renderOnlinePlayers();
   }else if(m.type==="player_left"){
     netPlayers.delete(m.playerId);renderOnlinePlayers();
+  }else if(m.type==="player_eliminated"){
+    const p=netPlayers.get(m.playerId)||{id:m.playerId,name:m.name||"Player"};
+    p.alive=false;p.respawnAt=Number(m.respawnAt)||0;p.deathFlashUntil=Number(m.deathFlashUntil)||0;netPlayers.set(m.playerId,p);
+    if(m.playerId===netPlayerId){
+      multiplayerEliminated=true;multiplayerRespawnAt=p.respawnAt;multiplayerDeathFlashUntil=p.deathFlashUntil;
+      keys.left=keys.right=keys.up=keys.down=false;
+      statusEl.textContent="ELIMINATED — respawning in 10 seconds if somebody is still alive.";
+    }
+    renderOnlinePlayers();
+  }else if(m.type==="player_respawn"){
+    multiplayerEliminated=false;multiplayerRespawnAt=0;multiplayerDeathFlashUntil=0;
+    player.x=(canvas.width-player.w)/2;player.y=350;
+    invincibleUntil=performance.now()+Math.max(2000,Number(m.invincibleMs)||2000);
+    noticeText="🛡 RESPAWN SHIELD • 2 SECONDS";noticeUntil=performance.now()+1800;
+    statusEl.textContent="Back in! Invincible for 2 seconds.";
+    setTimeout(()=>{try{canvas.focus();}catch(e){}},30);
+  }else if(m.type==="player_respawned"){
+    const p=netPlayers.get(m.playerId);if(p){p.alive=true;p.respawnAt=0;p.deathFlashUntil=0;netPlayers.set(m.playerId,p);}
+    renderOnlinePlayers();
+  }else if(m.type==="all_eliminated"){
+    endOnlineRoundAllEliminated();
   }else if(m.type==="game_start"){
-    // The host starts immediately on click. Other players start when this server event arrives.
-    // Avoid restarting the host's run when its own broadcast comes back.
+    // Any room member can begin the run. Everyone receives the same start event.
     const alreadyRunningOnline = netStarted && activeGameMode==="multi" && running;
-    netStarted=true;
+    if(m.difficulty && DIFFICULTIES[m.difficulty]) selectedDifficulty=m.difficulty;
+    if(Number.isInteger(m.startWorld)) selectedStartWorld=m.startWorld;
+    netStarted=true;multiplayerEliminated=false;multiplayerRespawnAt=0;multiplayerDeathFlashUntil=0;multiplayerRoundEnding=false;
     activeGameMode="multi";
     applyGameModeLayout();
     closeBattlePass();closeLocker();closeMultiplayerMenu();
     if(!alreadyRunningOnline) startGame();
-    setOnlineStatus("Online run started!");
+    keys.left=keys.right=keys.up=keys.down=false;
+    setTimeout(()=>{try{canvas.focus();}catch(e){}},30);
+    setOnlineStatus("Online run started — everybody is live!");
   }else if(m.type==="error"){
     alert(m.message||"Multiplayer error");
     setOnlineStatus(m.message||"Multiplayer error");
@@ -3288,12 +3328,14 @@ function showOnlineLobby(){
   roomCodeLabel.textContent=netRoom||"----";
   if(onlineRoomHud)onlineRoomHud.textContent=netRoom||"----";
   onlineHud.style.display=activeGameMode==="multi"?"inline-flex":"none";
-  hostStartBtn.style.display=netIsHost?"block":"none";
-  setOnlineStatus(netIsHost?"You are host. Share the room code, then start when ready.":"Joined room "+netRoom+". Waiting for host.");
+  hostStartBtn.style.display="block";
+  hostStartBtn.textContent="▶ START ONLINE RUN";
+  setOnlineStatus(netIsHost?"You are host. Share the code — anyone in the room can start.":"Joined room "+netRoom+". Anyone in the room can start the run.");
   renderOnlinePlayers();
 }
 function resetOnlineRoomUI(){
   netRoom=null;netPlayerId=null;netIsHost=false;netStarted=false;netPlayers.clear();
+  multiplayerEliminated=false;multiplayerRespawnAt=0;multiplayerDeathFlashUntil=0;multiplayerRoundEnding=false;
   if(onlineJoinControls)onlineJoinControls.style.display="none";
   onlineLobby.style.display="none";
   onlineHud.style.display="none";
@@ -3306,7 +3348,9 @@ function renderOnlinePlayers(){
   const list=[...netPlayers.values()];
   list.forEach(p=>{
     const row=document.createElement("div");row.className="player-row";
-    row.innerHTML='<span class="player-dot"></span><b>'+escapeHtml(p.name||"Player")+'</b>'+(p.id===netPlayerId?' <span>(YOU)</span>':'')+(p.isHost?'<span class="player-host">HOST</span>':'');
+    const out=p.alive===false;const respawnLeft=out&&p.respawnAt?Math.max(0,Math.ceil((p.respawnAt-Date.now())/1000)):0;
+    row.style.borderColor=out?"#ef4444":"";row.style.background=out?"rgba(127,29,29,.35)":"";
+    row.innerHTML='<span class="player-dot" style="background:'+(out?'#ef4444':'#22c55e')+'"></span><b>'+escapeHtml(p.name||"Player")+'</b>'+(p.id===netPlayerId?' <span>(YOU)</span>':'')+(p.isHost?'<span class="player-host">HOST</span>':'')+(out?'<span style="color:#fca5a5;font-weight:900"> OUT'+(respawnLeft?' • '+respawnLeft+'s':'')+'</span>':'');
     playerList.appendChild(row);
   });
   if(onlineCountHud)onlineCountHud.textContent=Math.max(1,list.length);
@@ -3334,28 +3378,12 @@ function leaveOnlineRoom(){
   setOnlineStatus("Left room.");
 }
 function startOnlineRun(){
-  if(!netRoom){
-    setOnlineStatus("Create a room first.");
-    return;
-  }
-  if(!netIsHost){
-    setOnlineStatus("Only the room host can start the run.");
-    return;
-  }
-
-  // A one-player room is valid multiplayer. Start the host locally immediately
-  // so the button can never feel dead while waiting for the WebSocket round trip.
-  netStarted=true;
-  activeGameMode="multi";
-  applyGameModeLayout();
-  closeBattlePass();
-  closeLocker();
-  closeMultiplayerMenu();
-  startGame();
-  setOnlineStatus("Online run started!");
-
-  // Tell the server so every other player in the room starts too.
+  if(!netRoom){setOnlineStatus("Create or join a room first.");return;}
+  if(!netSocket||netSocket.readyState!==WebSocket.OPEN){setOnlineStatus("Multiplayer connection is not ready yet.");return;}
+  hostStartBtn.disabled=true;
+  setOnlineStatus("Starting the online run for everyone...");
   sendOnline("start_game",{difficulty:selectedDifficulty,startWorld:selectedStartWorld});
+  setTimeout(()=>{if(hostStartBtn)hostStartBtn.disabled=false;},900);
 }
 function sendLocalPlayerState(dt){
   if(!netRoom||!running||!netSocket||netSocket.readyState!==WebSocket.OPEN)return;
@@ -3366,25 +3394,71 @@ function sendLocalPlayerState(dt){
     x:player.x,y:player.y,w:player.w,h:player.h,
     score:Math.floor(score),coins:coins,biome:biomeIndex(),
     equippedCharacter:profile.equippedCharacter,equippedBike:profile.equippedBike,
-    name:playerName
+    name:playerName,alive:!multiplayerEliminated
   });
 }
 function drawRemotePlayers(){
   if(!netRoom)return;
+  const wallNow=Date.now();
   for(const p of netPlayers.values()){
     if(p.id===netPlayerId||!Number.isFinite(p.x)||!Number.isFinite(p.y))continue;
+    const dead=p.alive===false, flashing=dead&&wallNow<(Number(p.deathFlashUntil)||0);
+    if(dead&&!flashing)continue;
     ctx.save();
-    ctx.globalAlpha=.82;
+    ctx.globalAlpha=dead?.95:.82;
     ctx.translate(p.x,p.y);
-    ctx.strokeStyle="#f8fafc";ctx.lineWidth=3;
+    if(flashing){ctx.fillStyle="rgba(239,68,68,.48)";ctx.strokeStyle="#ff1f1f";ctx.lineWidth=6;roundedRectPath(-9,-22,62,72,12);ctx.fill();ctx.stroke();}
+    ctx.strokeStyle=flashing?"#fee2e2":"#f8fafc";ctx.lineWidth=3;
     ctx.beginPath();ctx.arc(9,35,8,0,Math.PI*2);ctx.arc(33,35,8,0,Math.PI*2);ctx.stroke();
-    ctx.strokeStyle="#22d3ee";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(9,35);ctx.lineTo(20,22);ctx.lineTo(33,35);ctx.lineTo(16,35);ctx.lineTo(20,22);ctx.stroke();
-    ctx.fillStyle="#f97316";roundedRectPath(15,7,14,17,5);ctx.fill();
+    ctx.strokeStyle=flashing?"#ef4444":"#22d3ee";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(9,35);ctx.lineTo(20,22);ctx.lineTo(33,35);ctx.lineTo(16,35);ctx.lineTo(20,22);ctx.stroke();
+    ctx.fillStyle=flashing?"#ef4444":"#f97316";roundedRectPath(15,7,14,17,5);ctx.fill();
     ctx.fillStyle="#d6a67a";ctx.beginPath();ctx.arc(22,-1,7,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle="#fff";ctx.font="900 10px monospace";ctx.textAlign="center";ctx.strokeStyle="#000";ctx.lineWidth=3;ctx.strokeText((p.name||"Player").slice(0,12),21,-14);ctx.fillText((p.name||"Player").slice(0,12),21,-14);
+    ctx.fillStyle=flashing?"#fecaca":"#fff";ctx.font="900 10px monospace";ctx.textAlign="center";ctx.strokeStyle="#000";ctx.lineWidth=3;
+    const nm=(p.name||"Player").slice(0,12)+(dead?" • OUT":"");ctx.strokeText(nm,21,-14);ctx.fillText(nm,21,-14);
     ctx.restore();
   }
 }
+
+function drawMultiplayerLifeOverlay(){
+  if(activeGameMode!=="multi")return;
+  const wallNow=Date.now();
+  if(multiplayerEliminated){
+    const flashing=wallNow<multiplayerDeathFlashUntil;
+    if(flashing){
+      ctx.save();ctx.fillStyle="rgba(239,68,68,.46)";ctx.strokeStyle="#ff1f1f";ctx.lineWidth=7;roundedRectPath(player.x-10,player.y-22,64,78,12);ctx.fill();ctx.stroke();ctx.restore();
+    }
+    const left=Math.max(0,(multiplayerRespawnAt-wallNow)/1000);
+    ctx.save();ctx.fillStyle="rgba(15,23,42,.88)";roundedRectPath(canvas.width/2-170,18,340,58,12);ctx.fill();ctx.strokeStyle="#ef4444";ctx.lineWidth=3;ctx.stroke();
+    ctx.textAlign="center";ctx.fillStyle="#fecaca";ctx.font="900 19px monospace";ctx.fillText("YOU ARE OUT",canvas.width/2,43);
+    ctx.fillStyle="#fff";ctx.font="900 13px monospace";ctx.fillText(left>0?"RESPAWN IN "+left.toFixed(1)+"s":"WAITING FOR ROUND...",canvas.width/2,63);ctx.restore();
+  }else if(performance.now()<invincibleUntil){
+    const left=Math.max(0,(invincibleUntil-performance.now())/1000);
+    ctx.save();ctx.fillStyle="rgba(34,211,238,.16)";ctx.strokeStyle="#67e8f9";ctx.lineWidth=4;ctx.beginPath();ctx.arc(player.x+player.w/2,player.y+player.h/2,34+Math.sin(performance.now()/80)*3,0,Math.PI*2);ctx.stroke();ctx.fill();
+    ctx.fillStyle="#cffafe";ctx.textAlign="center";ctx.font="900 11px monospace";ctx.fillText("RESPAWN SHIELD "+left.toFixed(1)+"s",player.x+player.w/2,player.y-18);ctx.restore();
+  }
+}
+
+function multiplayerEliminate(){
+  if(activeGameMode!=="multi"||!netRoom||multiplayerEliminated||multiplayerRoundEnding)return;
+  multiplayerEliminated=true;multiplayerRespawnAt=Date.now()+10000;multiplayerDeathFlashUntil=Date.now()+1000;
+  keys.left=keys.right=keys.up=keys.down=false;
+  try{soundCrash();}catch(e){}
+  statusEl.textContent="ELIMINATED — out for 10 seconds unless everybody is eliminated.";
+  sendOnline("player_eliminated",{score:Math.floor(score)});
+}
+
+function endOnlineRoundAllEliminated(){
+  if(multiplayerRoundEnding)return;
+  multiplayerRoundEnding=true;netStarted=false;multiplayerEliminated=true;multiplayerRespawnAt=0;
+  if(running)bankRunProgress();flushCloudSave();running=false;keys.left=keys.right=keys.up=keys.down=false;stopRetroMusic();
+  if(gameTimer){clearInterval(gameTimer);gameTimer=0;}
+  noticeText="ALL PLAYERS ELIMINATED";noticeUntil=performance.now()+2500;
+  statusEl.textContent="All players eliminated — round over.";
+  try{draw();}catch(e){}
+  setOnlineStatus("All players were eliminated. Start another run when ready.");
+  setTimeout(()=>{multiplayerRoundEnding=false;multiplayerEliminated=false;openMultiplayerMenu();showOnlineLobby();},1200);
+}
+
 if(openBattlePassBtn)openBattlePassBtn.addEventListener("click",openBattlePass);
 if(openLockerBtn)openLockerBtn.addEventListener("click",openLocker);
 if(closeBattlePassBtn)closeBattlePassBtn.addEventListener("click",closeBattlePass);

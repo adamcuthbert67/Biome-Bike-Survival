@@ -28,3 +28,12 @@ For truly permanent live accounts on Render, attach persistent storage and set e
 DATA_DIR=/var/data
 (or set DATA_DIR to the mount path you choose).
 Without persistent server storage, the game still saves locally in each browser, but the global account database/leaderboard can be lost if Render replaces the instance.
+
+
+MULTIPLAYER ROUND UPDATE
+- Any room member can press START ONLINE RUN; everyone starts together.
+- Supports solo and multi-player rooms, including 2-3 players.
+- Collision eliminates a player for 10 seconds while at least one other player is alive.
+- Eliminated rider flashes red for 1 second and is marked OUT in the player list.
+- Respawning grants 2 seconds of invincibility.
+- If every connected player is eliminated before a respawn, the round ends immediately and the lobby remains available for a new run.

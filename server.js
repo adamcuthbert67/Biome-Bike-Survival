@@ -98,11 +98,12 @@ function roomCode(){
   return crypto.randomBytes(3).toString("hex").slice(0,4).toUpperCase();
 }
 function send(ws,obj){if(ws.readyState===WebSocket.OPEN)ws.send(JSON.stringify(obj));}
-function publicPlayer(p){return {id:p.id,name:p.name,isHost:p.isHost,x:p.x,y:p.y,w:p.w,h:p.h,score:p.score,coins:p.coins,biome:p.biome,equippedCharacter:p.equippedCharacter,equippedBike:p.equippedBike};}
+function publicPlayer(p){return {id:p.id,name:p.name,isHost:p.isHost,x:p.x,y:p.y,w:p.w,h:p.h,score:p.score,coins:p.coins,biome:p.biome,equippedCharacter:p.equippedCharacter,equippedBike:p.equippedBike,alive:p.alive!==false,respawnAt:p.respawnAt||0,deathFlashUntil:p.deathFlashUntil||0};}
 function broadcast(room,obj,except=null){for(const p of room.players.values())if(p.ws!==except)send(p.ws,obj);}
 function broadcastRoomState(room){broadcast(room,{type:"room_state",roomCode:room.code,hostId:room.hostId,started:room.started,players:[...room.players.values()].map(publicPlayer)});}
 function detachPlayer(player){
   if(!player||!player.roomCode)return;
+  if(player.respawnTimer){clearTimeout(player.respawnTimer);player.respawnTimer=null;}
   const room=rooms.get(player.roomCode); if(!room)return;
   room.players.delete(player.id); broadcast(room,{type:"player_left",playerId:player.id});
   if(room.players.size===0){rooms.delete(room.code);return;}
@@ -175,7 +176,7 @@ const server=http.createServer(async(req,res)=>{
 
 const wss=new WebSocket.Server({server});
 wss.on("connection",ws=>{
-  const player={id:crypto.randomUUID(),ws,name:"Guest",roomCode:null,isHost:false,x:null,y:null,w:44,h:52,score:0,coins:0,biome:0,equippedCharacter:"rider",equippedBike:"classic"};
+  const player={id:crypto.randomUUID(),ws,name:"Guest",roomCode:null,isHost:false,x:null,y:null,w:44,h:52,score:0,coins:0,biome:0,equippedCharacter:"rider",equippedBike:"classic",alive:true,respawnAt:0,deathFlashUntil:0,respawnTimer:null};
   ws.on("message",raw=>{
     let m;try{m=JSON.parse(raw.toString());}catch{return;}if(!m||typeof m.type!=="string")return;
     if(m.type==="create_room"){
@@ -191,7 +192,32 @@ wss.on("connection",ws=>{
     }
     if(m.type==="leave_room"){detachPlayer(player);player.roomCode=null;player.isHost=false;return;}
     const room=rooms.get(player.roomCode);if(!room)return;
-    if(m.type==="start_game"){if(room.hostId!==player.id)return;room.started=true;room.difficulty=String(m.difficulty||"normal");room.startWorld=Number.isInteger(m.startWorld)?m.startWorld:-1;broadcast(room,{type:"game_start",difficulty:room.difficulty,startWorld:room.startWorld});return;}
+    if(m.type==="start_game"){
+      if(room.started)return;
+      room.started=true;room.difficulty=String(m.difficulty||"normal");room.startWorld=Number.isInteger(m.startWorld)?m.startWorld:-1;
+      for(const p of room.players.values()){if(p.respawnTimer){clearTimeout(p.respawnTimer);p.respawnTimer=null;}p.alive=true;p.respawnAt=0;p.deathFlashUntil=0;}
+      broadcast(room,{type:"game_start",difficulty:room.difficulty,startWorld:room.startWorld});broadcastRoomState(room);return;
+    }
+    if(m.type==="player_eliminated"){
+      if(!room.started||player.alive===false)return;
+      const now=Date.now();player.alive=false;player.respawnAt=now+10000;player.deathFlashUntil=now+1000;
+      broadcast(room,{type:"player_eliminated",playerId:player.id,name:player.name,respawnAt:player.respawnAt,deathFlashUntil:player.deathFlashUntil});
+      broadcastRoomState(room);
+      const everyoneOut=[...room.players.values()].every(p=>p.alive===false);
+      if(everyoneOut){
+        room.started=false;
+        for(const p of room.players.values()){if(p.respawnTimer){clearTimeout(p.respawnTimer);p.respawnTimer=null;}p.respawnAt=0;}
+        broadcast(room,{type:"all_eliminated"});broadcastRoomState(room);return;
+      }
+      player.respawnTimer=setTimeout(()=>{
+        const liveRoom=rooms.get(player.roomCode);
+        if(!liveRoom||!liveRoom.started||!liveRoom.players.has(player.id)||player.alive!==false)return;
+        player.alive=true;player.respawnAt=0;player.deathFlashUntil=0;player.respawnTimer=null;
+        send(player.ws,{type:"player_respawn",invincibleMs:2000});
+        broadcast(liveRoom,{type:"player_respawned",playerId:player.id},player.ws);broadcastRoomState(liveRoom);
+      },10000);
+      return;
+    }
     if(m.type==="player_state"){
       const num=(v,lo,hi,d)=>Number.isFinite(Number(v))?Math.max(lo,Math.min(hi,Number(v))):d;
       player.x=num(m.x,-100,1200,player.x);player.y=num(m.y,-100,520,player.y);player.w=num(m.w,20,90,44);player.h=num(m.h,20,100,52);player.score=num(m.score,0,1e9,0);player.coins=num(m.coins,0,1e9,0);player.biome=num(m.biome,0,100,0);
