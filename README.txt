@@ -37,3 +37,6 @@ MULTIPLAYER ROUND UPDATE
 - Eliminated rider flashes red for 1 second and is marked OUT in the player list.
 - Respawning grants 2 seconds of invincibility.
 - If every connected player is eliminated before a respawn, the round ends immediately and the lobby remains available for a new run.
+
+
+MULTIPLAYER PERFECT V3: 2-3 player rooms, synchronized server-timed starts, reconnect/rejoin, 10s elimination, 1s red death flash, 2s respawn invincibility.

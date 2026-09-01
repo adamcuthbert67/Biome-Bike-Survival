@@ -3216,7 +3216,15 @@ let netIsHost=false;
 let netPlayers=new Map();
 let netStarted=false;
 let netRoundId=0;
+let netLastStartedRound=0;
 let netSendAccumulator=0;
+let netReconnectTimer=0;
+let netReconnectAttempts=0;
+let netManualLeave=false;
+let netDesiredRoom=null;
+let netClientKey="";
+try{netClientKey=sessionStorage.getItem("biomeBikeNetClientKey")||"";if(!netClientKey){netClientKey=(crypto.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2)+Date.now().toString(36));sessionStorage.setItem("biomeBikeNetClientKey",netClientKey);}}catch(e){netClientKey=Math.random().toString(36).slice(2)+Date.now().toString(36);}
+
 let multiplayerEliminated=false;
 let multiplayerRespawnAt=0;
 let multiplayerDeathFlashUntil=0;
@@ -3248,56 +3256,59 @@ function currentOnlineName(){
   const v=(usernameInput&&usernameInput.value||"").trim();
   return (v||playerName||"Guest").slice(0,18);
 }
+function scheduleOnlineReconnect(){
+  if(netManualLeave||!netDesiredRoom||netReconnectTimer)return;
+  if(netReconnectAttempts>=6){setOnlineStatus("Connection lost. Press JOIN and enter room "+netDesiredRoom+" again.");return;}
+  const delay=Math.min(5000,700+netReconnectAttempts*700);netReconnectAttempts++;
+  setOnlineStatus("Reconnecting to room "+netDesiredRoom+"... attempt "+netReconnectAttempts+"/6");
+  netReconnectTimer=setTimeout(async()=>{netReconnectTimer=0;try{await connectOnline();sendOnline("join_room",{roomCode:netDesiredRoom,name:currentOnlineName(),clientKey:netClientKey});}catch(e){scheduleOnlineReconnect();}},delay);
+}
 function connectOnline(){
   if(netSocket&&netSocket.readyState===WebSocket.OPEN)return Promise.resolve();
   if(netSocket&&netSocket.readyState===WebSocket.CONNECTING&&netConnectPromise)return netConnectPromise;
   netConnectPromise=new Promise((resolve,reject)=>{
-    try{netSocket=new WebSocket(onlineWsUrl());}
-    catch(err){netConnectPromise=null;reject(err);return;}
+    try{netSocket=new WebSocket(onlineWsUrl());}catch(err){netConnectPromise=null;reject(err);return;}
     let settled=false;
-    const timer=setTimeout(()=>{
-      if(settled)return;settled=true;netConnectPromise=null;
-      try{netSocket.close();}catch(e){}
-      reject(new Error("Connection timed out. Try again in a few seconds."));
-    },9000);
-    netSocket.onopen=()=>{
-      if(settled)return;settled=true;clearTimeout(timer);netConnected=true;netConnectPromise=null;
-      setOnlineStatus("Connected. Create or join a room.");resolve();
-    };
-    netSocket.onerror=()=>{
-      if(settled)return;settled=true;clearTimeout(timer);netConnectPromise=null;
-      reject(new Error("Could not connect to multiplayer server. Refresh and try once more."));
-    };
+    const timer=setTimeout(()=>{if(settled)return;settled=true;netConnectPromise=null;try{netSocket.close();}catch(e){}reject(new Error("Connection timed out. Try again in a few seconds."));},10000);
+    netSocket.onopen=()=>{if(settled)return;settled=true;clearTimeout(timer);netConnected=true;netConnectPromise=null;netReconnectAttempts=0;setOnlineStatus("Connected to multiplayer server.");resolve();};
+    netSocket.onerror=()=>{if(settled)return;settled=true;clearTimeout(timer);netConnectPromise=null;reject(new Error("Could not connect to multiplayer server. Refresh and try once more."));};
     netSocket.onclose=()=>{
-      clearTimeout(timer);netConnected=false;netConnectPromise=null;
-      const hadRoom=!!netRoom;
-      resetOnlineRoomUI();
-      if(hadRoom)setOnlineStatus("Connection lost. Re-open Multiplayer and join the room again.");
+      clearTimeout(timer);netConnected=false;netConnectPromise=null;netSocket=null;
+      if(netManualLeave){netManualLeave=false;return;}
+      if(netDesiredRoom){netRoom=netDesiredRoom;scheduleOnlineReconnect();}
+      else resetOnlineRoomUI();
     };
-    netSocket.onmessage=(ev)=>{
-      try{handleOnlineMessage(JSON.parse(ev.data));}catch(err){console.error("Online message error",err);}
-    };
+    netSocket.onmessage=(ev)=>{try{handleOnlineMessage(JSON.parse(ev.data));}catch(err){console.error("Online message error",err);}};
   });
   return netConnectPromise;
 }
-function sendOnline(type,data={}){
-  if(netSocket&&netSocket.readyState===WebSocket.OPEN)netSocket.send(JSON.stringify({type,...data}));
-}
+function sendOnline(type,data={}){if(netSocket&&netSocket.readyState===WebSocket.OPEN)netSocket.send(JSON.stringify({type,...data}));}
+
 function beginOnlineRunFromServer(m={}){
-  const alreadyRunningOnline=activeGameMode==="multi"&&running;
+  const round=Number(m.roundId)||0;
+  if(round&&round<netLastStartedRound)return;
   if(m.difficulty&&DIFFICULTIES[m.difficulty])selectedDifficulty=m.difficulty;
   if(Number.isInteger(m.startWorld))selectedStartWorld=m.startWorld;
-  netStarted=true;netRoundId=Math.max(netRoundId,Number(m.roundId)||0);
-  multiplayerEliminated=false;multiplayerRespawnAt=0;multiplayerDeathFlashUntil=0;multiplayerRoundEnding=false;
-  activeGameMode="multi";applyGameModeLayout();closeBattlePass();closeLocker();closeMultiplayerMenu();
-  if(!alreadyRunningOnline)startGame();
-  keys.left=keys.right=keys.up=keys.down=false;
-  setTimeout(()=>{try{canvas.focus();}catch(e){}},30);
-  setOnlineStatus("Online run started — "+Math.max(1,netPlayers.size)+" player"+(netPlayers.size===1?"":"s")+" connected.");
+  netStarted=true;netRoundId=Math.max(netRoundId,round);
+  const delay=Math.max(0,Math.min(1800,(Number(m.startAt)||Date.now())-Date.now()));
+  setOnlineStatus("All players connected — starting in "+Math.max(1,Math.ceil(delay/1000))+"...");
+  setTimeout(()=>{
+    if(round&&round<netRoundId)return;
+    netLastStartedRound=Math.max(netLastStartedRound,round);
+    multiplayerEliminated=false;multiplayerRespawnAt=0;multiplayerDeathFlashUntil=0;multiplayerRoundEnding=false;
+    activeGameMode="multi";applyGameModeLayout();closeBattlePass();closeLocker();closeMultiplayerMenu();
+    startGame();
+    keys.left=keys.right=keys.up=keys.down=false;
+    setTimeout(()=>{try{canvas.focus();}catch(e){}},30);
+    setOnlineStatus("ONLINE RUN LIVE — "+Math.max(1,netPlayers.size)+" players connected.");
+  },delay);
 }
+
 function handleOnlineMessage(m){
-  if(m.type==="room_joined"){
-    netRoom=m.roomCode;netPlayerId=m.playerId;netIsHost=!!m.isHost;netStarted=!!m.started;netRoundId=Number(m.roundId)||0;
+  if(m.type==="hello"){
+    return;
+  }else if(m.type==="room_joined"){
+    netRoom=m.roomCode;netDesiredRoom=m.roomCode;netReconnectAttempts=0;netPlayerId=m.playerId;netIsHost=!!m.isHost;netStarted=!!m.started;netRoundId=Number(m.roundId)||0;
     if(m.difficulty&&DIFFICULTIES[m.difficulty])selectedDifficulty=m.difficulty;
     if(Number.isInteger(m.startWorld))selectedStartWorld=m.startWorld;
     netPlayers=new Map((m.players||[]).map(p=>[p.id,p]));
@@ -3311,9 +3322,9 @@ function handleOnlineMessage(m){
     if(Number.isInteger(m.startWorld))selectedStartWorld=m.startWorld;
     netPlayers=new Map((m.players||[]).map(p=>[p.id,p]));
     if(!running)showOnlineLobby();
-    // Safety net: if this client somehow missed GAME_START, start from authoritative room state.
-    if(netStarted&&!running&&!multiplayerRoundEnding){
-      setTimeout(()=>{if(netStarted&&!running)beginOnlineRunFromServer({difficulty:m.difficulty,startWorld:m.startWorld,roundId:m.roundId,resync:true});},120);
+    // Safety net: authoritative room state can recover a missed start message.
+    if(netStarted&&!running&&!multiplayerRoundEnding&&Number(m.roundId)>=netLastStartedRound){
+      setTimeout(()=>{if(netStarted&&!running)beginOnlineRunFromServer({difficulty:m.difficulty,startWorld:m.startWorld,roundId:m.roundId,startAt:Date.now()+250,resync:true});},120);
     }
   }else if(m.type==="player_state"){
     if(m.player&&m.player.id!==netPlayerId)netPlayers.set(m.player.id,m.player);
@@ -3344,9 +3355,12 @@ function handleOnlineMessage(m){
   }else if(m.type==="game_start"){
     // Server-authoritative start/resync. Safe to receive more than once.
     beginOnlineRunFromServer(m);
+  }else if(m.type==="replaced_connection"){
+    setOnlineStatus("This multiplayer connection was replaced by a newer connection.");
   }else if(m.type==="error"){
-    alert(m.message||"Multiplayer error");
-    setOnlineStatus(m.message||"Multiplayer error");
+    if(m.code==="ROOM_NOT_FOUND"&&netReconnectAttempts>0){netDesiredRoom=null;netRoom=null;}
+    if(joinRoomBtn)joinRoomBtn.disabled=false;
+    alert(m.message||"Multiplayer error");setOnlineStatus(m.message||"Multiplayer error");
   }
 }
 function showOnlineLobby(){
@@ -3355,14 +3369,15 @@ function showOnlineLobby(){
   roomCodeLabel.textContent=netRoom||"----";
   if(onlineRoomHud)onlineRoomHud.textContent=netRoom||"----";
   onlineHud.style.display=activeGameMode==="multi"?"inline-flex":"none";
-  hostStartBtn.style.display="block";hostStartBtn.disabled=false;
-  const count=Math.max(1,netPlayers.size);
-  hostStartBtn.textContent=netStarted?"↻ SYNC / START RUN":"▶ START RUN FOR "+count+" PLAYER"+(count===1?"":"S");
-  setOnlineStatus(netStarted?"Run is active. New players can still join with this code.":count+" player"+(count===1?"":"s")+" in room — anyone can press START.");
+  hostStartBtn.style.display="block";
+  const count=netPlayers.size;
+  hostStartBtn.disabled=count<2||count>3;
+  hostStartBtn.textContent=count<2?"WAITING FOR PLAYER 2...":(netStarted?"▶ RESTART RUN FOR "+count+" PLAYERS":"▶ START RUN FOR "+count+" PLAYERS");
+  setOnlineStatus(count<2?"Room ready — send the code to a friend. The run unlocks at 2 players.":(netStarted?"Run active with "+count+" players.":count+" players connected — press START to launch everyone together."));
   renderOnlinePlayers();
 }
 function resetOnlineRoomUI(){
-  netRoom=null;netPlayerId=null;netIsHost=false;netStarted=false;netRoundId=0;netPlayers.clear();
+  netRoom=null;netDesiredRoom=null;netPlayerId=null;netIsHost=false;netStarted=false;netRoundId=0;netLastStartedRound=0;netPlayers.clear();
   multiplayerEliminated=false;multiplayerRespawnAt=0;multiplayerDeathFlashUntil=0;multiplayerRoundEnding=false;
   if(onlineJoinControls)onlineJoinControls.style.display="none";
   onlineLobby.style.display="none";
@@ -3381,10 +3396,10 @@ function renderOnlinePlayers(){
     row.innerHTML='<span class="player-dot" style="background:'+(out?'#ef4444':'#22c55e')+'"></span><b>'+escapeHtml(p.name||"Player")+'</b>'+(p.id===netPlayerId?' <span>(YOU)</span>':'')+(p.isHost?'<span class="player-host">HOST</span>':'')+(out?'<span style="color:#fca5a5;font-weight:900"> OUT'+(respawnLeft?' • '+respawnLeft+'s':'')+'</span>':'');
     playerList.appendChild(row);
   });
-  if(onlineCountHud)onlineCountHud.textContent=Math.max(1,list.length);
+  if(onlineCountHud)onlineCountHud.textContent=list.length;
   if(hostStartBtn&&netRoom){
-    const count=Math.max(1,list.length);
-    hostStartBtn.textContent=netStarted?"↻ SYNC / START RUN":"▶ START RUN FOR "+count+" PLAYER"+(count===1?"":"S");
+    const count=list.length;hostStartBtn.disabled=count<2||count>3;
+    hostStartBtn.textContent=count<2?"WAITING FOR PLAYER 2...":(netStarted?"▶ RESTART RUN FOR "+count+" PLAYERS":"▶ START RUN FOR "+count+" PLAYERS");
   }
 }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]))}
@@ -3392,7 +3407,7 @@ async function createOnlineRoom(){
   try{
     setOnlineStatus(netRoom?"Creating a brand-new room code...":"Creating room...");
     await connectOnline();
-    sendOnline("create_room",{name:currentOnlineName()});
+    sendOnline("create_room",{name:currentOnlineName(),clientKey:netClientKey});
   }catch(err){setOnlineStatus(err.message);alert(err.message);}
 }
 async function joinOnlineRoom(){
@@ -3401,22 +3416,24 @@ async function joinOnlineRoom(){
   if(code.length!==4){alert("Enter the 4-character room code.");return;}
   try{
     joinRoomBtn.disabled=true;setOnlineStatus("Connecting to room "+code+"...");
+    netDesiredRoom=code;netManualLeave=false;
     await connectOnline();
-    sendOnline("join_room",{roomCode:code,name:currentOnlineName()});
+    sendOnline("join_room",{roomCode:code,name:currentOnlineName(),clientKey:netClientKey});
     setTimeout(()=>{if(joinRoomBtn)joinRoomBtn.disabled=false;},900);
   }catch(err){joinRoomBtn.disabled=false;setOnlineStatus(err.message);alert(err.message);}
 }
 function leaveOnlineRoom(){
-  sendOnline("leave_room");
-  resetOnlineRoomUI();
-  setOnlineStatus("Left room.");
+  netManualLeave=true;if(netReconnectTimer){clearTimeout(netReconnectTimer);netReconnectTimer=0;}
+  sendOnline("leave_room");netDesiredRoom=null;resetOnlineRoomUI();setOnlineStatus("Left room.");
 }
 function startOnlineRun(){
   if(!netRoom){setOnlineStatus("Create or join a room first.");return;}
   if(!netSocket||netSocket.readyState!==WebSocket.OPEN){setOnlineStatus("Multiplayer connection is not ready yet. Re-open Multiplayer and rejoin the room.");return;}
+  const count=netPlayers.size;
+  if(count<2){setOnlineStatus("You need 2 players in the room before starting.");return;}
+  if(count>3){setOnlineStatus("This mode supports 2–3 players.");return;}
   hostStartBtn.disabled=true;
-  const count=Math.max(1,netPlayers.size);
-  setOnlineStatus((netStarted?"Re-syncing":"Starting")+" the run for all "+count+" connected player"+(count===1?"":"s")+"...");
+  setOnlineStatus("Starting the run for all "+count+" players together...");
   sendOnline("start_game",{difficulty:selectedDifficulty,startWorld:selectedStartWorld});
   setTimeout(()=>{if(hostStartBtn){hostStartBtn.disabled=false;if(netRoom)renderOnlinePlayers();}},1200);
 }

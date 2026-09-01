@@ -92,39 +92,61 @@ function readJson(req,limit=50000){
   });
 }
 function safeName(v){return String(v||"Guest").trim().slice(0,18).replace(/[<>]/g,"")||"Guest";}
+function safeClientKey(v){return String(v||"").replace(/[^A-Za-z0-9_-]/g,"").slice(0,80);}
+const MAX_ROOM_PLAYERS=3;
+const EMPTY_ROOM_GRACE_MS=60000;
 function roomCode(){
   const chars="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   for(let tries=0;tries<1000;tries++){let s="";for(let i=0;i<4;i++)s+=chars[Math.floor(Math.random()*chars.length)];if(!rooms.has(s))return s;}
   return crypto.randomBytes(3).toString("hex").slice(0,4).toUpperCase();
 }
-function send(ws,obj){if(ws.readyState===WebSocket.OPEN)ws.send(JSON.stringify(obj));}
+function send(ws,obj){if(ws&&ws.readyState===WebSocket.OPEN)ws.send(JSON.stringify(obj));}
 function publicPlayer(p){return {id:p.id,name:p.name,isHost:p.isHost,x:p.x,y:p.y,w:p.w,h:p.h,score:p.score,coins:p.coins,biome:p.biome,equippedCharacter:p.equippedCharacter,equippedBike:p.equippedBike,alive:p.alive!==false,respawnAt:p.respawnAt||0,deathFlashUntil:p.deathFlashUntil||0};}
-function broadcast(room,obj,except=null){for(const p of room.players.values())if(p.ws!==except)send(p.ws,obj);}
+function broadcast(room,obj,except=null){for(const p of room.players.values())if(p.ws&&p.ws!==except)send(p.ws,obj);}
 function broadcastRoomState(room){
   broadcast(room,{type:"room_state",roomCode:room.code,hostId:room.hostId,started:room.started,difficulty:room.difficulty||"normal",startWorld:Number.isInteger(room.startWorld)?room.startWorld:-1,roundId:room.roundId||0,players:[...room.players.values()].map(publicPlayer)});
 }
-function detachPlayer(player){
+function scheduleEmptyRoomCleanup(room){
+  if(room.cleanupTimer)clearTimeout(room.cleanupTimer);
+  if(room.players.size!==0)return;
+  room.cleanupTimer=setTimeout(()=>{const current=rooms.get(room.code);if(current&&current.players.size===0)rooms.delete(room.code);},EMPTY_ROOM_GRACE_MS);
+}
+function detachPlayer(player,{keepEmptyRoom=true}={}){
   if(!player)return;
   const oldCode=player.roomCode;
   if(player.respawnTimer){clearTimeout(player.respawnTimer);player.respawnTimer=null;}
-  player.roomCode=null;
-  player.isHost=false;
-  player.alive=true;
-  player.respawnAt=0;
-  player.deathFlashUntil=0;
+  player.roomCode=null;player.isHost=false;player.alive=true;player.respawnAt=0;player.deathFlashUntil=0;
   if(!oldCode)return;
-  const room=rooms.get(oldCode); if(!room)return;
-  room.players.delete(player.id); broadcast(room,{type:"player_left",playerId:player.id});
-  if(room.players.size===0){rooms.delete(room.code);return;}
-  if(room.hostId===player.id){const next=room.players.values().next().value;room.hostId=next.id;next.isHost=true;}
+  const room=rooms.get(oldCode);if(!room)return;
+  room.players.delete(player.id);
+  broadcast(room,{type:"player_left",playerId:player.id});
+  if(room.players.size===0){
+    room.hostId=null;room.started=false;
+    if(keepEmptyRoom)scheduleEmptyRoomCleanup(room);else rooms.delete(room.code);
+    return;
+  }
+  if(room.hostId===player.id||!room.players.has(room.hostId)){
+    const next=room.players.values().next().value;room.hostId=next.id;next.isHost=true;
+  }
   broadcastRoomState(room);
 }
+function addPlayerToRoom(room,player,name,clientKey){
+  if(room.cleanupTimer){clearTimeout(room.cleanupTimer);room.cleanupTimer=null;}
+  // Replace a stale connection from the same browser session instead of consuming another slot.
+  const same=[...room.players.values()].find(p=>clientKey&&p.clientKey===clientKey&&p.id!==player.id);
+  if(same){try{send(same.ws,{type:"replaced_connection"});same.ws&&same.ws.close();}catch(e){}room.players.delete(same.id);}
+  player.name=safeName(name);player.clientKey=safeClientKey(clientKey);player.roomCode=room.code;player.alive=true;player.respawnAt=0;player.deathFlashUntil=0;
+  room.players.set(player.id,player);
+  if(!room.hostId||!room.players.has(room.hostId)){room.hostId=player.id;}
+  for(const p of room.players.values())p.isHost=p.id===room.hostId;
+}
+
 
 const server=http.createServer(async(req,res)=>{
   const pathname=req.url.split("?")[0];
   try{
     if(pathname==="/api/health"&&req.method==="GET"){
-      return json(res,200,{ok:true,accounts:true,multiplayer:true,version:"multiplayer-room-sync-v2"});
+      return json(res,200,{ok:true,accounts:true,multiplayer:true,version:"multiplayer-perfect-v3"});
     }
     if(pathname==="/api/register"&&req.method==="POST"){
       const b=await readJson(req), username=String(b.username||"").trim(), password=String(b.password||"");
@@ -187,40 +209,48 @@ const wss=new WebSocket.Server({server});
 wss.on("connection",ws=>{
   ws.isAlive=true;
   ws.on("pong",()=>{ws.isAlive=true;});
-  const player={id:crypto.randomUUID(),ws,name:"Guest",roomCode:null,isHost:false,x:null,y:null,w:44,h:52,score:0,coins:0,biome:0,equippedCharacter:"rider",equippedBike:"classic",alive:true,respawnAt:0,deathFlashUntil:0,respawnTimer:null};
+  const player={id:crypto.randomUUID(),ws,name:"Guest",clientKey:"",roomCode:null,isHost:false,x:null,y:null,w:44,h:52,score:0,coins:0,biome:0,equippedCharacter:"rider",equippedBike:"classic",alive:true,respawnAt:0,deathFlashUntil:0,respawnTimer:null};
+  send(ws,{type:"hello",playerId:player.id,serverVersion:"multiplayer-perfect-v3",maxPlayers:MAX_ROOM_PLAYERS});
   ws.on("message",raw=>{
     let m;try{m=JSON.parse(raw.toString());}catch{return;}if(!m||typeof m.type!=="string")return;
     if(m.type==="create_room"){
-      detachPlayer(player);const code=roomCode();player.name=safeName(m.name);player.roomCode=code;player.isHost=true;player.alive=true;player.respawnAt=0;player.deathFlashUntil=0;
-      const room={code,hostId:player.id,started:false,difficulty:"normal",startWorld:-1,roundId:0,players:new Map([[player.id,player]])};rooms.set(code,room);
-      send(ws,{type:"room_joined",roomCode:code,playerId:player.id,isHost:true,started:false,difficulty:room.difficulty,startWorld:room.startWorld,roundId:room.roundId,players:[publicPlayer(player)]});return;
+      detachPlayer(player);
+      const code=roomCode();
+      const room={code,hostId:null,started:false,difficulty:"normal",startWorld:-1,roundId:0,players:new Map(),cleanupTimer:null};
+      rooms.set(code,room);addPlayerToRoom(room,player,m.name,m.clientKey);
+      send(ws,{type:"room_joined",roomCode:code,playerId:player.id,isHost:true,started:false,difficulty:room.difficulty,startWorld:room.startWorld,roundId:room.roundId,players:[...room.players.values()].map(publicPlayer)});
+      broadcastRoomState(room);return;
     }
     if(m.type==="join_room"){
-      detachPlayer(player);const code=String(m.roomCode||"").toUpperCase().replace(/[^A-Z0-9]/g,"").trim();const room=rooms.get(code);
-      if(!room){send(ws,{type:"error",message:"Room not found. Check the 4-character code and try again."});return;}if(room.players.size>=8){send(ws,{type:"error",message:"Room is full (8 players max)."});return;}
-      player.name=safeName(m.name);player.roomCode=code;player.isHost=false;player.alive=true;player.respawnAt=0;player.deathFlashUntil=0;room.players.set(player.id,player);
-      send(ws,{type:"room_joined",roomCode:code,playerId:player.id,isHost:false,started:room.started,difficulty:room.difficulty||"normal",startWorld:Number.isInteger(room.startWorld)?room.startWorld:-1,roundId:room.roundId||0,players:[...room.players.values()].map(publicPlayer)});
+      const code=String(m.roomCode||"").toUpperCase().replace(/[^A-Z0-9]/g,"").trim();
+      const room=rooms.get(code);
+      if(!room){send(ws,{type:"error",code:"ROOM_NOT_FOUND",message:"Room not found. Check the 4-character code and try again."});return;}
+      const key=safeClientKey(m.clientKey);
+      const same=[...room.players.values()].find(p=>key&&p.clientKey===key&&p.id!==player.id);
+      const effectiveSize=room.players.size-(same?1:0)-(room.players.has(player.id)?1:0);
+      if(effectiveSize>=MAX_ROOM_PLAYERS){send(ws,{type:"error",code:"ROOM_FULL",message:"Room is full (3 players max)."});return;}
+      // Only leave the old room after the target room has been validated.
+      if(player.roomCode&&player.roomCode!==code)detachPlayer(player);
+      addPlayerToRoom(room,player,m.name,key);
+      send(ws,{type:"room_joined",roomCode:code,playerId:player.id,isHost:player.isHost,started:room.started,difficulty:room.difficulty||"normal",startWorld:Number.isInteger(room.startWorld)?room.startWorld:-1,roundId:room.roundId||0,players:[...room.players.values()].map(publicPlayer)});
       broadcastRoomState(room);
-      // Late joins are allowed. If a run is already active, immediately sync the new player into it.
-      if(room.started)send(ws,{type:"game_start",difficulty:room.difficulty||"normal",startWorld:Number.isInteger(room.startWorld)?room.startWorld:-1,roundId:room.roundId||0,lateJoin:true});
+      if(room.started)send(ws,{type:"game_start",difficulty:room.difficulty||"normal",startWorld:Number.isInteger(room.startWorld)?room.startWorld:-1,roundId:room.roundId||0,startAt:Date.now()+500,lateJoin:true,playerCount:room.players.size});
       return;
     }
-    if(m.type==="leave_room"){detachPlayer(player);player.roomCode=null;player.isHost=false;return;}
-    const room=rooms.get(player.roomCode);if(!room)return;
+    if(m.type==="leave_room"){detachPlayer(player,{keepEmptyRoom:false});return;}
+    const room=rooms.get(player.roomCode);if(!room||!room.players.has(player.id))return;
     if(m.type==="start_game"){
-      // Any room member can start. Repeated START presses re-sync every client instead of being ignored.
-      if(!room.started){
-        room.started=true;room.roundId=(room.roundId||0)+1;room.difficulty=String(m.difficulty||"normal");room.startWorld=Number.isInteger(m.startWorld)?m.startWorld:-1;
-        for(const p of room.players.values()){if(p.respawnTimer){clearTimeout(p.respawnTimer);p.respawnTimer=null;}p.alive=true;p.respawnAt=0;p.deathFlashUntil=0;}
-      }
-      broadcast(room,{type:"game_start",difficulty:room.difficulty||"normal",startWorld:Number.isInteger(room.startWorld)?room.startWorld:-1,roundId:room.roundId||1,resync:true,playerCount:room.players.size});
+      if(room.players.size<2){send(ws,{type:"error",code:"NEED_PLAYERS",message:"You need at least 2 players in the room before starting."});broadcastRoomState(room);return;}
+      room.started=true;room.roundId=(room.roundId||0)+1;room.difficulty=String(m.difficulty||"normal");room.startWorld=Number.isInteger(m.startWorld)?m.startWorld:-1;
+      for(const p of room.players.values()){if(p.respawnTimer){clearTimeout(p.respawnTimer);p.respawnTimer=null;}p.alive=true;p.respawnAt=0;p.deathFlashUntil=0;}
+      const startAt=Date.now()+800;
+      broadcast(room,{type:"game_start",difficulty:room.difficulty,startWorld:room.startWorld,roundId:room.roundId,startAt,playerCount:room.players.size});
       broadcastRoomState(room);return;
     }
     if(m.type==="player_eliminated"){
       if(!room.started||player.alive===false)return;
       const now=Date.now();player.alive=false;player.respawnAt=now+10000;player.deathFlashUntil=now+1000;
-      broadcast(room,{type:"player_eliminated",playerId:player.id,name:player.name,respawnAt:player.respawnAt,deathFlashUntil:player.deathFlashUntil});
-      broadcastRoomState(room);
+      broadcast(room,{type:"player_eliminated",playerId:player.id,name:player.name,respawnAt:player.respawnAt,deathFlashUntil:player.deathFlashUntil});broadcastRoomState(room);
       const everyoneOut=[...room.players.values()].every(p=>p.alive===false);
       if(everyoneOut){
         room.started=false;
@@ -233,24 +263,23 @@ wss.on("connection",ws=>{
         player.alive=true;player.respawnAt=0;player.deathFlashUntil=0;player.respawnTimer=null;
         send(player.ws,{type:"player_respawn",invincibleMs:2000});
         broadcast(liveRoom,{type:"player_respawned",playerId:player.id},player.ws);broadcastRoomState(liveRoom);
-      },10000);
-      return;
+      },10000);return;
     }
     if(m.type==="player_state"){
+      if(!room.started)return;
       const num=(v,lo,hi,d)=>Number.isFinite(Number(v))?Math.max(lo,Math.min(hi,Number(v))):d;
       player.x=num(m.x,-100,1200,player.x);player.y=num(m.y,-100,520,player.y);player.w=num(m.w,20,90,44);player.h=num(m.h,20,100,52);player.score=num(m.score,0,1e9,0);player.coins=num(m.coins,0,1e9,0);player.biome=num(m.biome,0,100,0);
-      player.equippedCharacter=String(m.equippedCharacter||"rider").slice(0,30);player.equippedBike=String(m.equippedBike||"classic").slice(0,30);player.name=safeName(m.name||player.name);broadcast(room,{type:"player_state",player:publicPlayer(player)},ws);return;
+      player.equippedCharacter=String(m.equippedCharacter||"rider").slice(0,30);player.equippedBike=String(m.equippedBike||"classic").slice(0,30);player.name=safeName(m.name||player.name);
+      broadcast(room,{type:"player_state",player:publicPlayer(player)},ws);return;
     }
   });
-  ws.on("close",()=>detachPlayer(player));
+  ws.on("close",()=>detachPlayer(player,{keepEmptyRoom:true}));
 });
 
-// Keep lobby/game sockets alive through hosting proxies and clean up dead clients.
 const heartbeat=setInterval(()=>{
   for(const ws of wss.clients){
     if(ws.isAlive===false){try{ws.terminate();}catch(e){}continue;}
-    ws.isAlive=false;
-    try{ws.ping();}catch(e){}
+    ws.isAlive=false;try{ws.ping();}catch(e){}
   }
 },25000);
 wss.on("close",()=>clearInterval(heartbeat));
