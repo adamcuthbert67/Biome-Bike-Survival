@@ -755,6 +755,40 @@
 .landing-enter{background:linear-gradient(135deg,#ffe545,#ff9d2f) !important;border-color:#7d4a0c !important;}
 @media(max-width:700px){.menu-screen{padding:8px !important}.sectioned-home{margin:8px auto 24px !important;min-height:auto !important;max-height:none !important;overflow:visible !important}.home-section-stage{overflow:visible !important}}
 
+
+
+/* ===== V19 RENDER SCROLL FIX =====
+   Let the DOCUMENT own menu scrolling instead of a fixed overlay.
+   This avoids wheel/touch scroll getting trapped on hosted browsers. */
+html{min-height:100%;overflow-x:hidden;overflow-y:auto !important;scroll-behavior:auto}
+body{min-height:100%;height:auto !important;overflow-x:hidden !important;overflow-y:auto !important;display:block !important;padding:2px 4px 24px !important}
+.wrap{margin-left:auto;margin-right:auto}
+.menu-screen{
+  position:absolute !important;
+  left:0 !important;
+  right:0 !important;
+  top:0 !important;
+  bottom:auto !important;
+  width:100% !important;
+  height:auto !important;
+  min-height:100vh !important;
+  max-height:none !important;
+  overflow:visible !important;
+  overscroll-behavior:auto !important;
+  touch-action:pan-y !important;
+}
+.sectioned-home{
+  height:auto !important;
+  min-height:calc(100vh - 36px) !important;
+  max-height:none !important;
+  overflow:visible !important;
+}
+.home-section-stage,.home-section{height:auto !important;max-height:none !important;overflow:visible !important}
+@media(max-width:700px){
+  .menu-screen{position:absolute !important;min-height:100vh !important;height:auto !important;overflow:visible !important;touch-action:pan-y !important}
+  .sectioned-home{min-height:calc(100vh - 16px) !important;height:auto !important;overflow:visible !important}
+}
+
 </style>
 </head>
 <body>
