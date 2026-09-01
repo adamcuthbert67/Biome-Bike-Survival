@@ -104,7 +104,7 @@ function send(ws,obj){if(ws&&ws.readyState===WebSocket.OPEN)ws.send(JSON.stringi
 function publicPlayer(p){return {id:p.id,name:p.name,isHost:p.isHost,x:p.x,y:p.y,w:p.w,h:p.h,score:p.score,coins:p.coins,biome:p.biome,equippedCharacter:p.equippedCharacter,equippedBike:p.equippedBike,alive:p.alive!==false,respawnAt:p.respawnAt||0,deathFlashUntil:p.deathFlashUntil||0};}
 function broadcast(room,obj,except=null){for(const p of room.players.values())if(p.ws&&p.ws!==except)send(p.ws,obj);}
 function broadcastRoomState(room){
-  broadcast(room,{type:"room_state",roomCode:room.code,hostId:room.hostId,started:room.started,difficulty:room.difficulty||"normal",startWorld:Number.isInteger(room.startWorld)?room.startWorld:-1,roundId:room.roundId||0,players:[...room.players.values()].map(publicPlayer)});
+  broadcast(room,{type:"room_state",roomCode:room.code,hostId:room.hostId,started:room.started,starting:!!room.starting,difficulty:room.difficulty||"normal",startWorld:Number.isInteger(room.startWorld)?room.startWorld:-1,roundId:room.roundId||0,players:[...room.players.values()].map(publicPlayer)});
 }
 function scheduleEmptyRoomCleanup(room){
   if(room.cleanupTimer)clearTimeout(room.cleanupTimer);
@@ -280,22 +280,28 @@ wss.on("connection",ws=>{
 
     if(m.type==="start_game"){
       const count=room.players.size;
-      if(count<2||count>3){send(ws,{type:"error",code:"NEED_PLAYERS",message:"Multiplayer needs 2 or 3 connected players before the run can start."});broadcastRoomState(room);return;}
-      if(room.started){
-        // Re-send the authoritative start to everybody instead of silently ignoring a second press.
-        broadcast(room,{type:"game_start",difficulty:room.difficulty,startWorld:room.startWorld,roundId:room.roundId,playerCount:count,startAt:Date.now()+350,resync:true});
-        broadcastRoomState(room);
-        return;
-      }
-      room.started=true;room.roundId=(room.roundId||0)+1;
+      if(player.id!==room.hostId){send(ws,{type:"error",code:"HOST_ONLY",message:"Only the room host can start the multiplayer run."});return;}
+      if(count<2||count>3){send(ws,{type:"error",code:"NEED_PLAYERS",message:"Multiplayer needs 2 or 3 connected players before the host can start."});broadcastRoomState(room);return;}
+      if(room.started||room.starting){send(ws,{type:"error",code:"ALREADY_STARTING",message:"The multiplayer round is already starting or running."});return;}
+      room.starting=true;
       room.difficulty=String(m.difficulty||"normal");room.startWorld=Number.isInteger(m.startWorld)?m.startWorld:-1;
-      for(const p of room.players.values()){
-        if(p.respawnTimer){clearTimeout(p.respawnTimer);p.respawnTimer=null;}
-        p.alive=true;p.respawnAt=0;p.deathFlashUntil=0;
-      }
-      // One authoritative start message is sent to every connected socket.
-      broadcast(room,{type:"game_start",difficulty:room.difficulty,startWorld:room.startWorld,roundId:room.roundId,playerCount:count,startAt:Date.now()+500});
+      const nextRound=(room.roundId||0)+1;
+      const startAt=Date.now()+3200;
+      broadcast(room,{type:"start_countdown",seconds:3,startAt,roundId:nextRound,playerCount:count});
       broadcastRoomState(room);
+      room.startTimer=setTimeout(()=>{
+        room.startTimer=null;
+        if(!rooms.has(room.code))return;
+        const liveCount=room.players.size;
+        if(liveCount<2||liveCount>3){room.starting=false;broadcast(room,{type:"start_cancelled",message:"Start cancelled — multiplayer needs 2 or 3 connected players."});broadcastRoomState(room);return;}
+        room.starting=false;room.started=true;room.roundId=nextRound;
+        for(const p of room.players.values()){
+          if(p.respawnTimer){clearTimeout(p.respawnTimer);p.respawnTimer=null;}
+          p.alive=true;p.respawnAt=0;p.deathFlashUntil=0;
+        }
+        broadcast(room,{type:"game_start",difficulty:room.difficulty,startWorld:room.startWorld,roundId:room.roundId,playerCount:liveCount,startAt:Date.now()+100});
+        broadcastRoomState(room);
+      },3100);
       return;
     }
 

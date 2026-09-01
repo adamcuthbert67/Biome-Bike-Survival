@@ -3213,6 +3213,7 @@ let netConnected=false;
 let netRoom=null;
 let netPlayerId=null;
 let netIsHost=false;
+let netStarting=false;
 let netPlayers=new Map();
 let netStarted=false;
 let netRoundId=0;
@@ -3343,11 +3344,18 @@ function handleOnlineMessage(m){
     showOnlineLobby();
   }else if(m.type==="room_state"){
     if(!netPlayerId)return;
-    netIsHost=m.hostId===netPlayerId;netStarted=!!m.started;netRoundId=Number(m.roundId)||netRoundId;
+    netIsHost=m.hostId===netPlayerId;netStarted=!!m.started;netStarting=!!m.starting;netRoundId=Number(m.roundId)||netRoundId;
     netPlayers=new Map((m.players||[]).map(p=>[p.id,p]));
     if(!running)showOnlineLobby();else renderOnlinePlayers();
+  }else if(m.type==="start_countdown"){
+    netStarting=true;
+    const target=Number(m.startAt)||Date.now()+3000;
+    const tick=()=>{const left=Math.max(0,Math.ceil((target-Date.now())/1000));setOnlineStatus(left>0?("MULTIPLAYER STARTING IN "+left+"..."):"GO!");if(left>0)setTimeout(tick,180);};tick();
+    if(hostStartBtn)hostStartBtn.disabled=true;
+  }else if(m.type==="start_cancelled"){
+    netStarted=false;netStarting=false;if(hostStartBtn)hostStartBtn.disabled=!netIsHost;setOnlineStatus(m.message||"Start cancelled.");renderOnlinePlayers();
   }else if(m.type==="game_start"){
-    beginOnlineRunFromServer(m);
+    netStarting=false;beginOnlineRunFromServer(m);
   }else if(m.type==="player_state"){
     if(m.player&&m.player.id!==netPlayerId)netPlayers.set(m.player.id,m.player);
     renderOnlinePlayers();
@@ -3391,14 +3399,14 @@ function showOnlineLobby(){
   roomCodeLabel.textContent=netRoom||"----";
   if(onlineRoomHud)onlineRoomHud.textContent=netRoom||"----";
   onlineHud.style.display=activeGameMode==="multi"?"inline-flex":"none";
-  hostStartBtn.style.display="block";
+  hostStartBtn.style.display=netIsHost?"block":"none";
   renderOnlinePlayers();
   const count=netPlayers.size;
   if(count<2)setOnlineStatus("Room "+netRoom+" ready — waiting for player 2.");
   else setOnlineStatus(count+" players connected — press START and everybody will begin together.");
 }
 function resetOnlineRoomUI(){
-  netRoom=null;netPlayerId=null;netIsHost=false;netStarted=false;netRoundId=0;netLastStartedRound=0;netPlayers.clear();
+  netRoom=null;netPlayerId=null;netIsHost=false;netStarted=false;netStarting=false;netRoundId=0;netLastStartedRound=0;netPlayers.clear();
   multiplayerEliminated=false;multiplayerRespawnAt=0;multiplayerDeathFlashUntil=0;multiplayerRoundEnding=false;
   if(onlineJoinControls)onlineJoinControls.style.display="grid";
   onlineLobby.style.display="none";onlineHud.style.display="none";roomCodeLabel.textContent="----";renderOnlinePlayers();
@@ -3417,8 +3425,9 @@ function renderOnlinePlayers(){
   if(onlineCountHud)onlineCountHud.textContent=list.length;
   if(hostStartBtn&&netRoom){
     const count=list.length;
-    hostStartBtn.disabled=!!netStarted;
-    hostStartBtn.textContent=netStarted?"RUN IN PROGRESS":(count<2?"▶ CHECK / START MULTIPLAYER":"▶ START RUN FOR "+count+" PLAYERS");
+    hostStartBtn.style.display=netIsHost?"block":"none";
+    hostStartBtn.disabled=!netIsHost||!!netStarted||!!netStarting||count<2||count>3;
+    hostStartBtn.textContent=netStarted?"RUN IN PROGRESS":(count<2?"WAITING FOR PLAYER 2":"▶ HOST START — "+count+" PLAYERS");
   }
 }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]))}
@@ -3445,9 +3454,11 @@ function leaveOnlineRoom(){
 }
 function startOnlineRun(){
   if(!netRoom){setOnlineStatus("Create or join a room first.");return;}
+  if(!netIsHost){setOnlineStatus("Only the HOST can start the multiplayer run.");return;}
   if(!netSocket||netSocket.readyState!==WebSocket.OPEN){setOnlineStatus("Multiplayer connection is not open. Refresh and rejoin the room.");return;}
   const count=netPlayers.size;
-  hostStartBtn.disabled=true;setOnlineStatus(count>=2?"Starting all "+count+" players...":"Checking room with server...");
+  if(count<2||count>3){setOnlineStatus("Wait until 2 or 3 players are connected.");return;}
+  hostStartBtn.disabled=true;setOnlineStatus("Starting countdown for all "+count+" players...");
   if(!sendOnline("start_game",{difficulty:selectedDifficulty,startWorld:selectedStartWorld})){
     hostStartBtn.disabled=false;setOnlineStatus("Start failed because the server connection closed. Rejoin the room.");
   }
