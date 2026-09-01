@@ -100,11 +100,20 @@ function roomCode(){
 function send(ws,obj){if(ws.readyState===WebSocket.OPEN)ws.send(JSON.stringify(obj));}
 function publicPlayer(p){return {id:p.id,name:p.name,isHost:p.isHost,x:p.x,y:p.y,w:p.w,h:p.h,score:p.score,coins:p.coins,biome:p.biome,equippedCharacter:p.equippedCharacter,equippedBike:p.equippedBike,alive:p.alive!==false,respawnAt:p.respawnAt||0,deathFlashUntil:p.deathFlashUntil||0};}
 function broadcast(room,obj,except=null){for(const p of room.players.values())if(p.ws!==except)send(p.ws,obj);}
-function broadcastRoomState(room){broadcast(room,{type:"room_state",roomCode:room.code,hostId:room.hostId,started:room.started,players:[...room.players.values()].map(publicPlayer)});}
+function broadcastRoomState(room){
+  broadcast(room,{type:"room_state",roomCode:room.code,hostId:room.hostId,started:room.started,difficulty:room.difficulty||"normal",startWorld:Number.isInteger(room.startWorld)?room.startWorld:-1,roundId:room.roundId||0,players:[...room.players.values()].map(publicPlayer)});
+}
 function detachPlayer(player){
-  if(!player||!player.roomCode)return;
+  if(!player)return;
+  const oldCode=player.roomCode;
   if(player.respawnTimer){clearTimeout(player.respawnTimer);player.respawnTimer=null;}
-  const room=rooms.get(player.roomCode); if(!room)return;
+  player.roomCode=null;
+  player.isHost=false;
+  player.alive=true;
+  player.respawnAt=0;
+  player.deathFlashUntil=0;
+  if(!oldCode)return;
+  const room=rooms.get(oldCode); if(!room)return;
   room.players.delete(player.id); broadcast(room,{type:"player_left",playerId:player.id});
   if(room.players.size===0){rooms.delete(room.code);return;}
   if(room.hostId===player.id){const next=room.players.values().next().value;room.hostId=next.id;next.isHost=true;}
@@ -115,7 +124,7 @@ const server=http.createServer(async(req,res)=>{
   const pathname=req.url.split("?")[0];
   try{
     if(pathname==="/api/health"&&req.method==="GET"){
-      return json(res,200,{ok:true,accounts:true,multiplayer:true,version:"render-ready"});
+      return json(res,200,{ok:true,accounts:true,multiplayer:true,version:"multiplayer-room-sync-v2"});
     }
     if(pathname==="/api/register"&&req.method==="POST"){
       const b=await readJson(req), username=String(b.username||"").trim(), password=String(b.password||"");
@@ -176,27 +185,36 @@ const server=http.createServer(async(req,res)=>{
 
 const wss=new WebSocket.Server({server});
 wss.on("connection",ws=>{
+  ws.isAlive=true;
+  ws.on("pong",()=>{ws.isAlive=true;});
   const player={id:crypto.randomUUID(),ws,name:"Guest",roomCode:null,isHost:false,x:null,y:null,w:44,h:52,score:0,coins:0,biome:0,equippedCharacter:"rider",equippedBike:"classic",alive:true,respawnAt:0,deathFlashUntil:0,respawnTimer:null};
   ws.on("message",raw=>{
     let m;try{m=JSON.parse(raw.toString());}catch{return;}if(!m||typeof m.type!=="string")return;
     if(m.type==="create_room"){
-      detachPlayer(player);const code=roomCode();player.name=safeName(m.name);player.roomCode=code;player.isHost=true;
-      const room={code,hostId:player.id,started:false,players:new Map([[player.id,player]])};rooms.set(code,room);
-      send(ws,{type:"room_joined",roomCode:code,playerId:player.id,isHost:true,started:false,players:[publicPlayer(player)]});return;
+      detachPlayer(player);const code=roomCode();player.name=safeName(m.name);player.roomCode=code;player.isHost=true;player.alive=true;player.respawnAt=0;player.deathFlashUntil=0;
+      const room={code,hostId:player.id,started:false,difficulty:"normal",startWorld:-1,roundId:0,players:new Map([[player.id,player]])};rooms.set(code,room);
+      send(ws,{type:"room_joined",roomCode:code,playerId:player.id,isHost:true,started:false,difficulty:room.difficulty,startWorld:room.startWorld,roundId:room.roundId,players:[publicPlayer(player)]});return;
     }
     if(m.type==="join_room"){
-      detachPlayer(player);const code=String(m.roomCode||"").toUpperCase().trim();const room=rooms.get(code);
-      if(!room){send(ws,{type:"error",message:"Room not found."});return;}if(room.started){send(ws,{type:"error",message:"That room is already in a run."});return;}if(room.players.size>=8){send(ws,{type:"error",message:"Room is full (8 players max)."});return;}
-      player.name=safeName(m.name);player.roomCode=code;player.isHost=false;room.players.set(player.id,player);
-      send(ws,{type:"room_joined",roomCode:code,playerId:player.id,isHost:false,started:false,players:[...room.players.values()].map(publicPlayer)});broadcastRoomState(room);return;
+      detachPlayer(player);const code=String(m.roomCode||"").toUpperCase().replace(/[^A-Z0-9]/g,"").trim();const room=rooms.get(code);
+      if(!room){send(ws,{type:"error",message:"Room not found. Check the 4-character code and try again."});return;}if(room.players.size>=8){send(ws,{type:"error",message:"Room is full (8 players max)."});return;}
+      player.name=safeName(m.name);player.roomCode=code;player.isHost=false;player.alive=true;player.respawnAt=0;player.deathFlashUntil=0;room.players.set(player.id,player);
+      send(ws,{type:"room_joined",roomCode:code,playerId:player.id,isHost:false,started:room.started,difficulty:room.difficulty||"normal",startWorld:Number.isInteger(room.startWorld)?room.startWorld:-1,roundId:room.roundId||0,players:[...room.players.values()].map(publicPlayer)});
+      broadcastRoomState(room);
+      // Late joins are allowed. If a run is already active, immediately sync the new player into it.
+      if(room.started)send(ws,{type:"game_start",difficulty:room.difficulty||"normal",startWorld:Number.isInteger(room.startWorld)?room.startWorld:-1,roundId:room.roundId||0,lateJoin:true});
+      return;
     }
     if(m.type==="leave_room"){detachPlayer(player);player.roomCode=null;player.isHost=false;return;}
     const room=rooms.get(player.roomCode);if(!room)return;
     if(m.type==="start_game"){
-      if(room.started)return;
-      room.started=true;room.difficulty=String(m.difficulty||"normal");room.startWorld=Number.isInteger(m.startWorld)?m.startWorld:-1;
-      for(const p of room.players.values()){if(p.respawnTimer){clearTimeout(p.respawnTimer);p.respawnTimer=null;}p.alive=true;p.respawnAt=0;p.deathFlashUntil=0;}
-      broadcast(room,{type:"game_start",difficulty:room.difficulty,startWorld:room.startWorld});broadcastRoomState(room);return;
+      // Any room member can start. Repeated START presses re-sync every client instead of being ignored.
+      if(!room.started){
+        room.started=true;room.roundId=(room.roundId||0)+1;room.difficulty=String(m.difficulty||"normal");room.startWorld=Number.isInteger(m.startWorld)?m.startWorld:-1;
+        for(const p of room.players.values()){if(p.respawnTimer){clearTimeout(p.respawnTimer);p.respawnTimer=null;}p.alive=true;p.respawnAt=0;p.deathFlashUntil=0;}
+      }
+      broadcast(room,{type:"game_start",difficulty:room.difficulty||"normal",startWorld:Number.isInteger(room.startWorld)?room.startWorld:-1,roundId:room.roundId||1,resync:true,playerCount:room.players.size});
+      broadcastRoomState(room);return;
     }
     if(m.type==="player_eliminated"){
       if(!room.started||player.alive===false)return;
@@ -226,5 +244,15 @@ wss.on("connection",ws=>{
   });
   ws.on("close",()=>detachPlayer(player));
 });
+
+// Keep lobby/game sockets alive through hosting proxies and clean up dead clients.
+const heartbeat=setInterval(()=>{
+  for(const ws of wss.clients){
+    if(ws.isAlive===false){try{ws.terminate();}catch(e){}continue;}
+    ws.isAlive=false;
+    try{ws.ping();}catch(e){}
+  }
+},25000);
+wss.on("close",()=>clearInterval(heartbeat));
 
 server.listen(PORT,"0.0.0.0",()=>console.log(`Biome Bike Online running on port ${PORT}; account data: ${DB_FILE}`));
