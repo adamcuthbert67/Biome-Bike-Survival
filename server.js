@@ -283,25 +283,19 @@ wss.on("connection",ws=>{
       if(player.id!==room.hostId){send(ws,{type:"error",code:"HOST_ONLY",message:"Only the room host can start the multiplayer run."});return;}
       if(count<2||count>3){send(ws,{type:"error",code:"NEED_PLAYERS",message:"Multiplayer needs 2 or 3 connected players before the host can start."});broadcastRoomState(room);return;}
       if(room.started||room.starting){send(ws,{type:"error",code:"ALREADY_STARTING",message:"The multiplayer round is already starting or running."});return;}
-      room.starting=true;
-      room.difficulty=String(m.difficulty||"normal");room.startWorld=Number.isInteger(m.startWorld)?m.startWorld:-1;
-      const nextRound=(room.roundId||0)+1;
-      const startAt=Date.now()+3200;
-      broadcast(room,{type:"start_countdown",seconds:3,startAt,roundId:nextRound,playerCount:count});
+      room.starting=false; room.started=true;
+      room.difficulty=String(m.difficulty||"normal");
+      room.startWorld=Number.isInteger(m.startWorld)?m.startWorld:-1;
+      room.roundId=(room.roundId||0)+1;
+      for(const p of room.players.values()){
+        if(p.respawnTimer){clearTimeout(p.respawnTimer);p.respawnTimer=null;}
+        p.alive=true;p.respawnAt=0;p.deathFlashUntil=0;
+      }
+      // ONE authoritative start broadcast. Clients all run the same 3-second countdown
+      // and enter gameplay themselves. This removes the old second delayed game_start
+      // message which could leave the lobby stuck on "Starting all players...".
+      broadcast(room,{type:"start_countdown",seconds:3,roundId:room.roundId,playerCount:count,difficulty:room.difficulty,startWorld:room.startWorld});
       broadcastRoomState(room);
-      room.startTimer=setTimeout(()=>{
-        room.startTimer=null;
-        if(!rooms.has(room.code))return;
-        const liveCount=room.players.size;
-        if(liveCount<2||liveCount>3){room.starting=false;broadcast(room,{type:"start_cancelled",message:"Start cancelled — multiplayer needs 2 or 3 connected players."});broadcastRoomState(room);return;}
-        room.starting=false;room.started=true;room.roundId=nextRound;
-        for(const p of room.players.values()){
-          if(p.respawnTimer){clearTimeout(p.respawnTimer);p.respawnTimer=null;}
-          p.alive=true;p.respawnAt=0;p.deathFlashUntil=0;
-        }
-        broadcast(room,{type:"game_start",difficulty:room.difficulty,startWorld:room.startWorld,roundId:room.roundId,playerCount:liveCount,startAt:Date.now()+100});
-        broadcastRoomState(room);
-      },3100);
       return;
     }
 

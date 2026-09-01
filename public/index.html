@@ -3348,10 +3348,32 @@ function handleOnlineMessage(m){
     netPlayers=new Map((m.players||[]).map(p=>[p.id,p]));
     if(!running)showOnlineLobby();else renderOnlinePlayers();
   }else if(m.type==="start_countdown"){
-    netStarting=true;
-    const target=Number(m.startAt)||Date.now()+3000;
-    const tick=()=>{const left=Math.max(0,Math.ceil((target-Date.now())/1000));setOnlineStatus(left>0?("MULTIPLAYER STARTING IN "+left+"..."):"GO!");if(left>0)setTimeout(tick,180);};tick();
+    // The server has already validated the HOST and the 2-3 player room.
+    // Every client starts from this ONE message, so there is no second WebSocket
+    // message/timer that can leave players stuck in the lobby.
+    netStarting=true; netStarted=true;
+    if(m.difficulty&&DIFFICULTIES[m.difficulty])selectedDifficulty=m.difficulty;
+    if(Number.isInteger(m.startWorld))selectedStartWorld=m.startWorld;
+    const thisRound=Number(m.roundId)||((netRoundId||0)+1);
+    netRoundId=thisRound;
     if(hostStartBtn)hostStartBtn.disabled=true;
+    let left=3;
+    setOnlineStatus("MULTIPLAYER STARTING IN 3...");
+    const countdown=setInterval(()=>{
+      left--;
+      if(left>0){setOnlineStatus("MULTIPLAYER STARTING IN "+left+"...");return;}
+      clearInterval(countdown);
+      setOnlineStatus("GO!");
+      netStarting=false;
+      multiplayerEliminated=false;multiplayerRespawnAt=0;multiplayerDeathFlashUntil=0;multiplayerRoundEnding=false;
+      activeGameMode="multi";
+      applyGameModeLayout();
+      closeBattlePass();closeLocker();closeMultiplayerMenu();
+      startGame();
+      keys.left=keys.right=keys.up=keys.down=false;
+      setTimeout(()=>{try{canvas.focus();}catch(e){}},40);
+      setOnlineStatus("ONLINE RUN LIVE — "+netPlayers.size+" players connected.");
+    },1000);
   }else if(m.type==="start_cancelled"){
     netStarted=false;netStarting=false;if(hostStartBtn)hostStartBtn.disabled=!netIsHost;setOnlineStatus(m.message||"Start cancelled.");renderOnlinePlayers();
   }else if(m.type==="game_start"){
