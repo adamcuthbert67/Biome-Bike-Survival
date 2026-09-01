@@ -40,3 +40,18 @@ MULTIPLAYER ROUND UPDATE
 
 
 MULTIPLAYER PERFECT V3: 2-3 player rooms, synchronized server-timed starts, reconnect/rejoin, 10s elimination, 1s red death flash, 2s respawn invincibility.
+
+DESIGN UPDATE V9 (2026-09-01)
+- Multiplayer/gameplay logic preserved from Multiplayer Ready V8.
+- Locker character cards now use illustrated character portraits instead of emoji-only previews.
+- Character cosmetics received more detailed visual styling, including Arcane Rider/Wizard.
+- Added Daily Spin to home menu: one free spin per local calendar day; extra spins cost 250 coins.
+- Daily Spin contains 15 distinct rewards (coins, exclusive skins and bikes), including Cosmic Sovereign at exactly 1% selection weight.
+- Daily Spin free-use state syncs with signed-in profiles.
+- +50 pickup text now cycles colour continuously for the enchanted/rainbow-style effect.
+
+
+V16: homepage menu scrolling restored and homepage/landing colours made more vibrant. Gameplay and multiplayer logic unchanged.
+
+
+V18 COSMETIC RENDER FIX: equipped character and ride now render as exclusive full replacements; remote multiplayer riders also use synced cosmetics.

@@ -24,7 +24,7 @@ function saveDb(){
   fs.renameSync(tmp,DB_FILE);
 }
 function defaultProfile(){
-  return {wallet:0,passXp:0,claimed:[],ownedCharacters:["rider"],ownedBikes:["classic"],ownedTrails:["none"],equippedCharacter:"rider",equippedBike:"classic",equippedTrail:"none",chestsCollected:0};
+  return {wallet:0,passXp:0,claimed:[],ownedCharacters:["rider"],ownedBikes:["classic"],ownedTrails:["none"],equippedCharacter:"rider",equippedBike:"classic",equippedTrail:"none",chestsCollected:0,lastFreeSpinDay:""};
 }
 function uniqueStrings(v,allowedLen=40){
   if(!Array.isArray(v))return [];
@@ -39,6 +39,7 @@ function sanitizeProfile(v){
     wallet:Math.max(0,Math.min(100000000,Math.floor(Number(p.wallet)||0))),
     passXp:Math.max(0,Math.min(12499,Math.floor(Number(p.passXp)||0))),
     chestsCollected:Math.max(0,Math.min(100000000,Math.floor(Number(p.chestsCollected)||0))),
+    lastFreeSpinDay:/^\d{4}-\d{2}-\d{2}$/.test(String(p.lastFreeSpinDay||""))?String(p.lastFreeSpinDay):"",
     claimed:[...new Set((Array.isArray(p.claimed)?p.claimed:[]).map(Number).filter(n=>Number.isInteger(n)&&n>=1&&n<=50))],
     ownedCharacters,ownedBikes,ownedTrails,
     equippedCharacter:String(p.equippedCharacter||d.equippedCharacter).slice(0,40),
@@ -146,7 +147,7 @@ const server=http.createServer(async(req,res)=>{
   const pathname=req.url.split("?")[0];
   try{
     if(pathname==="/api/health"&&req.method==="GET"){
-      return json(res,200,{ok:true,accounts:true,multiplayer:true,version:"multiplayer-ready-v8"});
+      return json(res,200,{ok:true,accounts:true,multiplayer:true,version:"design-locker-daily-spin-v9"});
     }
     if(pathname==="/api/register"&&req.method==="POST"){
       const b=await readJson(req), username=String(b.username||"").trim(), password=String(b.password||"");

@@ -475,9 +475,46 @@
 .locker-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .cosmetic-card{background:#16364c;border:3px solid #28536d;padding:12px;text-align:center;min-height:150px}
 .cosmetic-card.equipped{border-color:#ffe45c;background:#234b57}
-.cosmetic-preview{height:62px;display:flex;align-items:center;justify-content:center;font-size:42px;background:#0d2637;border:2px solid #244e67;margin-bottom:8px}
+.cosmetic-preview{height:178px;display:flex;align-items:flex-end;justify-content:center;background:radial-gradient(circle at 50% 28%,#183e59 0,#102d42 42%,#091a28 100%);border:2px solid #244e67;margin-bottom:9px;overflow:hidden;position:relative}
+.cosmetic-preview svg{width:100%;height:100%;display:block}
+.cosmetic-preview:after{content:"";position:absolute;left:12%;right:12%;bottom:5px;height:10px;border-radius:50%;background:rgba(0,0,0,.28);filter:blur(2px);pointer-events:none}
+.cosmetic-card{border-radius:8px;overflow:hidden;transition:transform .14s ease,filter .14s ease}
+.cosmetic-card:hover{transform:translateY(-2px);filter:brightness(1.05)}
+.cosmetic-card.equipped .cosmetic-preview{box-shadow:inset 0 0 0 2px #ffe45c}
+.character-rarity{font-size:9px;letter-spacing:1.3px;font-weight:1000;color:#8fdcff;margin-bottom:4px}
+/* ===== V12 COSMETIC RARITY SYSTEM ===== */
+.cosmetic-card.rarity-common{border-color:#6b7280;background:linear-gradient(180deg,#26313b,#17232d)}
+.cosmetic-card.rarity-uncommon{border-color:#34d399;background:linear-gradient(180deg,#123d32,#102a25)}
+.cosmetic-card.rarity-rare{border-color:#60a5fa;background:linear-gradient(180deg,#12375a,#102a42)}
+.cosmetic-card.rarity-epic{border-color:#a78bfa;background:linear-gradient(180deg,#34245b,#241b40)}
+.cosmetic-card.rarity-legendary{border-color:#fb7185;background:linear-gradient(180deg,#5a2630,#351b24)}
+.cosmetic-card.rarity-mythic{border-color:#f59e0b;background:linear-gradient(180deg,#5c3510,#2c1c0b);box-shadow:0 0 0 1px #fbbf24,0 0 22px rgba(245,158,11,.28)}
+.cosmetic-card.rarity-common .cosmetic-preview{background:radial-gradient(circle at 50% 28%,#55616b 0,#303b45 46%,#1a2229 100%);border-color:#7b8790}
+.cosmetic-card.rarity-uncommon .cosmetic-preview{background:radial-gradient(circle at 50% 28%,#1f765e 0,#164c40 46%,#0d2d27 100%);border-color:#34d399}
+.cosmetic-card.rarity-rare .cosmetic-preview{background:radial-gradient(circle at 50% 28%,#2867a5 0,#184875 46%,#0d2b47 100%);border-color:#60a5fa}
+.cosmetic-card.rarity-epic .cosmetic-preview{background:radial-gradient(circle at 50% 28%,#6d42a8 0,#482b76 46%,#281840 100%);border-color:#a78bfa}
+.cosmetic-card.rarity-legendary .cosmetic-preview{background:radial-gradient(circle at 50% 28%,#9f3f55 0,#64293a 46%,#351821 100%);border-color:#fb7185}
+.cosmetic-card.rarity-mythic .cosmetic-preview{background:radial-gradient(circle at 50% 25%,#f6b73c 0,#b86a14 34%,#6e3d0b 58%,#25170a 100%);border-color:#fbbf24;box-shadow:inset 0 0 32px rgba(255,220,112,.18),0 0 18px rgba(245,158,11,.28)}
+.cosmetic-card.rarity-mythic .cosmetic-name{color:#ffd166;text-shadow:0 1px 0 #6b3b00}
+.secret-mythic-preview{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 38%,rgba(255,233,154,.35),rgba(245,158,11,.10) 38%,rgba(62,34,8,.12) 68%,transparent 70%);position:relative}
+.secret-mythic-preview:before{content:"MYTHIC";position:absolute;top:12px;letter-spacing:3px;font-size:10px;font-weight:1000;color:#ffe29a;text-shadow:0 1px 4px #7c4700}
+.secret-mythic-preview span{font-size:106px;line-height:1;font-weight:1000;color:#ffd166;text-shadow:0 3px 0 #7a4300,0 0 20px rgba(255,209,102,.75),0 0 42px rgba(245,158,11,.55);transform:translateY(8px)}
+.cosmetic-rarity{font-size:9px;letter-spacing:1.5px;font-weight:1000;margin:1px 0 5px}
+.rarity-common .cosmetic-rarity{color:#cbd5e1}.rarity-uncommon .cosmetic-rarity{color:#6ee7b7}.rarity-rare .cosmetic-rarity{color:#93c5fd}.rarity-epic .cosmetic-rarity{color:#c4b5fd}.rarity-legendary .cosmetic-rarity{color:#fda4af}.rarity-mythic .cosmetic-rarity{color:#fbbf24}
+
+.daily-spin-card{margin:14px auto 12px;width:min(620px,96%);border:4px solid #6445a3;border-radius:9px;background:linear-gradient(180deg,#201548,#10162d);box-shadow:inset 0 -6px 0 rgba(0,0,0,.2),0 6px 0 #0b1022;padding:14px;color:#fff}
+.daily-spin-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}
+.daily-spin-head b{color:#fff0a8;letter-spacing:1.2px;font-size:14px}.daily-spin-head span{font-size:10px;color:#d8d7f3}
+.daily-spin-body{display:grid;grid-template-columns:250px 1fr;gap:15px;align-items:center}
+.spin-wheel-wrap{width:230px;height:230px;margin:auto;position:relative}
+.spin-wheel{width:100%;height:100%;border-radius:50%;border:8px solid #f5d061;box-shadow:0 0 0 4px #6d4317,0 0 24px rgba(246,205,96,.28);position:relative;overflow:hidden;transition:transform 3.8s cubic-bezier(.12,.72,.12,1);background:conic-gradient(#3569a8 0deg 24deg,#7c3aed 24deg 48deg,#14846a 48deg 72deg,#a33e5c 72deg 96deg,#9a6b24 96deg 120deg,#315b8f 120deg 144deg,#6d3e92 144deg 168deg,#297659 168deg 192deg,#a94b32 192deg 216deg,#596bc2 216deg 240deg,#8a4f9e 240deg 264deg,#268092 264deg 288deg,#9a7523 288deg 312deg,#4a7e3c 312deg 336deg,#7c295e 336deg 360deg)}
+.spin-wheel:after{content:"";position:absolute;inset:38%;border-radius:50%;background:#101a31;border:5px solid #f6d365;box-shadow:0 0 0 3px #6d4317;z-index:2}
+.spin-pointer{position:absolute;left:50%;top:-11px;transform:translateX(-50%);width:0;height:0;border-left:15px solid transparent;border-right:15px solid transparent;border-top:28px solid #fff3a3;filter:drop-shadow(0 2px 1px #4b2d10);z-index:5}
+.wheel-label{position:absolute;left:50%;top:50%;width:64px;margin-left:-32px;margin-top:-10px;text-align:center;font:1000 8px Arial;color:#fff;text-shadow:0 1px 2px #000;transform-origin:32px 10px;z-index:1;pointer-events:none}
+.spin-info{display:grid;gap:9px}.spin-status{min-height:42px;border:2px solid #3e4a78;background:#0c1830;padding:9px;border-radius:5px;font-size:11px;line-height:1.35;color:#e9f3ff}.spin-btn{min-height:48px;border:4px solid #5b3c14;border-radius:5px;background:linear-gradient(180deg,#f3c94b,#c88920);color:#2e1b07;font-weight:1000;font-size:13px;box-shadow:inset 0 -5px 0 rgba(0,0,0,.15),0 4px 0 #5b3c14}.spin-btn:disabled{filter:grayscale(.75);opacity:.65}.spin-odds{font-size:9px;color:#c7c7e8;line-height:1.4}.spin-rare{color:#f5b9ff;font-weight:1000}
+@media(max-width:640px){.daily-spin-body{grid-template-columns:1fr}.spin-wheel-wrap{width:205px;height:205px}.cosmetic-preview{height:140px}}
 .cosmetic-name{font-weight:900;color:#fff}
-.cosmetic-desc{font-size:10px;color:#cce4f0;min-height:28px;margin:5px 0}
+.cosmetic-desc{font-size:10px;color:#d5e9f3;min-height:42px;margin:6px 2px 8px;line-height:1.42;font-style:italic}
 .cosmetic-cost{color:#ffe66d;font-weight:900;font-size:11px}
 .cosmetic-card button{margin-top:7px;width:100%;padding:8px 5px;border:3px solid #18354a}
 .locked-world:after{content:"🔒";position:absolute;right:4px;top:3px;font-size:12px}
@@ -595,9 +632,143 @@
 .leaderboard-panel{max-width:760px}.leaderboard-meta{text-align:center;color:#bae6fd;font-size:11px;margin:8px 0 12px}.leaderboard-list{display:grid;gap:6px}.leader-row{display:grid;grid-template-columns:56px 1fr 110px;gap:8px;align-items:center;padding:10px 12px;border:2px solid #244661;border-radius:5px;background:#071827;font-weight:900}.leader-row.me{border-color:#facc15;background:#2b2308}.leader-rank{color:#facc15}.leader-score{text-align:right;color:#bbf7d0;font-family:monospace}.leader-empty{text-align:center;padding:24px;color:#94a3b8}
 @media(max-width:700px){.account-actions,.auth-grid{grid-template-columns:1fr}.leader-row{grid-template-columns:46px 1fr 84px}.auth-panel,.leaderboard-panel{width:min(96vw,760px)}}
 
+
+/* ===== V14 SECTIONED HOME PAGE ===== */
+.menu-screen{align-items:center;overflow:hidden;padding:14px}
+.sectioned-home{width:min(790px,96vw);max-height:calc(100vh - 28px);padding:18px 22px 20px;overflow:hidden;display:flex;flex-direction:column}
+.home-title-row{display:flex;align-items:center;justify-content:center;gap:18px;position:relative}
+.sectioned-home .pixel-badge{margin-bottom:7px;padding:5px 10px;font-size:10px}
+.sectioned-home .menu-title{font-size:38px;line-height:.88}
+.sectioned-home .menu-sub{margin:9px auto 11px;font-size:12px}
+.home-mini-stats{position:absolute;right:0;top:2px;display:grid;gap:5px;text-align:right}
+.home-mini-stats div{background:#163c54;border:2px solid #0e2b3d;padding:6px 8px;font-size:11px;color:#dff7ff;min-width:92px}
+.home-mini-stats b{color:#ffe45c}
+.home-section-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:3px 0 11px}
+.home-section-tab{min-width:0;border-radius:4px;border:3px solid #173a54;background:#1a4963;color:#dff7ff;padding:9px 5px;font-size:11px;letter-spacing:.7px;box-shadow:inset 0 -4px 0 rgba(0,0,0,.18)}
+.home-section-tab.active{background:#f4c542;color:#35240c;border-color:#8a5d18}
+.home-section-stage{min-height:0;flex:1;position:relative;display:flex}
+.home-section{display:none;width:100%;min-height:0;align-content:start;animation:homeSectionIn .15s ease-out}
+.home-section.active{display:block}
+@keyframes homeSectionIn{from{opacity:.35;transform:translateY(4px)}to{opacity:1;transform:none}}
+.section-heading{color:#ffe66d;font-size:14px;font-weight:1000;letter-spacing:1.6px;margin:5px 0 5px}
+.section-copy{color:#dff7ff;font-size:11px;margin-bottom:8px;opacity:.9}
+.sectioned-home .difficulty-wrap{margin:4px auto 6px}
+.sectioned-home .mode-select-panel{margin:8px auto 7px;gap:7px}
+.sectioned-home .mode-card{min-height:62px;padding:7px 11px;grid-template-columns:46px 1fr 24px}
+.sectioned-home .mode-card-icon{font-size:27px}
+.sectioned-home .quick-start-wrap{margin:8px 0 7px}
+.sectioned-home .quick-start-btn{min-height:47px}
+.compact-home-actions{margin:7px 0 0}
+.compact-home-actions #menuStart{display:none}
+.compact-home-actions .menu-secondary{min-height:42px;padding:7px 14px}
+.home-world-select{margin:7px auto 4px;max-width:700px}
+.home-world-select .world-grid{max-height:330px;grid-template-columns:repeat(5,minmax(0,1fr))}
+.worlds-stats{margin-top:9px}
+.home-spin-card{margin:5px auto 9px;width:min(700px,100%);padding:11px}
+.home-spin-card .daily-spin-body{grid-template-columns:220px 1fr;gap:13px}
+.home-spin-card .spin-wheel-wrap{width:210px;height:210px}
+.rewards-actions{margin:10px 0 0}
+.rewards-actions .feature-btn{min-width:180px}
+.profile-actions{margin:12px auto;max-width:600px}
+.home-section[data-home-panel="profile"] .username-input{margin-bottom:8px}
+.home-section[data-home-panel="profile"] .account-status-strip{max-width:600px;margin:8px auto 4px}
+.home-section[data-home-panel="profile"] .menu-stats{max-width:600px;margin:14px auto 0}
+@media(max-width:700px){
+  .menu-screen{padding:8px;align-items:flex-start;overflow-y:auto}
+  .sectioned-home{width:96vw;max-height:none;min-height:calc(100vh - 16px);padding:15px 12px}
+  .home-title-row{justify-content:flex-start;padding-right:90px}
+  .sectioned-home .menu-title{font-size:30px}
+  .home-mini-stats{right:0;top:0}
+  .home-section-tabs{gap:4px}
+  .home-section-tab{font-size:9px;padding:8px 2px}
+  .home-world-select .world-grid{grid-template-columns:repeat(3,minmax(0,1fr));max-height:380px}
+  .home-spin-card .daily-spin-body{grid-template-columns:1fr}
+  .home-spin-card .spin-wheel-wrap{width:190px;height:190px}
+}
+@media(max-height:760px) and (min-width:701px){
+  .sectioned-home .menu-title{font-size:31px}
+  .sectioned-home .menu-sub{margin:6px auto 7px}
+  .sectioned-home{padding-top:12px;padding-bottom:12px}
+  .sectioned-home .mode-card{min-height:54px}
+  .home-world-select .world-grid{max-height:260px}
+  .home-spin-card .spin-wheel-wrap{width:185px;height:185px}
+  .home-spin-card .daily-spin-body{grid-template-columns:195px 1fr}
+}
+
+
+/* ===== V15 SIMPLE LANDING + REORDERED HOME ===== */
+.landing-screen{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#08111d}
+.landing-bg{position:absolute;inset:0;background:linear-gradient(#102d47 0 54%,#214d46 54% 69%,#13271f 69% 100%)}
+.landing-bg:before{content:"";position:absolute;left:50%;bottom:-12%;width:54%;height:62%;transform:translateX(-50%);background:#29353c;clip-path:polygon(38% 0,62% 0,100% 100%,0 100%);box-shadow:0 0 0 7px #39474e inset}
+.landing-bg:after{content:"";position:absolute;left:0;right:0;top:18%;height:2px;background:rgba(255,255,255,.08);box-shadow:0 85px rgba(255,255,255,.04),0 170px rgba(255,255,255,.03)}
+.landing-card{position:relative;z-index:2;width:min(620px,92vw);text-align:center;padding:34px 24px 30px}
+.landing-logo-mark{width:112px;height:112px;margin:0 auto 18px;border-radius:28px;background:linear-gradient(145deg,#ffd94a,#f09a24);border:7px solid #5e3a10;box-shadow:0 9px 0 #2b1b0a,0 18px 40px rgba(0,0,0,.35);display:grid;place-items:center;font-size:62px;transform:rotate(-4deg)}
+.landing-title{margin:0;font-size:clamp(44px,8vw,78px);line-height:.82;letter-spacing:-2px;font-weight:1000;text-shadow:0 6px 0 #102639,0 10px 24px rgba(0,0,0,.35)}
+.landing-title span{color:#ffd94a}
+.landing-tag{margin:18px 0 24px;color:#d8eef9;font-size:12px;font-weight:900;letter-spacing:2px;text-transform:uppercase}
+.landing-enter{min-width:260px;min-height:58px;border:4px solid #6b4615;border-radius:7px;background:#ffd24a;color:#312008;font-size:16px;font-weight:1000;letter-spacing:1.2px;cursor:pointer;box-shadow:inset 0 -6px 0 rgba(0,0,0,.16),0 7px 0 #3a250d}
+.landing-enter:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.landing-enter:active{transform:translateY(4px);box-shadow:inset 0 -3px 0 rgba(0,0,0,.16),0 3px 0 #3a250d}
+.home-top-shortcuts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 10px}
+.home-shortcut{min-height:43px;border-radius:5px;border:3px solid #173a54;font-weight:1000;letter-spacing:.7px;cursor:pointer;box-shadow:inset 0 -4px 0 rgba(0,0,0,.18)}
+.home-shortcut.locker{background:#92d6ff;color:#112f43}
+.home-shortcut.pass{background:#f5cc4b;color:#38270c}
+.sectioned-home .home-section-tabs{grid-template-columns:repeat(4,minmax(0,1fr))}
+.play-bottom-difficulty{margin-top:12px;padding-top:10px;border-top:2px solid rgba(220,240,255,.16)}
+.play-bottom-difficulty .difficulty-label{margin-bottom:6px}
+@media(max-width:700px){.landing-card{padding:26px 16px}.landing-logo-mark{width:92px;height:92px;font-size:50px}.home-top-shortcuts{gap:5px}.home-shortcut{font-size:10px}}
+
+
+/* ===== V16 SCROLL FIX + VIBRANT HOME ===== */
+.menu-screen{overflow-y:auto !important;align-items:flex-start !important;background:
+  radial-gradient(circle at 15% 12%,rgba(0,229,255,.28),transparent 26%),
+  radial-gradient(circle at 82% 18%,rgba(255,47,194,.30),transparent 30%),
+  radial-gradient(circle at 55% 88%,rgba(109,255,84,.18),transparent 28%),
+  linear-gradient(180deg,#07172e 0%,#102b55 52%,#16143d 100%) !important;}
+.sectioned-home{max-height:none !important;overflow:visible !important;margin:18px auto 36px;background:linear-gradient(180deg,rgba(15,40,72,.97),rgba(13,24,50,.97)) !important;border:3px solid #31d7ff !important;box-shadow:0 0 0 3px rgba(255,70,209,.22),0 18px 55px rgba(0,0,0,.45) !important;}
+.home-section-stage{overflow:visible !important;flex:none !important;display:block !important;}
+.home-section{overflow:visible !important;}
+.home-title-row .pixel-badge{background:#00d9ff !important;color:#06233a !important;border-color:#79efff !important;}
+.sectioned-home .menu-title{color:#ffffff;text-shadow:0 3px 0 #0a5278,0 0 18px rgba(49,215,255,.28)}
+.sectioned-home .menu-title span{color:#ffe34f !important;}
+.sectioned-home .menu-sub,.section-copy{color:#e9f9ff !important;}
+.home-mini-stats div{background:linear-gradient(135deg,#184c83,#522c8e) !important;border-color:#58dfff !important;color:#fff !important;}
+.home-shortcut.locker{background:linear-gradient(135deg,#3de2ff,#4b7dff) !important;color:#071d35 !important;border-color:#a8f5ff !important;}
+.home-shortcut.pass{background:linear-gradient(135deg,#ffe24e,#ff9f32) !important;color:#3b2104 !important;border-color:#fff09b !important;}
+.home-section-tab{background:linear-gradient(180deg,#245f91,#173e6b) !important;border-color:#4fcfff !important;color:#f4fbff !important;}
+.home-section-tab.active{background:linear-gradient(135deg,#ffdf3e,#ff9a2f) !important;color:#352000 !important;border-color:#fff29c !important;}
+.mode-card.single{background:linear-gradient(135deg,#0e7f9f,#1854a4) !important;border-color:#52e6ff !important;}
+.mode-card.multi{background:linear-gradient(135deg,#5f2ea8,#a12fbb) !important;border-color:#e585ff !important;}
+.quick-start-btn{background:linear-gradient(135deg,#18c96f,#079e64) !important;border-color:#73ffb2 !important;}
+.menu-secondary{background:linear-gradient(135deg,#264d7c,#26325b) !important;border-color:#5da8ff !important;}
+.diff-btn{background:#243c61 !important;border-color:#4d75a8 !important;color:#ecf8ff !important;}
+.diff-btn.selected{background:linear-gradient(135deg,#ffcd38,#ff862e) !important;border-color:#fff091 !important;color:#342000 !important;}
+.section-heading{color:#ffe45c !important;text-shadow:0 0 10px rgba(255,228,92,.25)}
+.menu-tip{background:linear-gradient(135deg,rgba(29,83,113,.92),rgba(57,44,112,.92)) !important;border-color:#54d7ff !important;color:#ecfaff !important;}
+.daily-spin-card{background:linear-gradient(145deg,#163965,#3b225e) !important;border-color:#ffce45 !important;}
+.feature-btn.pass{background:linear-gradient(135deg,#ffd93f,#ff982d) !important;color:#3b2104 !important;}
+.feature-btn.locker{background:linear-gradient(135deg,#3ad9ff,#5f78ff) !important;color:#071b38 !important;}
+.profile-actions button,.account-actions button{filter:saturate(1.25)}
+.landing-screen{background:#07172a !important;}
+.landing-bg{background:linear-gradient(#105989 0 54%,#2b8b72 54% 69%,#165034 69% 100%) !important;}
+.landing-logo-mark{background:linear-gradient(145deg,#fff04b,#ff9c26) !important;border-color:#71420d !important;}
+.landing-enter{background:linear-gradient(135deg,#ffe545,#ff9d2f) !important;border-color:#7d4a0c !important;}
+@media(max-width:700px){.menu-screen{padding:8px !important}.sectioned-home{margin:8px auto 24px !important;min-height:auto !important;max-height:none !important;overflow:visible !important}.home-section-stage{overflow:visible !important}}
+
 </style>
 </head>
 <body>
+
+<div id="landingScreen" class="landing-screen" aria-label="Biome Bike Survival start screen">
+  <div class="landing-bg" aria-hidden="true"></div>
+  <div class="landing-card">
+    <div class="landing-logo-mark" aria-hidden="true">🚲</div>
+    <h1 class="landing-title">BIOME BIKE<br><span>SURVIVAL</span></h1>
+    <div class="landing-tag">Ride • Survive • Conquer Every Biome</div>
+    <button id="enterGameMenuBtn" class="landing-enter" type="button">ENTER GAME</button>
+  </div>
+</div>
+
 <div id="menuScreen" class="menu-screen">
   <div class="pixel-sky" aria-hidden="true">
     <div class="sun"></div>
@@ -612,84 +783,117 @@
     <div id="menuParticles"></div>
   </div>
 
-  <div class="menu-card">
-    <div class="pixel-badge">BIOME ADVENTURE</div>
-    <h1 class="menu-title">BIOME BIKE<br><span>SURVIVAL</span></h1>
-    <div class="menu-sub">Ride through 32 worlds • Dodge hazards • Collect +50</div>
-
-    <label class="name-label" for="usernameInput">PLAYER NAME</label>
-    <input id="usernameInput" class="username-input" maxlength="16"
-           placeholder="Type your name" autocomplete="off" spellcheck="false">
-
-    <div id="accountStatusStrip" class="account-status-strip">👤 Playing as guest — create an account to sync progress everywhere.</div>
-    <div class="account-actions">
-      <button id="openAccountBtn" class="account-main-btn" type="button">👤 ACCOUNT / SIGN IN</button>
-      <button id="openLeaderboardBtn" class="account-main-btn secondary" type="button">🏆 GLOBAL LEADERBOARD</button>
-    </div>
-
-
-    <div class="difficulty-wrap">
-      <div class="difficulty-label">DIFFICULTY</div>
-      <div class="difficulty-row" id="difficultyRow">
-        <button class="diff-btn" type="button" data-difficulty="easy">EASY<small>steady</small></button>
-        <button class="diff-btn selected" type="button" data-difficulty="normal">NORMAL<small>balanced</small></button>
-        <button class="diff-btn" type="button" data-difficulty="hard">HARD<small>fast</small></button>
-        <button class="diff-btn" type="button" data-difficulty="nightmare">NIGHTMARE<small>brutal</small></button>
+  <div class="menu-card sectioned-home">
+    <div class="home-title-row">
+      <div>
+        <div class="pixel-badge">BIOME ADVENTURE</div>
+        <h1 class="menu-title">BIOME BIKE<br><span>SURVIVAL</span></h1>
+      </div>
+      <div class="home-mini-stats">
+        <div>🪙 <b id="walletCoins">0</b></div>
+        <div>🎫 LV <b id="passLevelMain">1</b>/50</div>
       </div>
     </div>
+    <div class="menu-sub">Ride through 32 worlds • Dodge hazards • Collect +50</div>
 
-    <section class="mode-select-panel" aria-label="Game Mode">
-      <div class="mode-select-title">CHOOSE GAME MODE</div>
-
-      <button id="singlePlayerModeBtn" class="mode-card single" type="button" onclick="startSinglePlayer()">
-        <span class="mode-card-icon">🚲</span>
-        <span class="mode-card-copy"><b>SINGLE PLAYER</b><small>Play the normal Biome Bike adventure by yourself.</small></span>
-        <span class="mode-card-arrow">▶</span>
-      </button>
-
-      <button id="multiplayerModeBtn" class="mode-card multi" type="button" onclick="openMultiplayerMenu()">
-        <span class="mode-card-icon">🌐</span>
-        <span class="mode-card-copy"><b>ONLINE MULTIPLAYER</b><small>Create a private room or join friends with a 4-character code.</small></span>
-        <span class="mode-card-arrow">▶</span>
-      </button>
-    </section>
-
-    <div class="quick-start-wrap">
-      <button id="quickStartBtn" class="quick-start-btn" type="button" onclick="startSinglePlayer()">▶ START SINGLE PLAYER</button>
+    <div class="home-top-shortcuts" aria-label="Quick cosmetic menus">
+      <button class="home-shortcut locker" type="button" onclick="openLocker()">🎒 LOCKER</button>
+      <button class="home-shortcut pass" type="button" onclick="openBattlePass()">🎫 BATTLE PASS</button>
     </div>
 
-    <section class="world-select" aria-label="World Select">
-      <div class="world-select-title">WORLD SELECT</div>
-      <div class="world-select-sub">Choose a world to start in, or leave it on Random Run.</div>
-      <div id="worldGrid" class="world-grid"></div>
-    </section>
+    <nav class="home-section-tabs" aria-label="Home sections">
+      <button class="home-section-tab active" type="button" data-home-section="play">🚲 PLAY</button>
+      <button class="home-section-tab" type="button" data-home-section="worlds">🌍 WORLDS</button>
+      <button class="home-section-tab" type="button" data-home-section="profile">👤 PROFILE</button>
+      <button class="home-section-tab" type="button" data-home-section="rewards">🎁 REWARDS</button>
+    </nav>
 
+    <div class="home-section-stage">
+      <section class="home-section active" data-home-panel="play">
+        <section class="mode-select-panel" aria-label="Game Mode">
+          <div class="mode-select-title">CHOOSE GAME MODE</div>
+          <button id="singlePlayerModeBtn" class="mode-card single" type="button" onclick="startSinglePlayer()">
+            <span class="mode-card-icon">🚲</span>
+            <span class="mode-card-copy"><b>SINGLE PLAYER</b><small>Play the normal Biome Bike adventure by yourself.</small></span>
+            <span class="mode-card-arrow">▶</span>
+          </button>
+          <button id="multiplayerModeBtn" class="mode-card multi" type="button" onclick="openMultiplayerMenu()">
+            <span class="mode-card-icon">🌐</span>
+            <span class="mode-card-copy"><b>ONLINE MULTIPLAYER</b><small>Create a private room or join friends with a 4-character code.</small></span>
+            <span class="mode-card-arrow">▶</span>
+          </button>
+        </section>
 
-    <div class="account-bar">
-      <div class="account-chip">🪙 WALLET <b id="walletCoins">0</b></div>
-      <div class="account-chip">🎫 PASS LEVEL <b id="passLevelMain">1</b>/50</div>
+        <div class="quick-start-wrap">
+          <button id="quickStartBtn" class="quick-start-btn" type="button" onclick="startSinglePlayer()">▶ START SINGLE PLAYER</button>
+        </div>
+        <div class="menu-actions compact-home-actions">
+          <button id="menuStart" class="menu-main" type="button" onclick="startSinglePlayer()">▶ START SINGLE PLAYER</button>
+          <button id="menuSound" class="menu-secondary" type="button">🔊 SOUND: ON</button>
+        </div>
+
+        <div class="difficulty-wrap play-bottom-difficulty">
+          <div class="difficulty-label">DIFFICULTY</div>
+          <div class="difficulty-row" id="difficultyRow">
+            <button class="diff-btn" type="button" data-difficulty="easy">EASY<small>steady</small></button>
+            <button class="diff-btn selected" type="button" data-difficulty="normal">NORMAL<small>balanced</small></button>
+            <button class="diff-btn" type="button" data-difficulty="hard">HARD<small>fast</small></button>
+            <button class="diff-btn" type="button" data-difficulty="nightmare">NIGHTMARE<small>brutal</small></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="home-section" data-home-panel="worlds">
+        <div class="section-heading">🌍 WORLD SELECT</div>
+        <div class="section-copy">Choose your starting biome or leave it on Random Run.</div>
+        <section class="world-select home-world-select" aria-label="World Select">
+          <div id="worldGrid" class="world-grid"></div>
+        </section>
+        <div class="menu-stats worlds-stats">
+          <div><b>WORLDS</b><span>32</span></div>
+          <div><b>NEW WORLD</b><span>EVERY 200</span></div>
+          <div><b>ORDER</b><span>NO REPEATS</span></div>
+        </div>
+        <div class="menu-tip">🌍 New random themed world every 200 points • No repeats until all unlocked worlds are used.</div>
+      </section>
+
+      <section class="home-section" data-home-panel="rewards">
+        <div class="section-heading">🎁 REWARDS</div>
+        <section class="daily-spin-card home-spin-card" aria-label="Daily Spin">
+          <div class="daily-spin-head"><b>🎡 DAILY SPIN</b><span>1 FREE DAILY • EXTRA 250 COINS</span></div>
+          <div class="daily-spin-body">
+            <div class="spin-wheel-wrap"><div class="spin-pointer"></div><div id="dailySpinWheel" class="spin-wheel"></div></div>
+            <div class="spin-info">
+              <div id="dailySpinStatus" class="spin-status">Your free daily spin is ready.</div>
+              <button id="dailySpinBtn" class="spin-btn" type="button">SPIN FREE</button>
+              <div class="spin-odds">15 prizes • coins • skins • bikes • <span class="spin-rare">1% secret Mythic skin.</span></div>
+            </div>
+          </div>
+        </section>
+        <div class="feature-actions rewards-actions">
+          <button id="openBattlePassBtn" class="feature-btn pass" type="button">🎫 BATTLE PASS</button>
+          <button id="openLockerBtn" class="feature-btn locker" type="button">🎒 LOCKER</button>
+        </div>
+      </section>
+
+      <section class="home-section" data-home-panel="profile">
+        <div class="section-heading">👤 PLAYER PROFILE</div>
+        <label class="name-label" for="usernameInput">PLAYER NAME</label>
+        <input id="usernameInput" class="username-input" maxlength="16" placeholder="Type your name" autocomplete="off" spellcheck="false">
+        <div id="accountStatusStrip" class="account-status-strip">👤 Playing as guest — create an account to sync progress everywhere.</div>
+        <div class="account-actions profile-actions">
+          <button id="openAccountBtn" class="account-main-btn" type="button">👤 ACCOUNT / SIGN IN</button>
+          <button id="openLeaderboardBtn" class="account-main-btn secondary" type="button">🏆 GLOBAL LEADERBOARD</button>
+        </div>
+        <div class="menu-stats">
+          <div><b>MOVE</b><span>WASD / ARROWS</span></div>
+          <div><b>BONUS</b><span>+50</span></div>
+          <div><b>SURVIVE</b><span>KEEP RIDING</span></div>
+        </div>
+      </section>
     </div>
-
-    <div class="feature-actions">
-      <button id="openBattlePassBtn" class="feature-btn pass" type="button">🎫 BATTLE PASS</button>
-      <button id="openLockerBtn" class="feature-btn locker" type="button">🎒 LOCKER</button>
-    </div>
-
-    <div class="menu-actions">
-      <button id="menuStart" class="menu-main" type="button" onclick="startSinglePlayer()">▶ START SINGLE PLAYER</button>
-      <button id="menuSound" class="menu-secondary" type="button">🔊 SOUND: ON</button>
-    </div>
-
-    <div class="menu-stats">
-      <div><b>MOVE</b><span>WASD / ARROWS</span></div>
-      <div><b>BONUS</b><span>+50</span></div>
-      <div><b>NEW WORLD</b><span>EVERY 200</span></div>
-    </div>
-
-    <div class="menu-tip">🌍 New random themed world every 200 points • No repeats until all worlds are used.</div>
   </div>
 </div>
-
 
 
 <div id="accountScreen" class="overlay-screen" aria-hidden="true">
@@ -930,7 +1134,8 @@ const DEFAULT_PROFILE={
   equippedCharacter:"rider",
   equippedBike:"classic",
   equippedTrail:"none",
-  chestsCollected:0
+  chestsCollected:0,
+  lastFreeSpinDay:""
 };
 function cloneDefault(){return JSON.parse(JSON.stringify(DEFAULT_PROFILE))}
 function loadProfile(){
@@ -942,6 +1147,7 @@ function loadProfile(){
     p.wallet=Math.max(0,Math.floor(Number(p.wallet)||0));
     p.passXp=Math.max(0,Math.floor(Number(p.passXp)||0));
     p.chestsCollected=Math.max(0,Math.floor(Number(p.chestsCollected)||0));
+    p.lastFreeSpinDay=typeof p.lastFreeSpinDay==="string"?p.lastFreeSpinDay.slice(0,10):"";
     if(!p.ownedBikes.includes(p.equippedBike))p.equippedBike="classic";
     if(!p.ownedTrails.includes(p.equippedTrail))p.equippedTrail="none";
     if(!p.ownedCharacters.includes(p.equippedCharacter))p.equippedCharacter="rider";
@@ -957,23 +1163,38 @@ function worldUnlocked(i){return requiredPassForWorld(i)<=passLevel()}
 function unlockedWorldIndexes(){return BIOMES.map((_,i)=>i).filter(worldUnlocked)}
 
 const CHARACTERS=[
- {id:"rider",name:"Classic Rider",icon:"🚴",cost:0,desc:"The original biome rider."},
- {id:"knight",name:"Castle Knight",icon:"🛡️",cost:140,desc:"Steel armour and a crimson tabard."},
- {id:"astronaut",name:"Moon Ranger",icon:"🧑‍🚀",cost:190,desc:"A clean white exploration suit."},
- {id:"samurai",name:"Ronin Rider",icon:"⚔️",cost:230,desc:"Dark lamellar armour and headband."},
- {id:"viking",name:"Fjord Raider",icon:"🪓",cost:260,desc:"Fur mantle and northern armour."},
- {id:"alien",name:"Xeno Scout",icon:"👽",cost:320,desc:"Bioluminescent off-world rider."},
- {id:"wizard",name:"Arcane Rider",icon:"🧙",cost:380,desc:"A rare enchanted traveller."},
- {id:"solarwarden",name:"Solar Warden",icon:"☀️",level:12,desc:"Battle Pass L12 • white-gold armour, radiant visor and solar shoulder plates."},
- {id:"reefphantom",name:"Reef Phantom",icon:"🐚",level:17,desc:"Battle Pass L17 • deep-sea armour with glowing cyan breathing tubes."},
- {id:"jadeserpent",name:"Jade Serpent",icon:"🐍",level:22,desc:"Battle Pass L22 • emerald scale coat, serpent mask and gold trim."},
- {id:"dragonborn",name:"Dragonborn Rider",icon:"🐲",level:27,desc:"Battle Pass L27 • obsidian dragon armour with ember horns and wing plates."},
- {id:"chromeronin",name:"Chrome Ronin",icon:"🥷",level:33,desc:"Battle Pass L33 • polished cyber-samurai armour with a neon face slit."},
- {id:"voidmonarch",name:"Void Monarch",icon:"👑",level:41,desc:"Battle Pass L41 • black-violet royal armour wrapped in void energy."},
- {id:"nexussentinel",name:"Nexus Sentinel",icon:"🔱",level:46,desc:"Battle Pass L46 • prismatic endgame armour with dimensional crown fins."}
+ {id:"rider",name:"Classic Rider",icon:"🚴",cost:0,desc:"No crown. No prophecy. Just nerve, speed and a refusal to stay down."},
+ {id:"knight",name:"Castle Knight",icon:"🛡️",cost:140,desc:"Swore loyalty to no kingdom — only to the road ahead and the steel on his back."},
+ {id:"astronaut",name:"Moon Ranger",icon:"🧑‍🚀",cost:190,desc:"Left Earth chasing silence. Came back faster than anything the stars could throw at him."},
+ {id:"samurai",name:"Ronin Rider",icon:"⚔️",cost:230,desc:"Masterless by choice. Every turn is measured, every strike already decided."},
+ {id:"viking",name:"Fjord Raider",icon:"🪓",cost:260,desc:"Raised where the sea freezes and weak men disappear. He rides like winter is behind him."},
+ {id:"alien",name:"Xeno Scout",icon:"👽",cost:320,desc:"No known homeworld. No known language. One universal message: keep up."},
+ {id:"wizard",name:"Arcane Rider",icon:"🧙",cost:380,desc:"He does not predict the path. He bends it — rune by rune, world by world."},
+ {id:"streetracer",name:"Street Racer",icon:"🏁",spin:true,desc:"Built under neon lights and bad decisions. If you see the visor, you are already behind."},
+ {id:"mysticmage",name:"Mystic Mage",icon:"🔮",spin:true,desc:"Wears the night sky like armour. Every white star on the robe marks a spell nobody survived twice."},
+ {id:"solarwarden",name:"Solar Warden",icon:"☀️",level:12,desc:"Forged in daylight so violent it became armour. Darkness does not survive his arrival."},
+ {id:"reefphantom",name:"Reef Phantom",icon:"🐚",level:17,desc:"The ocean buried him once. It learned not to try twice."},
+ {id:"ashenrevenant",name:"Ashen Revenant",icon:"🔥",cost:3000,desc:"Burned out of history and came back wearing the fire. Every scar on the armour belongs to someone who tried to stop him."},
+ {id:"eclipsewarden",name:"Eclipse Warden",icon:"🌘",cost:3000,desc:"When the light disappears, he is already there. No footsteps. No warning. Just the edge of a blackened blade."},
+ {id:"frosttyrant",name:"Frostbound Tyrant",icon:"❄️",cost:3000,desc:"A warlord carved from northern steel and dead winter. He does not survive the cold — the cold survives him."},
+ {id:"bloodreaper",name:"Bloodmoon Reaper",icon:"🌑",cost:5000,mythic:true,desc:"The red moon is his signal, not his symbol. By the time the hood is seen, the hunt ended minutes ago."},
+ {id:"starforgedarchon",name:"Starforged Archon",icon:"✦",cost:5000,mythic:true,desc:"Forged where dying stars collapse into silence. He rides like gravity, kings and worlds are all optional."},
+ {id:"cosmicsovereign",name:"Secret Skin",icon:"?",spin:true,superRare:true,desc:"A hidden 1% Mythic. Its true form stays classified until the wheel chooses you."}
 ];
+const RETIRED_CHARACTER_IDS=["jadeserpent","dragonborn","chromeronin","voidmonarch","nexussentinel"];
+function normalizeRetiredCharacters(){
+  if(!profile)return;
+  profile.ownedCharacters=(profile.ownedCharacters||[]).filter(id=>!RETIRED_CHARACTER_IDS.includes(id));
+  if(RETIRED_CHARACTER_IDS.includes(profile.equippedCharacter))profile.equippedCharacter="rider";
+}
+normalizeRetiredCharacters();
+try{localStorage.setItem(SAVE_KEY,JSON.stringify(profile))}catch(e){}
 const BIKES=[
  {id:"classic",name:"Classic Bike",icon:"🚲",source:"FREE",desc:"The original two-wheel ride."},
+ {id:"neonbmx",name:"Neon BMX",icon:"🚲",spin:true,desc:"Daily Spin exclusive • compact BMX frame with neon wheel trim."},
+ {id:"flamecruiser",name:"Flame Cruiser",icon:"🏍️",spin:true,desc:"Daily Spin exclusive • low cruiser frame with ember exhaust styling."},
+ {id:"frostbike",name:"Frost Bike",icon:"❄️",spin:true,desc:"Daily Spin exclusive • icy frame, silver forks and frost-rim wheels."},
+ {id:"goldenrocket",name:"Golden Rocket",icon:"🚀",spin:true,desc:"Daily Spin exclusive • gold aerodynamic rocket-bike shell."},
  {id:"sandgold",name:"Dune Gold Bike",icon:"🚲",level:3,desc:"Battle Pass level 3."},
  {id:"reef",name:"Surf Board",icon:"🏄",level:6,desc:"Battle Pass level 6."},
  {id:"skate",name:"Skateboard",icon:"🛹",level:8,desc:"Battle Pass level 8."},
@@ -1030,19 +1251,19 @@ const PASS_REWARDS=Array.from({length:50},(_,i)=>{
     20:{type:"map",map:28,icon:"🏛️",name:"WORLD: Sunken Ruins"},
 
     21:{type:"bike",id:"chopper",icon:"🏍️",name:"Mini Chopper"},
-    22:{type:"character",id:"jadeserpent",icon:"🐍",name:"SKIN: Jade Serpent"},
+    22:{type:"coins",amount:100,icon:"🪙",name:"100 Coin Cache"},
     23:{type:"trail",id:"petals",icon:"🌸",name:"Cherry Petals Trail"},
     24:{type:"bike",id:"cloud",icon:"☁️",name:"Storm Cloud"},
     25:{type:"coins",amount:60,icon:"💎",name:"60 Coin Vault"},
     26:{type:"bike",id:"royal",icon:"👑",name:"Royal Hover Throne"},
-    27:{type:"character",id:"dragonborn",icon:"🐲",name:"SKIN: Dragonborn Rider"},
+    27:{type:"coins",amount:125,icon:"🪙",name:"125 Coin Cache"},
     28:{type:"bike",id:"dragonride",icon:"🐉",name:"Dragon Glider"},
     29:{type:"trail",id:"stars",icon:"⭐",name:"Celestial Stars Trail"},
     30:{type:"map",map:29,icon:"✨",name:"WORLD: Celestial Temple"},
 
     31:{type:"coins",amount:70,icon:"💰",name:"70 Coin Cache"},
     32:{type:"bike",id:"mech",icon:"🤖",name:"Mech Strider"},
-    33:{type:"character",id:"chromeronin",icon:"🥷",name:"SKIN: Chrome Ronin"},
+    33:{type:"coins",amount:150,icon:"🪙",name:"150 Coin Cache"},
     34:{type:"trail",id:"lightning",icon:"⚡",name:"Storm Lightning Trail"},
     35:{type:"bike",id:"comet",icon:"☄️",name:"Comet Board"},
     36:{type:"coins",amount:90,icon:"💎",name:"90 Coin Vault"},
@@ -1051,12 +1272,12 @@ const PASS_REWARDS=Array.from({length:50},(_,i)=>{
     39:{type:"trail",id:"dragonfire",icon:"🔥",name:"Dragonfire Wake Trail"},
     40:{type:"map",map:30,icon:"🌩️",name:"WORLD: Voidstorm Citadel"},
 
-    41:{type:"character",id:"voidmonarch",icon:"👑",name:"SKIN: Void Monarch"},
+    41:{type:"coins",amount:200,icon:"🪙",name:"200 Coin Cache"},
     42:{type:"bike",id:"phantom",icon:"👻",name:"Phantom Speeder"},
     43:{type:"trail",id:"souls",icon:"👻",name:"Phantom Souls Trail"},
     44:{type:"coins",amount:175,icon:"💎",name:"175 Coin Vault"},
     45:{type:"bike",id:"meteor",icon:"🌠",name:"Meteor Chariot"},
-    46:{type:"character",id:"nexussentinel",icon:"🔱",name:"SKIN: Nexus Sentinel"},
+    46:{type:"coins",amount:250,icon:"🪙",name:"250 Coin Cache"},
     47:{type:"trail",id:"rainbow",icon:"🌈",name:"Prismatic Rift Trail"},
     48:{type:"coins",amount:300,icon:"💰",name:"300 Coin MEGA Vault"},
     49:{type:"bike",id:"nexus",icon:"💫",name:"Nexus Hyperbike"},
@@ -1148,6 +1369,7 @@ function applyAccountData(account){
   cloudSyncPaused=true;
   authAccount=account;
   profile=Object.assign(cloneDefault(),account.profile||{});
+  normalizeRetiredCharacters();
   best=Math.max(0,Math.floor(Number(account.bestScore)||0));
   try{localStorage.setItem(SAVE_KEY,JSON.stringify(profile));}catch(e){}
   if(bestEl)bestEl.textContent=best;
@@ -1241,6 +1463,71 @@ function renderBattlePass(){
   });
   updateAccountUI();
 }
+function characterPortraitSvg(id){
+  const P={
+    rider:{bg:"#10283a",body:"#246aa2",trim:"#ef4444",skin:"#d9aa86",metal:"#d8e7ef",hair:"#4a2d20",kind:"rider"},
+    knight:{bg:"#18212a",body:"#75818d",trim:"#a52136",skin:"#d8aa86",metal:"#d7dde2",hair:"#4a2d20",kind:"knight"},
+    astronaut:{bg:"#0e2236",body:"#e7edf2",trim:"#3e7da6",skin:"#cfa17f",metal:"#bbc8d3",hair:"#3d2b23",kind:"astronaut"},
+    samurai:{bg:"#181b20",body:"#262a31",trim:"#a11d2f",skin:"#c99773",metal:"#5f6670",hair:"#171717",kind:"samurai"},
+    viking:{bg:"#2a241f",body:"#654c3b",trim:"#9a6a42",skin:"#d6a37d",metal:"#b8c1c8",hair:"#8a5734",kind:"viking"},
+    alien:{bg:"#0d302b",body:"#2d7a67",trim:"#65efbb",skin:"#75d9ad",metal:"#24574e",hair:"#173d35",kind:"alien"},
+    wizard:{bg:"#21113a",body:"#48217c",trim:"#8b5cf6",skin:"#d1a486",metal:"#6f52a8",hair:"#c7c7d4",kind:"wizard"},
+    streetracer:{bg:"#121a25",body:"#202938",trim:"#e33c50",skin:"#c99676",metal:"#576477",hair:"#252525",kind:"racer"},
+    mysticmage:{bg:"#071a3a",body:"#0d47a1",trim:"#ffffff",skin:"#cfa58a",metal:"#78a8d8",hair:"#e8e1ff",kind:"mage"},
+    cosmicsovereign:{bg:"#090312",body:"#1b0c35",trim:"#c067ff",skin:"#c3a3d1",metal:"#6f45a4",hair:"#ece6ff",kind:"cosmic"},
+    solarwarden:{bg:"#332609",body:"#edf1f4",trim:"#d8ac2d",skin:"#cba080",metal:"#f3d772",hair:"#6b4b25",kind:"solar"},
+    reefphantom:{bg:"#062e3c",body:"#073f50",trim:"#22d3ee",skin:"#8da8a8",metal:"#2a7887",hair:"#24434a",kind:"reef"},
+    ashenrevenant:{bg:"#160b08",body:"#211512",trim:"#ff5a1f",skin:"#8f6757",metal:"#6b625e",hair:"#1a1311",kind:"revenant"},
+    eclipsewarden:{bg:"#090b11",body:"#151922",trim:"#a78bfa",skin:"#a88f87",metal:"#77808d",hair:"#151519",kind:"eclipse"},
+    frosttyrant:{bg:"#0a1a24",body:"#283945",trim:"#7dd3fc",skin:"#b7a092",metal:"#b7c4ce",hair:"#d3dde3",kind:"frosttyrant"},
+    bloodreaper:{bg:"#17070a",body:"#241014",trim:"#dc2626",skin:"#9f7a72",metal:"#4b4246",hair:"#151012",kind:"bloodreaper"},
+    starforgedarchon:{bg:"#0b1020",body:"#e7e5df",trim:"#f5d36a",skin:"#b99a86",metal:"#d8d5c7",hair:"#d7d0c5",kind:"archon"}
+  }[id]||null;
+  const p=P||{bg:"#10283a",body:"#246aa2",trim:"#ef4444",skin:"#d9aa86",metal:"#d8e7ef",hair:"#4a2d20",kind:"rider"};
+  const uid="cp_"+id;
+  const head='<ellipse cx="75" cy="53" rx="23" ry="27" fill="'+p.skin+'"/><path d="M55 49 Q58 29 75 27 Q94 29 96 49 Q87 38 75 39 Q63 38 55 49Z" fill="'+p.hair+'"/><path d="M62 54 Q67 51 71 54 M79 54 Q84 51 88 54" stroke="#34251f" stroke-width="2.2" fill="none"/><circle cx="67" cy="55" r="1.8" fill="#171717"/><circle cx="83" cy="55" r="1.8" fill="#171717"/><path d="M70 66 Q75 69 80 66" stroke="#7f5140" stroke-width="2" fill="none"/>';
+  let gear="";
+  if(p.kind==="knight") gear='<path d="M48 48 Q50 22 75 17 Q100 22 102 48 L98 67 H52Z" fill="url(#metal_'+uid+')" stroke="#46515c" stroke-width="4"/><path d="M55 48 H95 V57 H55Z" fill="#222a31"/><path d="M75 46 V60" stroke="#909aa4" stroke-width="3"/><path d="M42 89 L27 105 L31 130 L50 116" fill="#aab2b9" stroke="#59636c" stroke-width="4"/><path d="M108 88 L125 101 L121 128 L101 114" fill="#aab2b9" stroke="#59636c" stroke-width="4"/>';
+  else if(p.kind==="astronaut") gear='<circle cx="75" cy="51" r="35" fill="#e9eef2" stroke="#9eaeba" stroke-width="5"/><path d="M49 48 Q75 25 101 48 L97 67 Q75 78 53 67Z" fill="url(#visor_'+uid+')"/><rect x="104" y="83" width="19" height="42" rx="5" fill="#aeb9c3"/><path d="M58 91 H92 M75 82 V139" stroke="#4a7ea3" stroke-width="3"/><rect x="61" y="98" width="28" height="19" rx="4" fill="#d4dce2" stroke="#7e909e" stroke-width="3"/>';
+  else if(p.kind==="samurai"||p.kind==="chrome") gear='<path d="M48 49 Q50 22 75 18 Q100 22 102 49 L96 67 H54Z" fill="'+(p.kind==="chrome"?'url(#metal_'+uid+')':'#232830')+'" stroke="'+p.trim+'" stroke-width="4"/><path d="M42 44 H108" stroke="'+p.trim+'" stroke-width="6"/><path d="M52 89 H98 L94 113 H56Z" fill="#1c2229" stroke="'+p.trim+'" stroke-width="3"/><path d="M43 96 L28 116 L46 125 M107 96 L122 116 L104 125" fill="none" stroke="'+p.metal+'" stroke-width="7"/>'+(p.kind==="chrome"?'<path d="M57 52 H93" stroke="#72f4ff" stroke-width="4"/>':'<path d="M31 91 L15 136" stroke="#d7dde3" stroke-width="5"/><path d="M13 136 L25 129" stroke="#c59b4b" stroke-width="4"/>');
+  else if(p.kind==="viking") gear='<path d="M49 47 Q51 23 75 18 Q99 23 101 47 L97 62 H53Z" fill="url(#metal_'+uid+')" stroke="#66717a" stroke-width="4"/><path d="M50 39 Q35 27 34 14 Q49 21 58 37" fill="#ded7c7" stroke="#7a6a58" stroke-width="3"/><path d="M100 39 Q115 27 116 14 Q101 21 92 37" fill="#ded7c7" stroke="#7a6a58" stroke-width="3"/><path d="M59 67 Q75 91 91 67 Q88 91 75 101 Q62 91 59 67Z" fill="#8b5936"/><path d="M43 87 Q75 76 107 87 L99 104 Q75 95 51 104Z" fill="#d8d0bf" opacity=".85"/>';
+  else if(p.kind==="alien") gear='<ellipse cx="75" cy="50" rx="28" ry="34" fill="'+p.skin+'" stroke="#2d705c" stroke-width="4"/><ellipse cx="64" cy="50" rx="7" ry="11" fill="#111827"/><ellipse cx="86" cy="50" rx="7" ry="11" fill="#111827"/><circle cx="62" cy="46" r="2" fill="#d7fff2"/><circle cx="84" cy="46" r="2" fill="#d7fff2"/><path d="M60 66 Q75 73 90 66" stroke="#296b58" stroke-width="2" fill="none"/><circle cx="48" cy="91" r="7" fill="#67efbd" opacity=".8"/><circle cx="103" cy="104" r="5" fill="#67efbd" opacity=".55"/>';
+  else if(p.kind==="wizard") gear='<path d="M43 45 L75 5 L108 45 Q78 35 43 45Z" fill="url(#cloth_'+uid+')" stroke="#251242" stroke-width="4"/><path d="M53 41 Q75 30 101 41" stroke="'+p.trim+'" stroke-width="4" fill="none"/><circle cx="92" cy="26" r="3" fill="#ffe88a"/><path d="M58 82 Q75 72 92 82 L102 146 H48Z" fill="'+p.body+'" stroke="#22113e" stroke-width="4"/><path d="M62 92 L75 105 L88 92" stroke="'+p.trim+'" stroke-width="4" fill="none"/><path d="M116 61 L126 132" stroke="#755234" stroke-width="6"/><circle cx="115" cy="55" r="10" fill="#f6d365" stroke="#fff" stroke-width="2"/><path d="M48 115 L28 135 M102 115 L121 135" stroke="'+p.trim+'" stroke-width="6"/>';
+  else if(p.kind==="mage") gear='<path d="M43 45 L75 5 L108 45 Q78 35 43 45Z" fill="#0d47a1" stroke="#ffffff" stroke-width="4"/><path d="M53 41 Q75 30 101 41" stroke="#ffffff" stroke-width="4" fill="none"/><circle cx="62" cy="25" r="2.4" fill="#ffffff"/><circle cx="81" cy="15" r="2" fill="#ffffff"/><circle cx="95" cy="29" r="2.6" fill="#ffffff"/><path d="M58 82 Q75 72 92 82 L102 146 H48Z" fill="#0d47a1" stroke="#ffffff" stroke-width="4"/><path d="M62 92 L75 105 L88 92" stroke="#dbeafe" stroke-width="4" fill="none"/><circle cx="66" cy="112" r="2.5" fill="#ffffff"/><circle cx="83" cy="124" r="2" fill="#ffffff"/><circle cx="72" cy="137" r="2.8" fill="#ffffff"/><path d="M116 61 L126 132" stroke="#755234" stroke-width="6"/><circle cx="115" cy="55" r="10" fill="#60a5fa" stroke="#fff" stroke-width="2"/><path d="M48 115 L28 135 M102 115 L121 135" stroke="#ffffff" stroke-width="6"/>';
+  else if(p.kind==="racer") gear='<path d="M48 48 Q50 22 75 17 Q100 22 102 48 L98 67 H52Z" fill="#161d26" stroke="#e33c50" stroke-width="4"/><path d="M53 47 H98 L94 61 H57Z" fill="url(#visor_'+uid+')"/><path d="M48 88 L62 80 H88 L103 88 L98 145 H52Z" fill="#202938" stroke="#111827" stroke-width="4"/><path d="M60 88 H90 M58 105 H92" stroke="#e33c50" stroke-width="4"/><path d="M46 92 L29 108 M104 92 L121 108" stroke="#e33c50" stroke-width="7"/>';
+  else if(p.kind==="cosmic"||p.kind==="void") gear='<path d="M48 49 Q50 23 75 18 Q100 23 102 49 L97 67 H53Z" fill="#0b0712" stroke="'+p.trim+'" stroke-width="4"/><path d="M49 37 L55 14 L68 31 L76 7 L87 31 L99 13 L102 38Z" fill="url(#cloth_'+uid+')" stroke="'+p.trim+'" stroke-width="3"/><path d="M44 86 Q75 71 106 86 L100 146 H50Z" fill="url(#cloth_'+uid+')" stroke="#0a0612" stroke-width="4"/><path d="M60 92 L75 113 L90 92" stroke="'+p.trim+'" stroke-width="4" fill="none"/><circle cx="38" cy="112" r="5" fill="'+p.trim+'" opacity=".7"/><circle cx="111" cy="94" r="3" fill="#67e8f9" opacity=".8"/><circle cx="104" cy="128" r="4" fill="#f0abfc" opacity=".7"/>';
+  else if(p.kind==="solar") gear='<path d="M48 48 Q50 22 75 17 Q100 22 102 48 L97 67 H53Z" fill="#f4f7f8" stroke="#d3aa2d" stroke-width="4"/><path d="M55 49 H95" stroke="#72d8ff" stroke-width="5"/><path d="M44 86 Q75 72 106 86 L100 146 H50Z" fill="#e8edf3" stroke="#c59a20" stroke-width="4"/><circle cx="39" cy="95" r="14" fill="#d7ad2f"/><circle cx="111" cy="95" r="14" fill="#d7ad2f"/><path d="M64 93 L75 77 L86 93 L75 106Z" fill="#f5d86d"/>';
+  else if(p.kind==="reef") gear='<path d="M47 49 Q50 22 75 18 Q100 22 103 49 L97 68 H53Z" fill="#07384a" stroke="#22d3ee" stroke-width="4"/><path d="M54 50 H96" stroke="#67e8f9" stroke-width="5"/><path d="M47 61 Q33 76 38 103 M103 61 Q117 76 112 103" stroke="#22d3ee" stroke-width="4" fill="none"/><path d="M45 88 Q75 73 105 88 L98 146 H52Z" fill="#083344" stroke="#0ea5b7" stroke-width="4"/><circle cx="60" cy="102" r="5" fill="#67e8f9"/><circle cx="91" cy="117" r="4" fill="#67e8f9"/>';
+  else if(p.kind==="revenant") gear='<path d="M47 50 Q49 24 75 17 Q101 24 103 50 L98 69 H52Z" fill="#25201e" stroke="#7c2d12" stroke-width="4"/><path d="M53 47 H97 L91 60 H59Z" fill="#090706"/><path d="M61 53 H70 M80 53 H89" stroke="#ff5a1f" stroke-width="3"/><path d="M48 35 L37 18 L55 29 M96 34 L112 22 L99 44" fill="#3b2721" stroke="#7c2d12" stroke-width="3"/><path d="M43 87 Q75 70 107 87 L100 146 H50Z" fill="#201512" stroke="#5b2720" stroke-width="4"/><path d="M37 88 L20 111 L42 119 M113 88 L130 111 L108 119" fill="#39302d" stroke="#6b625e" stroke-width="5"/><path d="M63 95 L75 84 L87 95 L75 112Z" fill="#d94717"/><path d="M52 123 Q75 133 98 123" stroke="#ff5a1f" stroke-width="3" opacity=".7"/>';
+  else if(p.kind==="eclipse") gear='<path d="M46 49 Q49 22 75 17 Q101 22 104 49 L98 68 H52Z" fill="#11151d" stroke="#737b88" stroke-width="4"/><path d="M54 49 H96 L91 59 H59Z" fill="#05070b"/><path d="M62 53 H70 M80 53 H88" stroke="#c4b5fd" stroke-width="2.5"/><path d="M75 18 Q88 24 95 37 Q75 31 55 39 Q59 25 75 18Z" fill="#252b37"/><path d="M43 87 Q75 70 107 87 L101 146 H49Z" fill="#131821" stroke="#6b7280" stroke-width="4"/><path d="M40 92 L20 106 L34 128 L52 112 M110 92 L130 106 L116 128 L98 112" fill="#242a35" stroke="#77808d" stroke-width="4"/><path d="M62 95 Q75 84 88 95 L75 108Z" fill="#8b5cf6"/><path d="M113 74 Q124 93 112 114" stroke="#a78bfa" stroke-width="5" fill="none"/>';
+  else if(p.kind==="frosttyrant") gear='<path d="M45 49 Q48 20 75 15 Q102 20 105 49 L99 69 H51Z" fill="url(#metal_'+uid+')" stroke="#5c7180" stroke-width="4"/><path d="M51 47 H99 L93 60 H57Z" fill="#0b2230"/><path d="M59 53 H70 M80 53 H91" stroke="#7dd3fc" stroke-width="3"/><path d="M52 35 L39 18 L58 29 M98 35 L111 18 L92 29" fill="#d8edf7" stroke="#6b7f8c" stroke-width="3"/><path d="M40 87 Q75 68 110 87 L101 146 H49Z" fill="#2b3942" stroke="#91a8b7" stroke-width="4"/><path d="M43 85 Q75 75 107 85" stroke="#d9e5ea" stroke-width="9"/><path d="M36 94 L18 119 L41 128 M114 94 L132 119 L109 128" fill="#4b5d68" stroke="#b7c4ce" stroke-width="5"/><path d="M62 99 L75 84 L88 99 L75 114Z" fill="#8be0ff"/><path d="M53 126 H97" stroke="#d6f3ff" stroke-width="3"/>';
+  else if(p.kind==="bloodreaper") gear='<path d="M41 57 Q44 24 75 12 Q106 24 109 57 Q94 42 75 41 Q56 42 41 57Z" fill="#180b0e" stroke="#5f121c" stroke-width="4"/><path d="M54 47 Q75 37 96 47 L91 65 H59Z" fill="#090608"/><path d="M63 54 H70 M80 54 H87" stroke="#ef4444" stroke-width="3"/><path d="M43 86 Q75 69 107 86 L101 146 H49Z" fill="#211015" stroke="#641523" stroke-width="4"/><path d="M44 91 L22 113 L38 130 L55 112 M106 91 L128 113 L112 130 L95 112" fill="#301218" stroke="#4b4246" stroke-width="4"/><path d="M60 96 L75 111 L90 96" stroke="#dc2626" stroke-width="4" fill="none"/><path d="M116 67 Q133 82 121 108 Q115 120 103 129" stroke="#8d99a2" stroke-width="5" fill="none"/><path d="M116 67 Q128 62 132 71" stroke="#c1c8cc" stroke-width="3" fill="none"/>';
+  else if(p.kind==="archon") gear='<circle cx="75" cy="31" r="25" fill="none" stroke="#f5d36a" stroke-width="4" opacity=".8"/><path d="M47 50 Q49 23 75 17 Q101 23 103 50 L97 68 H53Z" fill="#ece9df" stroke="#b59b4b" stroke-width="4"/><path d="M55 49 H95 L91 60 H59Z" fill="#132033"/><path d="M62 53 H70 M80 53 H88" stroke="#f8e69b" stroke-width="3"/><path d="M50 34 L61 14 L69 31 L76 9 L85 31 L96 14 L101 36" fill="#f1df9a" stroke="#a98a33" stroke-width="3"/><path d="M41 87 Q75 68 109 87 L101 146 H49Z" fill="#e9e7df" stroke="#b9a45e" stroke-width="4"/><path d="M38 90 L17 108 L36 132 L55 110 M112 90 L133 108 L114 132 L95 110" fill="#16223a" stroke="#d8d5c7" stroke-width="4"/><path d="M61 96 L75 82 L89 96 L75 113Z" fill="#f5d36a"/><path d="M50 122 H100" stroke="#1d2b47" stroke-width="4"/>';
+  else gear=head+'<path d="M47 87 Q75 73 103 87 L98 146 H52Z" fill="'+p.body+'" stroke="#17324c" stroke-width="4"/><path d="M59 91 L75 103 L91 91" stroke="'+p.trim+'" stroke-width="4" fill="none"/>';
+  const baseBody='<path d="M41 150 Q42 91 56 82 Q75 70 94 82 Q108 91 109 150Z" fill="'+p.body+'" stroke="'+p.bg+'" stroke-width="4"/><path d="M50 96 L28 127 L42 137 L58 112 M100 96 L122 127 L108 137 L92 112" fill="'+p.body+'" stroke="'+p.bg+'" stroke-width="4"/>';
+  const useHead=!['knight','astronaut','samurai','chrome','viking','alien','racer','cosmic','void','solar','reef','serpent','dragon','nexus','revenant','eclipse','frosttyrant','bloodreaper','archon'].includes(p.kind);
+  return '<svg viewBox="0 0 150 160" role="img" aria-label="Detailed '+id+' character portrait">'+
+    '<defs><linearGradient id="metal_'+uid+'" x1="0" x2="1"><stop stop-color="#e5ebef"/><stop offset=".45" stop-color="'+p.metal+'"/><stop offset=".7" stop-color="#6e7881"/><stop offset="1" stop-color="#d9e0e5"/></linearGradient><linearGradient id="visor_'+uid+'" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#9bf2ff"/><stop offset=".45" stop-color="#315c7a"/><stop offset="1" stop-color="#0b1e2c"/></linearGradient><linearGradient id="cloth_'+uid+'" x1="0" y1="0" x2="1" y2="1"><stop stop-color="'+p.trim+'"/><stop offset=".55" stop-color="'+p.body+'"/><stop offset="1" stop-color="'+p.bg+'"/></linearGradient><linearGradient id="nexus_'+uid+'" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#67e8f9"/><stop offset=".5" stop-color="#7257b9"/><stop offset="1" stop-color="#f0abfc"/></linearGradient></defs>'+ 
+    '<rect width="150" height="160" fill="'+p.bg+'"/><circle cx="75" cy="55" r="48" fill="'+p.trim+'" opacity=".10"/><circle cx="75" cy="55" r="39" fill="#ffffff" opacity=".025"/>'+baseBody+(useHead?head:"")+gear+'<path d="M51 151 H99" stroke="#fff" stroke-width="2" opacity=".16"/></svg>';
+}
+
+function cosmeticRarity(item,tab){
+  if(item.mythic||item.superRare)return "mythic";
+  if(item.spin)return tab==="characters"?"epic":"rare";
+  if(item.level){
+    if(item.level>=40)return "legendary";
+    if(item.level>=25)return "epic";
+    if(item.level>=10)return "rare";
+    return "uncommon";
+  }
+  if(tab==="characters"&&Number.isFinite(item.cost)){
+    if(item.cost>=300)return "epic";
+    if(item.cost>=200)return "rare";
+    if(item.cost>0)return "uncommon";
+  }
+  return "common";
+}
+function rarityLabel(r){return r.toUpperCase()}
 function renderLocker(){
   if(!lockerGrid)return;
   updateAccountUI();lockerGrid.innerHTML="";
@@ -1252,20 +1539,24 @@ function renderLocker(){
     const owned=profile[ownedKey].includes(item.id);
     const equipped=profile[equipKey]===item.id;
     const levelLocked=item.level&&passLevel()<item.level;
-    const card=document.createElement("div");card.className="cosmetic-card"+(equipped?" equipped":"");
+    const rarity=cosmeticRarity(item,lockerTab);
+    const card=document.createElement("div");
+    card.className="cosmetic-card rarity-"+rarity+(equipped?" equipped":"")+(item.mythic?" mythic-card":"");
     let action="";
     if(levelLocked){
       action='<div class="cosmetic-cost">BATTLE PASS LEVEL '+item.level+'</div><button type="button" disabled>LOCKED</button>';
+    }else if(item.spin&&!owned){
+      action='<div class="cosmetic-cost">🎡 DAILY SPIN EXCLUSIVE</div><button type="button" disabled>SPIN TO UNLOCK</button>';
     }else if(lockerTab==="characters"&&!owned&&Number.isFinite(item.cost)){
       action='<div class="cosmetic-cost">🪙 '+item.cost+'</div><button type="button" data-buy="'+item.id+'">UNLOCK</button>';
     }else if(lockerTab==="characters"&&!owned){
       action='<div class="cosmetic-cost">BATTLE PASS REWARD</div><button type="button" disabled>LOCKED</button>';
-    }else if(levelLocked){
-      action='<div class="cosmetic-cost">PASS LEVEL '+item.level+'</div><button type="button" disabled>LOCKED</button>';
     }else{
       action='<div class="cosmetic-cost">'+(equipped?"EQUIPPED":"OWNED")+'</div><button type="button" data-equip="'+item.id+'" '+(equipped?"disabled":"")+'>'+(equipped?"EQUIPPED":"EQUIP")+'</button>';
     }
-    card.innerHTML='<div class="cosmetic-preview">'+item.icon+'</div><div class="cosmetic-name">'+item.name+'</div><div class="cosmetic-desc">'+item.desc+'</div>'+action;
+    const preview=lockerTab==="characters"?(item.id==="cosmicsovereign"?'<div class="secret-mythic-preview" aria-label="Secret Mythic skin"><span>?</span></div>':characterPortraitSvg(item.id)):'<div style="font-size:56px">'+item.icon+'</div>';
+    const sourceText=item.mythic?"MYTHIC • 5,000 COINS":item.superRare?"MYTHIC • 1% WHEEL":item.spin?"DAILY SPIN":item.level?"BATTLE PASS":"";
+    card.innerHTML='<div class="cosmetic-preview">'+preview+'</div><div class="cosmetic-rarity">'+rarityLabel(rarity)+(sourceText?' • '+sourceText:'')+'</div><div class="cosmetic-name">'+item.name+'</div><div class="cosmetic-desc">'+item.desc+'</div>'+action;
     lockerGrid.appendChild(card);
   });
   lockerGrid.querySelectorAll("[data-buy]").forEach(btn=>btn.addEventListener("click",()=>buyCharacter(btn.dataset.buy)));
@@ -1281,6 +1572,66 @@ function equipCosmetic(id){
   if(lockerTab==="bikes"&&profile.ownedBikes.includes(id))profile.equippedBike=id;
   if(lockerTab==="trails"&&profile.ownedTrails.includes(id))profile.equippedTrail=id;
   saveProfile();renderLocker();
+}
+
+const DAILY_SPIN_REWARDS=[
+ {id:"coin50",label:"50",type:"coins",amount:50,weight:15},
+ {id:"coin75",label:"75",type:"coins",amount:75,weight:12},
+ {id:"coin100",label:"100",type:"coins",amount:100,weight:11},
+ {id:"coin150",label:"150",type:"coins",amount:150,weight:10},
+ {id:"coin200",label:"200",type:"coins",amount:200,weight:9},
+ {id:"coin300",label:"300",type:"coins",amount:300,weight:7},
+ {id:"coin500",label:"500",type:"coins",amount:500,weight:4},
+ {id:"coin1000",label:"1000",type:"coins",amount:1000,weight:2},
+ {id:"streetracer",label:"RACER",type:"character",itemId:"streetracer",weight:8},
+ {id:"mysticmage",label:"MAGE",type:"character",itemId:"mysticmage",weight:5},
+ {id:"cosmicsovereign",label:"1% SKIN",type:"character",itemId:"cosmicsovereign",weight:1},
+ {id:"neonbmx",label:"BMX",type:"bike",itemId:"neonbmx",weight:5},
+ {id:"flamecruiser",label:"FLAME",type:"bike",itemId:"flamecruiser",weight:4},
+ {id:"frostbike",label:"FROST",type:"bike",itemId:"frostbike",weight:4},
+ {id:"goldenrocket",label:"GOLD",type:"bike",itemId:"goldenrocket",weight:3}
+];
+let dailySpinBusy=false,dailySpinRotation=0;
+function shuffledSpinRewards(){const a=DAILY_SPIN_REWARDS.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+const DAILY_SPIN_WHEEL_ORDER=shuffledSpinRewards();
+function localDayKey(){const d=new Date(),y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,"0"),day=String(d.getDate()).padStart(2,"0");return y+"-"+m+"-"+day}
+function freeDailySpinAvailable(){return profile.lastFreeSpinDay!==localDayKey()}
+function wheelRewardName(r){
+  if(r.type==="coins")return r.amount+" COINS";
+  const arr=r.type==="character"?CHARACTERS:BIKES,item=arr.find(x=>x.id===r.itemId);return item?item.name:r.label;
+}
+function renderDailySpin(){
+  const wheel=document.getElementById("dailySpinWheel"),btn=document.getElementById("dailySpinBtn"),status=document.getElementById("dailySpinStatus");
+  if(!wheel||!btn||!status)return;
+  if(!wheel.dataset.labels){
+    DAILY_SPIN_WHEEL_ORDER.forEach((r,i)=>{const el=document.createElement("div");el.className="wheel-label";const a=i*(360/15)+12;el.style.transform="rotate("+a+"deg) translateY(-88px) rotate("+(-a)+"deg)";el.textContent=r.type==="coins"?"🪙 "+r.label:r.label;wheel.appendChild(el)});wheel.dataset.labels="1";
+  }
+  const free=freeDailySpinAvailable();
+  btn.textContent=free?"🎁 SPIN FREE":"🎡 SPIN AGAIN • 250 COINS";
+  btn.disabled=dailySpinBusy||(!free&&profile.wallet<250);
+  if(!dailySpinBusy)status.innerHTML=free?"<b>FREE SPIN READY.</b> Spin once today at no cost.":(profile.wallet>=250?"Daily free spin used. You can spin again for <b>250 coins</b>.":"Daily free spin used. You need <b>250 coins</b> for another spin.");
+}
+function pickDailySpinReward(){let roll=Math.random()*100;for(const r of DAILY_SPIN_REWARDS){roll-=r.weight;if(roll<0)return r}return DAILY_SPIN_REWARDS[0]}
+function grantDailySpinReward(r){
+  if(r.type==="coins"){profile.wallet+=r.amount;return "🪙 YOU WON "+r.amount+" COINS!"}
+  if(r.type==="character"){
+    if(profile.ownedCharacters.includes(r.itemId)){const refund=r.itemId==="cosmicsovereign"?1000:300;profile.wallet+=refund;return "✨ DUPLICATE "+wheelRewardName(r)+" → "+refund+" COINS"}
+    profile.ownedCharacters.push(r.itemId);return (r.itemId==="cosmicsovereign"?"✨ 1% MYTHIC JACKPOT! ":"🎭 SKIN UNLOCKED! ")+wheelRewardName(r);
+  }
+  if(r.type==="bike"){
+    if(profile.ownedBikes.includes(r.itemId)){profile.wallet+=250;return "🚲 DUPLICATE "+wheelRewardName(r)+" → 250 COINS"}
+    profile.ownedBikes.push(r.itemId);return "🚲 BIKE UNLOCKED! "+wheelRewardName(r);
+  }
+  return "PRIZE WON!";
+}
+function spinDailyWheel(){
+  if(dailySpinBusy)return;const free=freeDailySpinAvailable();if(!free&&profile.wallet<250){renderDailySpin();return}
+  if(!free)profile.wallet-=250;else profile.lastFreeSpinDay=localDayKey();
+  const r=pickDailySpinReward(),idx=DAILY_SPIN_WHEEL_ORDER.indexOf(r),slice=360/15,targetCenter=idx*slice+slice/2;
+  dailySpinBusy=true;saveProfile();updateAccountUI();renderDailySpin();
+  const status=document.getElementById("dailySpinStatus"),wheel=document.getElementById("dailySpinWheel");if(status)status.textContent="Spinning...";
+  dailySpinRotation+=1440+(360-targetCenter);if(wheel)wheel.style.transform="rotate("+dailySpinRotation+"deg)";
+  setTimeout(()=>{const msg=grantDailySpinReward(r);dailySpinBusy=false;saveProfile();ensurePassOwnership();updateAccountUI();renderLocker();if(status)status.innerHTML="<b>"+msg+"</b>";renderDailySpin()},3900);
 }
 
 let selectedStartBiome=null;
@@ -2065,153 +2416,158 @@ function drawLateBiomeDetail(){
   }
 }
 
-function drawPlayer(){
-  const b=biomeIndex(),x=player.x,y=player.y,t=performance.now();
-  ctx.save();
-  ctx.translate(x,y);
-
-  // bike wheels
-  ctx.strokeStyle="#111827";ctx.lineWidth=4;
-  ctx.beginPath();ctx.arc(9,35,8,0,Math.PI*2);ctx.arc(33,35,8,0,Math.PI*2);ctx.stroke();
-
-  // bike frame
-  const frameCols=["#ef4444","#d1d5db","#f59e0b","#22d3ee","#60a5fa","#fb923c","#22d3ee","#65a30d","#b45309","#ec4899","#8b5cf6","#1d4ed8","#f97316","#22d3ee","#4d7c0f","#d6a757","#7c4a27","#4d7c0f","#cbd5e1","#991b1b","#3b82f6","#a78bfa","#b91c1c","#5f7890","#4d8c58","#b5793c","#5ee3b0"];
-  const bikeCosmeticColors={classic:null,sandgold:"#d8a62f",reef:"#12b9d2",skate:"#f59e0b",ufo:"#9be7ff",hover:"#d946ef",chopper:"#9ca3af",cloud:"#e5f5ff",royal:"#e0c45c",dragonride:"#a43a2f",mech:"#94a3b8",comet:"#f97316",voidwing:"#8b5cf6",phantom:"#c4b5fd",meteor:"#f59e0b",nexus:"#f0abfc"};
-  ctx.strokeStyle=bikeCosmeticColors[profile.equippedBike]||frameCols[b]||"#ef4444";ctx.lineWidth=3;
-  ctx.beginPath();ctx.moveTo(9,35);ctx.lineTo(20,22);ctx.lineTo(33,35);ctx.lineTo(16,35);ctx.lineTo(20,22);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(20,22);ctx.lineTo(30,18);ctx.stroke();
-
-  // legs
-  ctx.strokeStyle="#1f2937";ctx.lineWidth=4;
-  ctx.beginPath();ctx.moveTo(21,21);ctx.lineTo(16,31);ctx.lineTo(9,35);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(21,21);ctx.lineTo(27,30);ctx.lineTo(33,35);ctx.stroke();
-
-  // torso/arms themed per biome
-  const shirtCols=["#2563eb","#f8fafc","#d97706","#0891b2","#0ea5e9","#dc2626","#22d3ee","#15803d","#92400e","#f472b6","#6d28d9","#1d4ed8","#f97316","#06b6d4","#4d7c0f","#ca8a04","#7c2d12","#365314","#e5e7eb","#b91c1c","#2563eb","#7c3aed","#7f1d1d","#4f6b7c","#315d36","#7b542f","#3ca886"];
-  ctx.fillStyle=shirtCols[b]||"#2563eb";
-  roundedRectPath(15,7,14,17,5);ctx.fill();
-
-  // arms
-  ctx.strokeStyle="#d6a67a";ctx.lineWidth=3.5;
-  ctx.beginPath();ctx.moveTo(16,12);ctx.lineTo(10,20);ctx.lineTo(18,22);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(28,12);ctx.lineTo(32,18);ctx.lineTo(30,20);ctx.stroke();
-
-  // neck + human head
-  ctx.fillStyle="#d6a67a";ctx.fillRect(19,3,6,6);
-  ctx.beginPath();ctx.arc(22,-1,7,0,Math.PI*2);ctx.fill();
-
-  // hair / helmet / themed headwear
-  if(b===1||b===18){
-    ctx.fillStyle="#e5e7eb";ctx.beginPath();ctx.arc(22,-1,9,Math.PI,0);ctx.fill();
-    ctx.fillStyle="#1e293b";ctx.fillRect(16,-2,12,5);
-  } else if(b===15){
-    ctx.fillStyle="#facc15";ctx.fillRect(14,-7,16,5);ctx.fillRect(18,-12,8,6);
-  } else if(b===16){
-    ctx.fillStyle="#111827";ctx.beginPath();ctx.arc(22,-3,9,Math.PI,0);ctx.fill();ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(22,-3,3,0,Math.PI*2);ctx.fill();
-  } else if(b===11){
-    ctx.fillStyle="#9ca3af";ctx.beginPath();ctx.arc(22,-2,8,Math.PI,0);ctx.fill();ctx.strokeStyle="#6b7280";ctx.beginPath();ctx.moveTo(14,-2);ctx.lineTo(30,-2);ctx.stroke();
-  } else if(b===8){
-    ctx.fillStyle="#7c4a27";ctx.fillRect(13,-8,18,4);ctx.fillRect(16,-12,12,6);
-  } else if(b===9){
-    ctx.fillStyle="#f9a8d4";ctx.beginPath();ctx.arc(22,-4,8,Math.PI,0);ctx.fill();
-  } else if(b===17){
-    ctx.fillStyle="#365314";ctx.beginPath();ctx.moveTo(14,-3);ctx.lineTo(22,-10);ctx.lineTo(30,-3);ctx.closePath();ctx.fill();
-  } else if(b===20){
-    ctx.fillStyle="#60a5fa";ctx.fillRect(14,-7,16,5);
-  } else if(b===22){
-    ctx.fillStyle="#20242a";ctx.beginPath();ctx.arc(22,-3,9,Math.PI,0);ctx.fill();ctx.fillStyle="#9f1d2d";ctx.fillRect(13,-4,18,3);
-  } else if(b===23){
-    ctx.fillStyle="#9ca3af";ctx.beginPath();ctx.arc(22,-3,9,Math.PI,0);ctx.fill();ctx.fillStyle="#6b4b2f";ctx.beginPath();ctx.moveTo(14,-3);ctx.lineTo(10,-9);ctx.lineTo(17,-5);ctx.fill();ctx.beginPath();ctx.moveTo(30,-3);ctx.lineTo(34,-9);ctx.lineTo(27,-5);ctx.fill();
-  } else if(b===24){
-    ctx.fillStyle="#315d36";ctx.beginPath();ctx.moveTo(13,-2);ctx.lineTo(22,-11);ctx.lineTo(31,-2);ctx.fill();
-  } else if(b===25){
-    ctx.fillStyle="#6b4b2f";ctx.beginPath();ctx.arc(22,-3,8,Math.PI,0);ctx.fill();ctx.fillStyle="#c08a42";ctx.fillRect(15,-7,14,3);
-  } else if(b===26){
-    ctx.fillStyle="#56c99b";ctx.beginPath();ctx.arc(22,-4,8,Math.PI,0);ctx.fill();ctx.fillStyle="#e05cff";ctx.fillRect(15,-6,14,3);
-  } else {
-    ctx.fillStyle="#3f2d20";ctx.beginPath();ctx.arc(22,-4,7,Math.PI,0);ctx.fill();
-  }
-
-  // face details so it reads as human
-  ctx.fillStyle="#111827";ctx.beginPath();ctx.arc(20,-1,1,0,Math.PI*2);ctx.arc(24,-1,1,0,Math.PI*2);ctx.fill();
-  ctx.strokeStyle="#7c2d12";ctx.lineWidth=1;ctx.beginPath();ctx.arc(22,1,3,0.2,Math.PI-0.2);ctx.stroke();
-
-  // biome accessories
-  if(b===3){ctx.strokeStyle="#67e8f9";ctx.lineWidth=2;ctx.strokeRect(16,-4,12,4);}
-  if(b===6||b===13){ctx.strokeStyle="#22d3ee";ctx.lineWidth=2;ctx.strokeRect(14,6,16,18);}
-  if(b===10){ctx.fillStyle="rgba(255,255,255,.35)";ctx.beginPath();ctx.arc(22,8,15,0,Math.PI*2);ctx.fill();}
-  if(b===12){ctx.fillStyle="#facc15";ctx.fillRect(13,9,3,12);ctx.fillRect(28,9,3,12);}
-  if(b===19){ctx.fillStyle="#ef4444";ctx.beginPath();ctx.moveTo(16,-7);ctx.lineTo(19,-13);ctx.lineTo(21,-6);ctx.fill();ctx.beginPath();ctx.moveTo(28,-7);ctx.lineTo(25,-13);ctx.lineTo(23,-6);ctx.fill();}
-  if(b===21){ctx.fillStyle="rgba(167,139,250,.35)";ctx.beginPath();ctx.moveTo(12,20);ctx.lineTo(6,28);ctx.lineTo(15,25);ctx.fill();}
-
-  
-
-  // Distinct Locker ride silhouettes
-  const ride=profile.equippedBike;
-  if(ride==="skate"){
-    ctx.fillStyle="#e7a52d";roundedRectPath(-4,37,54,7,4);ctx.fill();
-    ctx.fillStyle="#222";ctx.beginPath();ctx.arc(5,46,4,0,Math.PI*2);ctx.arc(40,46,4,0,Math.PI*2);ctx.fill();
+function drawRideVisual(ride){
+  // Every ride is exclusive: exactly ONE equipped ride is drawn.
+  if(ride==="classic"||ride==="sandgold"){
+    ctx.strokeStyle="#111827";ctx.lineWidth=4;
+    ctx.beginPath();ctx.arc(9,35,8,0,Math.PI*2);ctx.arc(33,35,8,0,Math.PI*2);ctx.stroke();
+    ctx.strokeStyle=ride==="sandgold"?"#d8a62f":"#ef4444";ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(9,35);ctx.lineTo(20,22);ctx.lineTo(33,35);ctx.lineTo(16,35);ctx.lineTo(20,22);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(20,22);ctx.lineTo(30,18);ctx.stroke();
+  }else if(ride==="neonbmx"){
+    ctx.strokeStyle="#22d3ee";ctx.lineWidth=4;ctx.beginPath();ctx.arc(1,42,10,0,Math.PI*2);ctx.arc(43,42,10,0,Math.PI*2);ctx.stroke();
+    ctx.strokeStyle="#d946ef";ctx.beginPath();ctx.moveTo(3,39);ctx.lineTo(18,27);ctx.lineTo(33,39);ctx.lineTo(9,39);ctx.lineTo(22,42);ctx.lineTo(18,27);ctx.stroke();
+  }else if(ride==="flamecruiser"){
+    ctx.strokeStyle="#cbd5e1";ctx.lineWidth=4;ctx.beginPath();ctx.arc(-1,42,11,0,Math.PI*2);ctx.arc(45,42,11,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle="#b91c1c";ctx.beginPath();ctx.moveTo(6,38);ctx.lineTo(15,27);ctx.lineTo(34,29);ctx.lineTo(41,39);ctx.closePath();ctx.fill();
+    ctx.fillStyle="#fb923c";ctx.beginPath();ctx.moveTo(7,31);ctx.lineTo(-7,25);ctx.lineTo(4,36);ctx.fill();
+  }else if(ride==="frostbike"){
+    ctx.strokeStyle="#dff7ff";ctx.lineWidth=4;ctx.beginPath();ctx.arc(1,42,10,0,Math.PI*2);ctx.arc(43,42,10,0,Math.PI*2);ctx.stroke();
+    ctx.strokeStyle="#67e8f9";ctx.beginPath();ctx.moveTo(3,39);ctx.lineTo(19,26);ctx.lineTo(34,39);ctx.lineTo(9,39);ctx.stroke();ctx.fillStyle="#e0f2fe";ctx.fillRect(14,25,14,4);
+  }else if(ride==="goldenrocket"){
+    ctx.fillStyle="#d4a72c";ctx.beginPath();ctx.ellipse(21,37,29,8,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#fff0a8";ctx.beginPath();ctx.moveTo(42,37);ctx.lineTo(54,31);ctx.lineTo(47,42);ctx.fill();ctx.fillStyle="#f97316";ctx.beginPath();ctx.moveTo(-6,36);ctx.lineTo(-18,30);ctx.lineTo(-8,42);ctx.fill();
+  }else if(ride==="skate"){
+    ctx.fillStyle="#e7a52d";roundedRectPath(-4,37,54,7,4);ctx.fill();ctx.fillStyle="#222";ctx.beginPath();ctx.arc(5,46,4,0,Math.PI*2);ctx.arc(40,46,4,0,Math.PI*2);ctx.fill();
   }else if(ride==="reef"){
-    ctx.fillStyle="#16b9d4";ctx.beginPath();ctx.ellipse(20,41,31,6,-.08,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle="#f8fafc";ctx.fillRect(3,39,35,2);
+    ctx.fillStyle="#16b9d4";ctx.beginPath();ctx.ellipse(20,41,31,6,-.08,0,Math.PI*2);ctx.fill();ctx.fillStyle="#f8fafc";ctx.fillRect(3,39,35,2);
   }else if(ride==="ufo"){
-    ctx.fillStyle="#9be7ff";ctx.beginPath();ctx.ellipse(20,37,31,9,0,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle="#64748b";ctx.beginPath();ctx.ellipse(20,39,35,5,0,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle="rgba(125,249,255,.55)";ctx.beginPath();ctx.ellipse(20,29,13,9,0,Math.PI,0);ctx.fill();
+    ctx.fillStyle="#9be7ff";ctx.beginPath();ctx.ellipse(20,37,31,9,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#64748b";ctx.beginPath();ctx.ellipse(20,39,35,5,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="rgba(125,249,255,.55)";ctx.beginPath();ctx.ellipse(20,29,13,9,0,Math.PI,0);ctx.fill();
   }else if(ride==="hover"){
-    ctx.fillStyle="#d946ef";roundedRectPath(-4,38,51,7,5);ctx.fill();
-    ctx.fillStyle="#67e8f9";ctx.fillRect(2,46,39,3);
+    ctx.fillStyle="#d946ef";roundedRectPath(-4,38,51,7,5);ctx.fill();ctx.fillStyle="#67e8f9";ctx.fillRect(2,46,39,3);
   }else if(ride==="chopper"){
-    ctx.strokeStyle="#cbd5e1";ctx.lineWidth=4;ctx.beginPath();ctx.arc(-1,42,10,0,Math.PI*2);ctx.arc(44,42,10,0,Math.PI*2);ctx.stroke();
-    ctx.strokeStyle="#8b5e3c";ctx.beginPath();ctx.moveTo(3,38);ctx.lineTo(20,27);ctx.lineTo(35,39);ctx.lineTo(8,39);ctx.stroke();
+    ctx.strokeStyle="#cbd5e1";ctx.lineWidth=4;ctx.beginPath();ctx.arc(-1,42,10,0,Math.PI*2);ctx.arc(44,42,10,0,Math.PI*2);ctx.stroke();ctx.strokeStyle="#8b5e3c";ctx.beginPath();ctx.moveTo(3,38);ctx.lineTo(20,27);ctx.lineTo(35,39);ctx.lineTo(8,39);ctx.stroke();
   }else if(ride==="cloud"){
-    ctx.fillStyle="#eefaff";for(const [x,y,r] of [[0,40,10],[12,36,13],[26,38,15],[40,40,10]]){ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}
-    ctx.fillStyle="#93c5fd";ctx.fillRect(1,48,38,3);
+    ctx.fillStyle="#eefaff";for(const [rx,ry,r] of [[0,40,10],[12,36,13],[26,38,15],[40,40,10]]){ctx.beginPath();ctx.arc(rx,ry,r,0,Math.PI*2);ctx.fill()}ctx.fillStyle="#93c5fd";ctx.fillRect(1,48,38,3);
   }else if(ride==="royal"){
-    ctx.fillStyle="#d9bf59";roundedRectPath(2,29,37,18,5);ctx.fill();ctx.fillStyle="#7c3aed";ctx.fillRect(8,31,25,11);
-    ctx.fillStyle="#f8df70";ctx.beginPath();ctx.moveTo(9,28);ctx.lineTo(14,20);ctx.lineTo(20,28);ctx.lineTo(26,19);ctx.lineTo(32,28);ctx.fill();
+    ctx.fillStyle="#d9bf59";roundedRectPath(2,29,37,18,5);ctx.fill();ctx.fillStyle="#7c3aed";ctx.fillRect(8,31,25,11);ctx.fillStyle="#f8df70";ctx.beginPath();ctx.moveTo(9,28);ctx.lineTo(14,20);ctx.lineTo(20,28);ctx.lineTo(26,19);ctx.lineTo(32,28);ctx.fill();
   }else if(ride==="dragonride"){
-    ctx.fillStyle="#9f352c";ctx.beginPath();ctx.ellipse(20,38,25,8,0,0,Math.PI*2);ctx.fill();
-    ctx.beginPath();ctx.moveTo(9,36);ctx.lineTo(-13,20);ctx.lineTo(2,42);ctx.closePath();ctx.fill();
-    ctx.beginPath();ctx.moveTo(31,36);ctx.lineTo(54,20);ctx.lineTo(39,42);ctx.closePath();ctx.fill();
-    ctx.fillStyle="#e6b94d";ctx.beginPath();ctx.moveTo(42,34);ctx.lineTo(54,29);ctx.lineTo(45,40);ctx.fill();
+    ctx.fillStyle="#9f352c";ctx.beginPath();ctx.ellipse(20,38,25,8,0,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.moveTo(9,36);ctx.lineTo(-13,20);ctx.lineTo(2,42);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(31,36);ctx.lineTo(54,20);ctx.lineTo(39,42);ctx.closePath();ctx.fill();ctx.fillStyle="#e6b94d";ctx.beginPath();ctx.moveTo(42,34);ctx.lineTo(54,29);ctx.lineTo(45,40);ctx.fill();
+  }else if(ride==="mech"){
+    ctx.fillStyle="#475569";ctx.fillRect(3,31,36,13);ctx.fillStyle="#94a3b8";ctx.fillRect(8,27,26,8);ctx.strokeStyle="#cbd5e1";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(7,43);ctx.lineTo(1,51);ctx.moveTo(35,43);ctx.lineTo(42,51);ctx.stroke();ctx.fillStyle="#22d3ee";ctx.fillRect(12,35,18,3);
+  }else if(ride==="comet"){
+    ctx.fillStyle="#fb923c";ctx.beginPath();ctx.ellipse(20,40,31,6,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#fde68a";ctx.fillRect(4,38,33,2);ctx.fillStyle="#ef4444";ctx.beginPath();ctx.moveTo(-8,40);ctx.lineTo(-24,31);ctx.lineTo(-17,47);ctx.closePath();ctx.fill();
+  }else if(ride==="voidwing"){
+    ctx.fillStyle="#2e1065";ctx.beginPath();ctx.moveTo(20,37);ctx.lineTo(-19,22);ctx.lineTo(-3,43);ctx.lineTo(20,40);ctx.lineTo(45,43);ctx.lineTo(61,22);ctx.closePath();ctx.fill();ctx.strokeStyle="#a78bfa";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-10,28);ctx.lineTo(20,38);ctx.lineTo(52,28);ctx.stroke();
+  }else if(ride==="phantom"){
+    ctx.fillStyle="rgba(196,181,253,.72)";roundedRectPath(-7,35,57,10,6);ctx.fill();ctx.strokeStyle="#ede9fe";ctx.lineWidth=2;ctx.strokeRect(1,37,40,5);ctx.fillStyle="rgba(139,92,246,.42)";ctx.fillRect(-10,47,63,3);
+  }else if(ride==="meteor"){
+    ctx.fillStyle="#92400e";roundedRectPath(-2,31,45,16,5);ctx.fill();ctx.strokeStyle="#f59e0b";ctx.lineWidth=3;ctx.strokeRect(2,34,37,10);ctx.fillStyle="#f97316";ctx.beginPath();ctx.moveTo(-3,38);ctx.lineTo(-18,29);ctx.lineTo(-12,47);ctx.closePath();ctx.fill();
+  }else if(ride==="nexus"){
+    const nr=ctx.createLinearGradient(-6,36,49,43);nr.addColorStop(0,"#22d3ee");nr.addColorStop(.5,"#a855f7");nr.addColorStop(1,"#f0abfc");ctx.fillStyle=nr;roundedRectPath(-6,35,56,9,6);ctx.fill();ctx.fillStyle="#f8fafc";ctx.fillRect(2,38,40,2);ctx.strokeStyle="#67e8f9";ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(21,40,34,10,0,0,Math.PI*2);ctx.stroke();
+  }
+}
+
+function drawCharacterVisual(character,ride,b){
+  const boardLike=["skate","reef","hover","cloud","comet","voidwing","phantom","nexus","ufo","goldenrocket","dragonride","royal","meteor","mech"].includes(ride);
+  // Full body pose. Custom skins do NOT draw any Classic Rider body/head/helmet underneath.
+  const legColor=character==="rider"?"#1f2937":"#111827";
+  ctx.strokeStyle=legColor;ctx.lineWidth=4;ctx.lineCap="round";
+  ctx.beginPath();
+  if(boardLike){ctx.moveTo(20,24);ctx.lineTo(13,34);ctx.lineTo(6,38);ctx.moveTo(24,24);ctx.lineTo(29,33);ctx.lineTo(38,38)}
+  else{ctx.moveTo(20,23);ctx.lineTo(16,31);ctx.lineTo(9,35);ctx.moveTo(24,23);ctx.lineTo(28,30);ctx.lineTo(33,35)}
+  ctx.stroke();ctx.lineCap="butt";
+
+  if(character==="rider"){
+    const shirtCols=["#2563eb","#f8fafc","#d97706","#0891b2","#0ea5e9","#dc2626","#22d3ee","#15803d","#92400e","#f472b6","#6d28d9","#1d4ed8","#f97316","#06b6d4","#4d7c0f","#ca8a04","#7c2d12","#365314","#e5e7eb","#b91c1c","#2563eb","#7c3aed","#7f1d1d","#4f6b7c","#315d36","#7b542f","#3ca886"];
+    ctx.fillStyle=shirtCols[b]||"#2563eb";roundedRectPath(15,7,14,17,5);ctx.fill();
+    ctx.strokeStyle="#d6a67a";ctx.lineWidth=3.5;ctx.beginPath();ctx.moveTo(16,12);ctx.lineTo(10,20);ctx.lineTo(18,22);ctx.moveTo(28,12);ctx.lineTo(32,18);ctx.lineTo(30,20);ctx.stroke();
+    ctx.fillStyle="#d6a67a";ctx.fillRect(19,3,6,6);ctx.beginPath();ctx.arc(22,-1,7,0,Math.PI*2);ctx.fill();
+    // Default rider alone can receive biome headwear.
+    if(b===1||b===18){ctx.fillStyle="#e5e7eb";ctx.beginPath();ctx.arc(22,-1,9,Math.PI,0);ctx.fill();ctx.fillStyle="#1e293b";ctx.fillRect(16,-2,12,5)}
+    else if(b===15){ctx.fillStyle="#facc15";ctx.fillRect(14,-7,16,5);ctx.fillRect(18,-12,8,6)}
+    else if(b===16){ctx.fillStyle="#111827";ctx.beginPath();ctx.arc(22,-3,9,Math.PI,0);ctx.fill();ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(22,-3,3,0,Math.PI*2);ctx.fill()}
+    else if(b===11){ctx.fillStyle="#9ca3af";ctx.beginPath();ctx.arc(22,-2,8,Math.PI,0);ctx.fill()}
+    else if(b===8){ctx.fillStyle="#7c4a27";ctx.fillRect(13,-8,18,4);ctx.fillRect(16,-12,12,6)}
+    else if(b===22){ctx.fillStyle="#20242a";ctx.beginPath();ctx.arc(22,-3,9,Math.PI,0);ctx.fill();ctx.fillStyle="#9f1d2d";ctx.fillRect(13,-4,18,3)}
+    else if(b===23){ctx.fillStyle="#9ca3af";ctx.beginPath();ctx.arc(22,-3,9,Math.PI,0);ctx.fill()}
+    else{ctx.fillStyle="#3f2d20";ctx.beginPath();ctx.arc(22,-4,7,Math.PI,0);ctx.fill()}
+    ctx.fillStyle="#111827";ctx.beginPath();ctx.arc(20,-1,1,0,Math.PI*2);ctx.arc(24,-1,1,0,Math.PI*2);ctx.fill();
+    return;
   }
 
-  // Locker character cosmetic overlay
-  if(profile.equippedCharacter==="knight"){
-    ctx.fillStyle="#9ca3af";ctx.beginPath();ctx.arc(22,-2,10,Math.PI,0);ctx.fill();ctx.fillStyle="#8b1e2d";ctx.fillRect(15,8,14,13);
-  }else if(profile.equippedCharacter==="astronaut"){
-    ctx.fillStyle="#f1f5f9";ctx.beginPath();ctx.arc(22,-1,10,0,Math.PI*2);ctx.fill();ctx.fillStyle="#4b6b83";ctx.fillRect(15,-4,14,6);
-  }else if(profile.equippedCharacter==="samurai"){
-    ctx.fillStyle="#27272a";ctx.beginPath();ctx.arc(22,-3,9,Math.PI,0);ctx.fill();ctx.fillStyle="#b91c1c";ctx.fillRect(13,-5,18,3);
-  }else if(profile.equippedCharacter==="viking"){
-    ctx.fillStyle="#cbd5e1";ctx.beginPath();ctx.arc(22,-3,9,Math.PI,0);ctx.fill();ctx.fillStyle="#704a2d";ctx.fillRect(14,8,16,6);
-  }else if(profile.equippedCharacter==="alien"){
-    ctx.fillStyle="#72e6b2";ctx.beginPath();ctx.ellipse(22,-2,8,10,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#17202a";ctx.beginPath();ctx.ellipse(18,-3,2.5,4,0,0,Math.PI*2);ctx.ellipse(26,-3,2.5,4,0,0,Math.PI*2);ctx.fill();
-  }else if(profile.equippedCharacter==="wizard"){
-    ctx.fillStyle="#6d28d9";ctx.beginPath();ctx.moveTo(12,-2);ctx.lineTo(22,-18);ctx.lineTo(32,-2);ctx.closePath();ctx.fill();ctx.fillStyle="#facc15";ctx.fillRect(14,-4,16,3);
-  }else if(profile.equippedCharacter==="solarwarden"){
-    ctx.fillStyle="#f8fafc";roundedRectPath(13,5,18,22,5);ctx.fill();ctx.strokeStyle="#facc15";ctx.lineWidth=2;ctx.strokeRect(15,8,14,15);ctx.fillStyle="#fde047";ctx.beginPath();ctx.arc(22,-3,10,Math.PI,0);ctx.fill();ctx.fillStyle="#38bdf8";ctx.fillRect(14,-5,16,4);
-  }else if(profile.equippedCharacter==="reefphantom"){
-    ctx.fillStyle="#083344";roundedRectPath(13,5,18,22,5);ctx.fill();ctx.strokeStyle="#22d3ee";ctx.lineWidth=2;ctx.beginPath();ctx.arc(22,-2,10,0,Math.PI*2);ctx.stroke();ctx.fillStyle="#67e8f9";ctx.fillRect(14,-4,16,5);ctx.strokeStyle="#67e8f9";ctx.beginPath();ctx.moveTo(14,11);ctx.lineTo(7,18);ctx.moveTo(30,11);ctx.lineTo(37,18);ctx.stroke();
-  }else if(profile.equippedCharacter==="jadeserpent"){
-    ctx.fillStyle="#14532d";roundedRectPath(13,5,18,22,5);ctx.fill();ctx.strokeStyle="#facc15";ctx.lineWidth=2;ctx.strokeRect(15,8,14,15);ctx.fillStyle="#16a34a";ctx.beginPath();ctx.moveTo(12,-3);ctx.quadraticCurveTo(22,-15,32,-3);ctx.lineTo(28,4);ctx.lineTo(16,4);ctx.closePath();ctx.fill();ctx.fillStyle="#fde047";ctx.fillRect(17,-4,3,2);ctx.fillRect(24,-4,3,2);
-  }else if(profile.equippedCharacter==="dragonborn"){
-    ctx.fillStyle="#1c1917";roundedRectPath(12,5,20,23,4);ctx.fill();ctx.strokeStyle="#f97316";ctx.lineWidth=2;ctx.strokeRect(14,8,16,16);ctx.fillStyle="#7f1d1d";ctx.beginPath();ctx.arc(22,-2,10,Math.PI,0);ctx.fill();ctx.beginPath();ctx.moveTo(15,-7);ctx.lineTo(12,-15);ctx.lineTo(20,-8);ctx.moveTo(29,-7);ctx.lineTo(32,-15);ctx.lineTo(24,-8);ctx.fill();
-  }else if(profile.equippedCharacter==="chromeronin"){
-    ctx.fillStyle="#64748b";roundedRectPath(12,5,20,23,4);ctx.fill();ctx.strokeStyle="#22d3ee";ctx.lineWidth=2;ctx.strokeRect(14,8,16,16);ctx.fillStyle="#111827";ctx.beginPath();ctx.arc(22,-3,10,Math.PI,0);ctx.fill();ctx.fillStyle="#22d3ee";ctx.fillRect(13,-5,18,3);ctx.fillStyle="#94a3b8";ctx.fillRect(11,10,4,10);ctx.fillRect(29,10,4,10);
-  }else if(profile.equippedCharacter==="voidmonarch"){
-    ctx.fillStyle="#1e1038";roundedRectPath(11,4,22,24,5);ctx.fill();ctx.strokeStyle="#c084fc";ctx.lineWidth=2;ctx.strokeRect(14,8,16,16);ctx.fillStyle="#581c87";ctx.beginPath();ctx.arc(22,-3,10,Math.PI,0);ctx.fill();ctx.fillStyle="#f0abfc";ctx.beginPath();ctx.moveTo(13,-8);ctx.lineTo(16,-16);ctx.lineTo(21,-9);ctx.lineTo(25,-17);ctx.lineTo(31,-8);ctx.closePath();ctx.fill();
-  }else if(profile.equippedCharacter==="nexussentinel"){
-    const ng=ctx.createLinearGradient(10,4,34,28);ng.addColorStop(0,"#67e8f9");ng.addColorStop(.5,"#f0abfc");ng.addColorStop(1,"#fde68a");ctx.fillStyle=ng;roundedRectPath(11,4,22,24,5);ctx.fill();ctx.fillStyle="#111827";ctx.beginPath();ctx.arc(22,-3,10,Math.PI,0);ctx.fill();ctx.strokeStyle="#fde68a";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(12,-5);ctx.lineTo(6,-13);ctx.moveTo(32,-5);ctx.lineTo(38,-13);ctx.stroke();ctx.fillStyle="#67e8f9";ctx.fillRect(14,-5,16,3);
+  // Custom skin full-body base. This completely replaces the Classic Rider.
+  const palettes={
+    knight:["#9ca3af","#6b7280","#8b1e2d","#e5e7eb"], astronaut:["#f1f5f9","#94a3b8","#3b82f6","#0f172a"],
+    samurai:["#27272a","#b91c1c","#111827","#f5d0c5"], viking:["#6b4b2f","#94a3b8","#7c2d12","#d6a67a"],
+    alien:["#14532d","#72e6b2","#22d3ee","#0f172a"], wizard:["#312e81","#6d28d9","#facc15","#d6a67a"],
+    streetracer:["#111827","#1f2937","#ef4444","#67e8f9"], mysticmage:["#0d47a1","#082f72","#ffffff","#d6a67a"],
+    cosmicsovereign:["#1d1438","#7c3aed","#ec4899","#67e8f9"], solarwarden:["#f8fafc","#fde047","#f59e0b","#38bdf8"],
+    reefphantom:["#083344","#155e75","#22d3ee","#67e8f9"], ashenrevenant:["#211512","#44403c","#7c2d12","#ff5a1f"],
+    eclipsewarden:["#151922","#0d1118","#6b7280","#c4b5fd"], frosttyrant:["#2b3942","#b7c4ce","#0b2230","#7dd3fc"],
+    bloodreaper:["#211015","#14090c","#641523","#ef4444"], starforgedarchon:["#ece9df","#b59b4b","#132033","#f5d36a"]
+  };
+  const p=palettes[character]||["#1f2937","#374151","#6b7280","#e5e7eb"];
+  // boots + full legs
+  ctx.strokeStyle=p[1];ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(18,23);ctx.lineTo(13,34);ctx.lineTo(7,38);ctx.moveTo(26,23);ctx.lineTo(31,33);ctx.lineTo(39,38);ctx.stroke();
+  ctx.fillStyle="#0b0f16";ctx.fillRect(3,36,9,4);ctx.fillRect(35,36,9,4);
+  // torso/coat
+  ctx.fillStyle=p[0];roundedRectPath(10,5,24,24,5);ctx.fill();ctx.strokeStyle=p[2];ctx.lineWidth=2;ctx.strokeRect(13,8,18,17);
+  // arms
+  ctx.strokeStyle=p[1];ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(12,11);ctx.lineTo(5,20);ctx.lineTo(11,24);ctx.moveTo(32,11);ctx.lineTo(38,19);ctx.lineTo(34,24);ctx.stroke();
+  // head base - custom head, never default biome helmet
+  const skin=["alien","cosmicsovereign","reefphantom"].includes(character)?p[1]:"#d6a67a";
+  ctx.fillStyle=skin;ctx.beginPath();ctx.arc(22,-2,8,0,Math.PI*2);ctx.fill();
+
+  if(character==="knight"){
+    ctx.fillStyle="#aeb4bb";ctx.beginPath();ctx.arc(22,-3,11,Math.PI,0);ctx.lineTo(32,4);ctx.lineTo(12,4);ctx.closePath();ctx.fill();ctx.fillStyle="#20252a";ctx.fillRect(13,-4,18,4);ctx.fillStyle="#8b1e2d";ctx.beginPath();ctx.moveTo(22,-14);ctx.lineTo(25,-7);ctx.lineTo(20,-7);ctx.closePath();ctx.fill();
+  }else if(character==="astronaut"){
+    ctx.fillStyle="#f8fafc";ctx.beginPath();ctx.arc(22,-2,11,0,Math.PI*2);ctx.fill();ctx.fillStyle="#29465b";roundedRectPath(14,-7,16,10,4);ctx.fill();ctx.fillStyle="#38bdf8";ctx.fillRect(14,12,16,4);
+  }else if(character==="samurai"){
+    ctx.fillStyle="#27272a";ctx.beginPath();ctx.arc(22,-3,10,Math.PI,0);ctx.fill();ctx.fillStyle="#b91c1c";ctx.fillRect(11,-6,22,3);ctx.fillStyle="#52525b";ctx.fillRect(15,-2,14,5);ctx.strokeStyle="#d1d5db";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(37,7);ctx.lineTo(45,-9);ctx.stroke();
+  }else if(character==="viking"){
+    ctx.fillStyle="#cbd5e1";ctx.beginPath();ctx.arc(22,-3,10,Math.PI,0);ctx.fill();ctx.strokeStyle="#cbd5e1";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(14,-8);ctx.lineTo(7,-15);ctx.moveTo(30,-8);ctx.lineTo(37,-15);ctx.stroke();ctx.fillStyle="#6b4b2f";ctx.beginPath();ctx.moveTo(16,3);ctx.lineTo(22,10);ctx.lineTo(28,3);ctx.closePath();ctx.fill();
+  }else if(character==="alien"){
+    ctx.fillStyle="#72e6b2";ctx.beginPath();ctx.ellipse(22,-3,9,11,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#08111b";ctx.beginPath();ctx.ellipse(18,-4,3,5,0,0,Math.PI*2);ctx.ellipse(26,-4,3,5,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#22d3ee";ctx.lineWidth=2;ctx.strokeRect(13,9,18,14);
+  }else if(character==="wizard"){
+    ctx.fillStyle="#4c1d95";ctx.beginPath();ctx.moveTo(9,-1);ctx.lineTo(22,-22);ctx.lineTo(35,-1);ctx.closePath();ctx.fill();ctx.fillStyle="#facc15";ctx.fillRect(11,-4,22,3);ctx.fillStyle="#facc15";for(const [sx,sy] of [[18,-10],[24,-15],[28,-7]]){ctx.beginPath();ctx.arc(sx,sy,1.2,0,Math.PI*2);ctx.fill()}ctx.strokeStyle="#8b5e3c";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(39,22);ctx.lineTo(44,-13);ctx.stroke();
+  }else if(character==="streetracer"){
+    ctx.fillStyle="#111827";ctx.beginPath();ctx.arc(22,-3,11,Math.PI,0);ctx.lineTo(31,4);ctx.lineTo(13,4);ctx.closePath();ctx.fill();ctx.strokeStyle="#ef4444";ctx.lineWidth=2;ctx.stroke();ctx.fillStyle="#67e8f9";ctx.fillRect(13,-5,18,4);ctx.fillStyle="#ef4444";ctx.fillRect(17,12,10,3);
+  }else if(character==="mysticmage"){
+    ctx.fillStyle="#0d47a1";ctx.beginPath();ctx.moveTo(8,-1);ctx.lineTo(22,-23);ctx.lineTo(36,-1);ctx.closePath();ctx.fill();ctx.strokeStyle="#fff";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(10,-3);ctx.quadraticCurveTo(22,-8,34,-3);ctx.stroke();ctx.fillStyle="#fff";[[16,12],[25,15],[18,21],[28,23],[20,-10],[27,-5]].forEach(([sx,sy])=>{ctx.beginPath();ctx.arc(sx,sy,1.4,0,Math.PI*2);ctx.fill()});ctx.strokeStyle="#8b5e3c";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(39,21);ctx.lineTo(45,-16);ctx.stroke();ctx.fillStyle="#60a5fa";ctx.beginPath();ctx.arc(46,-18,4,0,Math.PI*2);ctx.fill();
+  }else if(character==="cosmicsovereign"){
+    ctx.fillStyle="#090312";ctx.beginPath();ctx.arc(22,-3,11,Math.PI,0);ctx.fill();ctx.fillStyle="#c084fc";ctx.beginPath();ctx.moveTo(10,-7);ctx.lineTo(15,-19);ctx.lineTo(21,-10);ctx.lineTo(26,-21);ctx.lineTo(34,-7);ctx.closePath();ctx.fill();ctx.fillStyle="#67e8f9";ctx.fillRect(13,-5,18,3);
+  }else if(character==="solarwarden"){
+    ctx.fillStyle="#fde047";ctx.beginPath();ctx.arc(22,-3,11,Math.PI,0);ctx.fill();ctx.fillStyle="#38bdf8";ctx.fillRect(13,-5,18,4);ctx.strokeStyle="#f59e0b";ctx.lineWidth=2;ctx.beginPath();ctx.arc(22,-4,15,Math.PI,0);ctx.stroke();
+  }else if(character==="reefphantom"){
+    ctx.fillStyle="#083344";ctx.beginPath();ctx.arc(22,-3,11,Math.PI,0);ctx.fill();ctx.strokeStyle="#22d3ee";ctx.lineWidth=2;ctx.beginPath();ctx.arc(22,-2,12,0,Math.PI*2);ctx.stroke();ctx.fillStyle="#67e8f9";ctx.fillRect(13,-4,18,5);
+  }else if(character==="ashenrevenant"){
+    ctx.fillStyle="#25201e";ctx.beginPath();ctx.arc(22,-3,11,Math.PI,0);ctx.fill();ctx.fillStyle="#ff5a1f";ctx.fillRect(13,-5,6,2);ctx.fillRect(25,-5,6,2);ctx.strokeStyle="#ff5a1f";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(11,10);ctx.lineTo(3,17);ctx.moveTo(33,10);ctx.lineTo(41,17);ctx.stroke();
+  }else if(character==="eclipsewarden"){
+    ctx.fillStyle="#0d1118";ctx.beginPath();ctx.arc(22,-3,11,Math.PI,0);ctx.fill();ctx.fillStyle="#c4b5fd";ctx.fillRect(13,-5,18,2);ctx.strokeStyle="#a78bfa";ctx.beginPath();ctx.arc(22,-3,15,-1.1,1.1);ctx.stroke();
+  }else if(character==="frosttyrant"){
+    ctx.fillStyle="#b7c4ce";ctx.beginPath();ctx.arc(22,-3,11,Math.PI,0);ctx.fill();ctx.fillStyle="#0b2230";ctx.fillRect(12,-5,20,4);ctx.fillStyle="#7dd3fc";ctx.fillRect(14,-4,16,2);ctx.strokeStyle="#d8edf7";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(14,-9);ctx.lineTo(8,-17);ctx.moveTo(30,-9);ctx.lineTo(36,-17);ctx.stroke();
+  }else if(character==="bloodreaper"){
+    ctx.fillStyle="#14090c";ctx.beginPath();ctx.moveTo(7,2);ctx.quadraticCurveTo(22,-22,37,2);ctx.lineTo(31,6);ctx.lineTo(13,6);ctx.closePath();ctx.fill();ctx.fillStyle="#ef4444";ctx.fillRect(14,-4,6,2);ctx.fillRect(24,-4,6,2);ctx.strokeStyle="#a4acb2";ctx.lineWidth=3;ctx.beginPath();ctx.arc(39,4,12,-1.4,1.2);ctx.stroke();
+  }else if(character==="starforgedarchon"){
+    ctx.fillStyle="#ece9df";ctx.beginPath();ctx.arc(22,-3,11,Math.PI,0);ctx.fill();ctx.fillStyle="#132033";ctx.fillRect(12,-5,20,4);ctx.fillStyle="#f5d36a";ctx.fillRect(14,-4,16,2);ctx.strokeStyle="#f5d36a";ctx.lineWidth=2;ctx.beginPath();ctx.arc(22,-7,15,0,Math.PI*2);ctx.stroke();
   }
-  // Locker trail cosmetic
-  if(profile.equippedTrail!=="none"){
+}
+
+function drawEquippedAvatar(character,ride,b,trail){
+  // trail first so it stays behind the equipped ride/character
+  if(trail&&trail!=="none"){
     const trailColors={spark:"#ffe45c",bubbles:"#8de9ff",embers:"#ff7438",petals:"#f9a8d4",stars:"#fff1a3",lightning:"#67e8f9",voiddust:"#a78bfa",souls:"#c4b5fd",rainbow:"#f0abfc",neoncomet:"#22d3ee",dragonfire:"#fb923c"};
-    ctx.fillStyle=trailColors[profile.equippedTrail]||"#fff";
-    for(let i=0;i<5;i++){ctx.globalAlpha=.28+i*.12;ctx.beginPath();ctx.arc(-8-i*8,35+(i%2)*4,2+(i%3),0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;
+    ctx.fillStyle=trailColors[trail]||"#fff";for(let i=0;i<5;i++){ctx.globalAlpha=.28+i*.12;ctx.beginPath();ctx.arc(-8-i*8,35+(i%2)*4,2+(i%3),0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;
   }
-ctx.restore();
+  drawRideVisual(ride||"classic");
+  drawCharacterVisual(character||"rider",ride||"classic",Number.isFinite(b)?b:0);
+}
+
+function drawPlayer(){
+  const b=biomeIndex(),x=player.x,y=player.y;
+  ctx.save();ctx.translate(x,y);
+  drawEquippedAvatar(profile.equippedCharacter,profile.equippedBike,b,profile.equippedTrail);
+  ctx.restore();
 }
 
 function roundedRectPath(x,y,w,h,r){
@@ -2648,7 +3004,7 @@ function drawPickup(p){
   }
   const cols=["#111827","#9ca3af","#22d3ee","#fff","#e0f2fe","#fb923c","#22d3ee","#facc15","#f59e0b","#fff","#d1d5db","#facc15","#fff","#22d3ee","#84cc16","#facc15","#fde68a","#22c55e","#cbd5e1","#ef4444","#3b82f6","#a78bfa"];
   ctx.fillStyle=cols[b];ctx.beginPath();ctx.arc(cx,cy,11,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle=(b===3||b===9||b===12||b===18)?"#111":"#fff";ctx.font="bold 9px Arial";ctx.textAlign="center";ctx.strokeStyle="rgba(0,0,0,.8)";ctx.lineWidth=3;ctx.strokeText("+50",cx,cy+3);ctx.fillText("+50",cx,cy+3);
+  const bonusHue=(performance.now()*.09+p.y*.7)%360;ctx.save();ctx.shadowColor="hsl("+bonusHue+",95%,65%)";ctx.shadowBlur=9;ctx.fillStyle="hsl("+bonusHue+",95%,72%)";ctx.font="bold 9px Arial";ctx.textAlign="center";ctx.strokeStyle="rgba(0,0,0,.82)";ctx.lineWidth=3;ctx.strokeText("+50",cx,cy+3);ctx.fillText("+50",cx,cy+3);ctx.restore();
 }
 
 function drawNotice(){
@@ -3149,6 +3505,7 @@ document.getElementById("openLeaderboardBtn").addEventListener("click",openLeade
 document.getElementById("closeLeaderboardBtn").addEventListener("click",closeLeaderboard);
 document.getElementById("registerPassword").addEventListener("keydown",e=>{if(e.key==="Enter")registerAccount();});
 document.getElementById("loginPassword").addEventListener("keydown",e=>{if(e.key==="Enter")loginAccount();});
+renderDailySpin();
 restoreAccount();
 
 usernameInput.addEventListener("keydown",e=>{
@@ -3511,11 +3868,7 @@ function drawRemotePlayers(){
     ctx.globalAlpha=dead?.95:.82;
     ctx.translate(p.x,p.y);
     if(flashing){ctx.fillStyle="rgba(239,68,68,.48)";ctx.strokeStyle="#ff1f1f";ctx.lineWidth=6;roundedRectPath(-9,-22,62,72,12);ctx.fill();ctx.stroke();}
-    ctx.strokeStyle=flashing?"#fee2e2":"#f8fafc";ctx.lineWidth=3;
-    ctx.beginPath();ctx.arc(9,35,8,0,Math.PI*2);ctx.arc(33,35,8,0,Math.PI*2);ctx.stroke();
-    ctx.strokeStyle=flashing?"#ef4444":"#22d3ee";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(9,35);ctx.lineTo(20,22);ctx.lineTo(33,35);ctx.lineTo(16,35);ctx.lineTo(20,22);ctx.stroke();
-    ctx.fillStyle=flashing?"#ef4444":"#f97316";roundedRectPath(15,7,14,17,5);ctx.fill();
-    ctx.fillStyle="#d6a67a";ctx.beginPath();ctx.arc(22,-1,7,0,Math.PI*2);ctx.fill();
+    drawEquippedAvatar(p.equippedCharacter||"rider",p.equippedBike||"classic",Number.isFinite(p.biome)?p.biome:0,"none");
     ctx.fillStyle=flashing?"#fecaca":"#fff";ctx.font="900 10px monospace";ctx.textAlign="center";ctx.strokeStyle="#000";ctx.lineWidth=3;
     const nm=(p.name||"Player").slice(0,12)+(dead?" • OUT":"");ctx.strokeText(nm,21,-14);ctx.fillText(nm,21,-14);
     ctx.restore();
@@ -3563,6 +3916,7 @@ function endOnlineRoundAllEliminated(){
 }
 
 if(openBattlePassBtn)openBattlePassBtn.addEventListener("click",openBattlePass);
+const dailySpinBtn=document.getElementById("dailySpinBtn");if(dailySpinBtn)dailySpinBtn.addEventListener("click",spinDailyWheel);
 if(openLockerBtn)openLockerBtn.addEventListener("click",openLocker);
 if(closeBattlePassBtn)closeBattlePassBtn.addEventListener("click",closeBattlePass);
 if(closeLockerBtn)closeLockerBtn.addEventListener("click",closeLocker);
@@ -3591,5 +3945,24 @@ resetGame();
 try{draw();}catch(err){console.error(err);statusEl.textContent="Press Start.";}
 showMenu();
 </script>
+
+<script>
+(function(){
+  const tabs=Array.from(document.querySelectorAll('.home-section-tab'));
+  const panels=Array.from(document.querySelectorAll('.home-section'));
+  function openHomeSection(name){
+    tabs.forEach(btn=>btn.classList.toggle('active',btn.dataset.homeSection===name));
+    panels.forEach(panel=>panel.classList.toggle('active',panel.dataset.homePanel===name));
+  }
+  tabs.forEach(btn=>btn.addEventListener('click',()=>openHomeSection(btn.dataset.homeSection)));
+  window.openHomeSection=openHomeSection;
+  const landing=document.getElementById('landingScreen');
+  const enterBtn=document.getElementById('enterGameMenuBtn');
+  if(enterBtn&&landing){
+    enterBtn.addEventListener('click',()=>{landing.style.display='none';});
+  }
+})();
+</script>
+
 </body>
 </html>
