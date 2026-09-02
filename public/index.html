@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Biome Bike Survival — V34 Shop Mix</title>
+<title>Biome Bike Survival — V35 Mobile Joystick</title>
 <style>
   *{box-sizing:border-box}
   body{margin:0;background:#0b1020;color:#fff;font-family:Arial,Helvetica,sans-serif;display:flex;justify-content:center;padding:2px 4px 10px;overflow-x:hidden}
@@ -18,6 +18,17 @@
   .controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:7px}
   button{border:0;border-radius:10px;background:#2563eb;color:#fff;padding:11px 16px;font-weight:800;cursor:pointer}
   button.ctrl{background:#1f2937;min-width:70px}
+  .mobile-stick-wrap{display:none;justify-content:center;align-items:center;margin:12px auto 5px;user-select:none;-webkit-user-select:none}
+  .mobile-stick{width:150px;height:150px;border-radius:50%;position:relative;touch-action:none;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.2),rgba(15,23,42,.92) 45%,rgba(2,6,23,.98));border:3px solid rgba(103,232,249,.72);box-shadow:0 0 0 7px rgba(34,211,238,.10),inset 0 0 28px rgba(56,189,248,.18),0 12px 32px rgba(0,0,0,.38)}
+  .mobile-stick:before{content:"";position:absolute;inset:23px;border-radius:50%;border:1px solid rgba(255,255,255,.13)}
+  .mobile-stick-knob{position:absolute;width:66px;height:66px;left:39px;top:39px;border-radius:50%;pointer-events:none;background:radial-gradient(circle at 35% 30%,#fff 0 7%,#67e8f9 22%,#2563eb 72%,#172554 100%);border:3px solid rgba(255,255,255,.82);box-shadow:0 8px 20px rgba(0,0,0,.42),0 0 24px rgba(34,211,238,.55);transform:translate(0,0)}
+  .mobile-stick-label{font-size:11px;font-weight:1000;letter-spacing:1.3px;color:#a5f3fc;margin-top:5px}
+  @media (pointer:coarse), (max-width:820px){
+    .controls{display:none}
+    .mobile-stick-wrap{display:flex;flex-direction:column}
+    #game{max-height:64vh}
+    .hint.desktop-hint{display:none}
+  }
   #status{margin-top:10px;min-height:22px;color:#cbd5e1}
   .hint{margin-top:6px;color:#94a3b8;font-size:13px}
 
@@ -1119,8 +1130,12 @@ body{min-height:100%;height:auto !important;overflow-x:hidden !important;overflo
     <button class="ctrl" data-k="down">↓ Down</button>
     <button class="ctrl" data-k="right">Right →</button>
   </div>
+  <div class="mobile-stick-wrap" id="mobileStickWrap" aria-label="Movement joystick">
+    <div class="mobile-stick" id="mobileStick"><div class="mobile-stick-knob" id="mobileStickKnob"></div></div>
+    <div class="mobile-stick-label">DRAG TO MOVE</div>
+  </div>
   <div id="status">Press Start.</div>
-  <div class="hint">Move with Arrow Keys or WASD. Every 200 points the world changes. Pickups = +50.</div>
+  <div class="hint desktop-hint">Move with Arrow Keys or WASD. Every 200 points the world changes. Pickups = +50.</div>
 </div>
 
 <script>
@@ -3999,6 +4014,39 @@ document.querySelectorAll(".ctrl").forEach(btn=>{
   const up=e=>{e.preventDefault();keys[k]=false};
   btn.addEventListener("pointerdown",down);btn.addEventListener("pointerup",up);btn.addEventListener("pointerleave",up);btn.addEventListener("pointercancel",up);
 });
+
+// V35 MOBILE-ONLY ANALOG THUMB STICK. Desktop keyboard controls remain unchanged.
+(function setupMobileThumbStick(){
+  const base=document.getElementById("mobileStick"), knob=document.getElementById("mobileStickKnob");
+  if(!base||!knob)return;
+  let activePointer=null;
+  const maxTravel=48, deadZone=.20;
+  function release(){
+    activePointer=null;
+    keys.left=keys.right=keys.up=keys.down=false;
+    knob.style.transform="translate(0px,0px)";
+  }
+  function moveFromEvent(e){
+    const r=base.getBoundingClientRect();
+    let dx=e.clientX-(r.left+r.width/2), dy=e.clientY-(r.top+r.height/2);
+    const dist=Math.hypot(dx,dy), limit=Math.min(maxTravel,r.width*.32);
+    if(dist>limit){dx=dx/dist*limit;dy=dy/dist*limit;}
+    knob.style.transform=`translate(${dx}px,${dy}px)`;
+    const nx=dx/limit, ny=dy/limit;
+    keys.left=nx < -deadZone; keys.right=nx > deadZone;
+    keys.up=ny < -deadZone; keys.down=ny > deadZone;
+  }
+  base.addEventListener("pointerdown",e=>{
+    if(e.pointerType==="mouse")return;
+    e.preventDefault();ensureAudio();activePointer=e.pointerId;
+    try{base.setPointerCapture(e.pointerId)}catch(_){}
+    moveFromEvent(e);
+  });
+  base.addEventListener("pointermove",e=>{if(e.pointerId===activePointer){e.preventDefault();moveFromEvent(e);}});
+  base.addEventListener("pointerup",e=>{if(e.pointerId===activePointer){e.preventDefault();release();}});
+  base.addEventListener("pointercancel",e=>{if(e.pointerId===activePointer)release();});
+  base.addEventListener("lostpointercapture",()=>{if(activePointer!==null)release();});
+})();
 
 document.getElementById("openAccountBtn").addEventListener("click",openAccount);
 document.getElementById("closeAccountBtn").addEventListener("click",closeAccount);
