@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Biome Bike Survival</title>
+<title>Biome Bike Survival — V34 Shop Mix</title>
 <style>
   *{box-sizing:border-box}
   body{margin:0;background:#0b1020;color:#fff;font-family:Arial,Helvetica,sans-serif;display:flex;justify-content:center;padding:2px 4px 10px;overflow-x:hidden}
@@ -374,74 +374,56 @@
 }
 
 
-/* --- WORLD SELECT --- */
-.world-select{
-  margin:18px auto 4px;
-  max-width:570px;
-  text-align:left;
-}
-.world-select-title{
-  color:#ffe66d;
-  font-size:12px;
-  font-weight:900;
-  letter-spacing:2px;
-  text-align:center;
-  margin-bottom:9px;
-}
-.world-select-sub{
-  color:#dff7ff;
-  opacity:.82;
-  text-align:center;
-  font-size:11px;
-  margin-bottom:10px;
-}
-.world-grid{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:7px;
-  max-height:205px;
-  overflow-y:auto;
-  padding:5px;
-  background:rgba(9,31,46,.35);
-  border:3px solid #173a54;
-}
-.world-btn{
-  position:relative;
-  min-width:0;
-  min-height:54px;
-  padding:7px 5px 6px;
-  border:3px solid #173a54;
-  border-radius:4px;
-  color:#fff;
-  background:linear-gradient(180deg,var(--w1,#315b78),var(--w2,#173a54));
-  box-shadow:inset 0 -4px 0 rgba(0,0,0,.18);
-  font-size:10px;
-  line-height:1.1;
-  text-align:center;
-}
-.world-btn .world-icon{display:block;font-size:19px;line-height:20px;margin-bottom:4px}
-.world-btn.selected{
-  border-color:#ffe45c;
-  box-shadow:0 0 0 2px rgba(255,228,92,.23),inset 0 -4px 0 rgba(0,0,0,.18);
-}
-.world-btn.selected:after{
-  content:"✓";
-  position:absolute;
-  right:3px;
-  top:2px;
-  color:#ffe45c;
-  font-size:12px;
-  font-weight:900;
-}
-.world-random{
-  grid-column:1/-1;
-  min-height:43px;
-  background:linear-gradient(180deg,#3d6b46,#23502e);
-  font-size:11px;
-}
-@media(max-width:560px){
-  .world-grid{grid-template-columns:repeat(3,minmax(0,1fr));max-height:230px}
-}
+/* --- V31 FLOATING ISLAND WORLD CAROUSEL --- */
+.world-select{margin:14px auto 4px;max-width:860px;text-align:center}
+.world-select-title{color:#ffe66d;font-size:12px;font-weight:900;letter-spacing:2px;text-align:center;margin-bottom:9px}
+.world-select-sub{color:#dff7ff;opacity:.82;text-align:center;font-size:11px;margin-bottom:10px}
+.world-carousel-shell{position:relative;min-height:430px;overflow:hidden;border:3px solid #173a54;border-radius:18px;background:radial-gradient(circle at 50% 38%,rgba(102,197,255,.20),transparent 28%),linear-gradient(180deg,#102b48 0%,#183d5c 44%,#0a1a2b 100%);box-shadow:inset 0 0 50px rgba(0,0,0,.35);padding:14px 58px 18px}
+.world-carousel-shell:before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 12% 16%,#fff 0 1px,transparent 2px),radial-gradient(circle at 83% 22%,#fff 0 1px,transparent 2px),radial-gradient(circle at 72% 8%,#ffeaa7 0 1px,transparent 2px),radial-gradient(circle at 28% 30%,#fff 0 1px,transparent 2px);background-size:180px 130px,210px 160px,260px 190px,230px 170px;opacity:.55}
+.world-carousel{position:relative;height:350px;perspective:900px;transform-style:preserve-3d}
+.world-island-card{--offset:0;--abs:0;position:absolute;left:50%;top:12px;width:250px;height:330px;margin-left:-125px;border:0;background:transparent;color:#fff;transform-origin:50% 55%;transform:translateX(calc(var(--offset)*215px)) translateY(calc(var(--abs)*20px)) scale(calc(1 - var(--abs)*.18)) rotateY(calc(var(--offset)*-16deg));opacity:calc(1 - var(--abs)*.28);filter:saturate(calc(1 - var(--abs)*.18)) brightness(calc(1 - var(--abs)*.12));transition:transform .52s cubic-bezier(.2,.8,.2,1),opacity .42s,filter .42s;z-index:calc(20 - var(--abs));cursor:pointer;padding:0}
+.world-island-card[data-hidden="1"]{opacity:0;pointer-events:none;transform:translateX(calc(var(--offset)*190px)) scale(.55)}
+.world-island-card.selected{filter:none}
+.world-island-card:focus-visible{outline:3px solid #fff;outline-offset:-6px;border-radius:20px}
+.island-scene{position:relative;height:260px;display:flex;align-items:flex-start;justify-content:center;padding-top:28px;filter:drop-shadow(0 16px 13px rgba(0,0,0,.48))}
+.island-top{position:absolute;left:24px;right:24px;top:116px;height:86px;border-radius:50%;background:linear-gradient(180deg,var(--grass,#5cae55) 0 38%,var(--soil,#755039) 40% 100%);border:4px solid rgba(255,255,255,.14);box-shadow:inset 0 10px 0 rgba(255,255,255,.08)}
+.island-bottom{position:absolute;left:42px;right:42px;top:168px;height:88px;background:linear-gradient(135deg,var(--rock1,#67584c),var(--rock2,#2c2928));clip-path:polygon(0 0,100% 0,82% 35%,68% 48%,57% 100%,45% 66%,30% 84%,20% 38%);border-radius:0 0 35% 35%}
+.island-bottom:after{content:"";position:absolute;inset:7px 25px 18px;background:linear-gradient(90deg,transparent 0 20%,rgba(255,255,255,.16) 21% 24%,transparent 25% 60%,rgba(0,0,0,.2) 61% 66%,transparent 67%);clip-path:inherit}
+.island-landmark{position:relative;z-index:3;margin-top:18px;font-size:76px;line-height:1;text-shadow:0 5px 0 rgba(0,0,0,.25);animation:islandFloat 3.2s ease-in-out infinite}
+.island-props{position:absolute;z-index:4;left:37px;right:37px;top:104px;height:80px;display:flex;align-items:flex-start;justify-content:space-between;font-size:31px;text-shadow:0 3px 0 rgba(0,0,0,.3)}
+.island-props span:nth-child(2){transform:translateY(12px) scale(.82)}
+.island-cloud{position:absolute;z-index:0;font-size:30px;opacity:.7;animation:cloudDrift 5s ease-in-out infinite alternate}
+.island-cloud.c1{left:8px;top:48px}.island-cloud.c2{right:5px;top:83px;animation-delay:-2s}
+@keyframes islandFloat{50%{transform:translateY(-5px)}}
+@keyframes cloudDrift{to{transform:translateX(12px)}}
+.world-island-card.selected .island-scene{animation:selectedIsland 2.2s ease-in-out infinite}
+@keyframes selectedIsland{50%{transform:translateY(-7px)}}
+.world-island-info{position:absolute;left:0;right:0;bottom:0;text-align:center;z-index:5}
+.world-island-number{font-size:10px;font-weight:1000;letter-spacing:2px;color:#aee7ff;margin-bottom:4px}
+.world-island-name{font-size:17px;font-weight:1000;letter-spacing:.5px;text-shadow:0 3px 0 #07131e}
+.world-island-lock{display:inline-block;margin-top:5px;padding:4px 8px;border-radius:999px;background:#38151b;border:2px solid #a74450;color:#ffdce0;font-size:10px;font-weight:1000}
+.world-island-card.selected .world-island-name{color:#ffe45c;font-size:20px}
+.world-island-card.selected:after{content:"SELECTED";position:absolute;top:0;left:50%;transform:translateX(-50%);padding:5px 11px;border-radius:999px;background:#ffe45c;color:#152235;font-size:9px;font-weight:1000;letter-spacing:1.5px;box-shadow:0 4px 0 rgba(0,0,0,.25)}
+.world-nav{position:absolute;z-index:40;top:145px;width:48px;height:58px;border-radius:14px;border:3px solid #7ddcff;background:linear-gradient(#276d98,#143b5d);color:#fff;font-size:29px;font-weight:1000;box-shadow:0 6px 0 #071927;cursor:pointer}
+.world-nav:hover{transform:translateY(-2px)}.world-nav:active{transform:translateY(3px);box-shadow:0 3px 0 #071927}.world-nav.prev{left:9px}.world-nav.next{right:9px}
+.world-carousel-dots{height:20px;display:flex;align-items:center;justify-content:center;gap:5px;margin-top:-3px;overflow:hidden}
+.world-dot{width:6px;height:6px;border-radius:50%;background:#54758d;flex:0 0 auto}.world-dot.active{width:18px;border-radius:5px;background:#ffe45c}
+.world-random{min-height:42px;margin-top:5px;padding:8px 16px;border:3px solid #3e8d57;border-radius:12px;background:linear-gradient(#3d7e51,#1d4b2e);color:#fff;font-size:11px;font-weight:1000;letter-spacing:.5px;box-shadow:0 5px 0 #0c2818;cursor:pointer}.world-random.selected{border-color:#ffe45c;color:#ffe45c}
+.world-carousel-help{margin-top:7px;color:#bfeaff;font-size:10px;font-weight:800;letter-spacing:.4px}
+.world-island-card.locked-world{cursor:not-allowed}.world-island-card.locked-world .island-scene{filter:grayscale(.72) brightness(.55) drop-shadow(0 16px 13px rgba(0,0,0,.48))}
+/* biome material variants */
+.world-island-card[data-world="1"],.world-island-card[data-world="18"],.world-island-card[data-world="30"]{--grass:#59627a;--soil:#313748;--rock1:#3b4052;--rock2:#171b28}
+.world-island-card[data-world="2"],.world-island-card[data-world="8"],.world-island-card[data-world="15"]{--grass:#e2b85d;--soil:#b47739;--rock1:#9b6238;--rock2:#51321f}
+.world-island-card[data-world="3"],.world-island-card[data-world="16"],.world-island-card[data-world="28"],.world-island-card[data-world="33"]{--grass:#3cc7cf;--soil:#17788c;--rock1:#1d6a78;--rock2:#093e51}
+.world-island-card[data-world="4"],.world-island-card[data-world="23"]{--grass:#eafaff;--soil:#8fc6df;--rock1:#90aebd;--rock2:#405d70}
+.world-island-card[data-world="5"],.world-island-card[data-world="19"],.world-island-card[data-world="27"]{--grass:#7b3023;--soil:#4b1c17;--rock1:#6c2b22;--rock2:#1d0a09}
+.world-island-card[data-world="6"],.world-island-card[data-world="13"]{--grass:#24d4c8;--soil:#493a8d;--rock1:#463b72;--rock2:#17142d}
+.world-island-card[data-world="9"],.world-island-card[data-world="20"]{--grass:#ff9bcb;--soil:#a96fd0;--rock1:#9863bd;--rock2:#523875}
+.world-island-card[data-world="10"],.world-island-card[data-world="21"],.world-island-card[data-world="31"]{--grass:#745c9e;--soil:#382c5a;--rock1:#44325f;--rock2:#181426}
+.world-island-card[data-world="35"]{--grass:#8ab42e;--soil:#435b1d;--rock1:#3b4d24;--rock2:#141d0e}
+.world-island-card[data-world="36"]{--grass:#788bd4;--soil:#384b8e;--rock1:#344174;--rock2:#121a3c}
+@media(max-width:700px){.world-carousel-shell{min-height:390px;padding:10px 44px 14px}.world-carousel{height:315px}.world-island-card{width:220px;height:300px;margin-left:-110px;transform:translateX(calc(var(--offset)*170px)) translateY(calc(var(--abs)*17px)) scale(calc(1 - var(--abs)*.20)) rotateY(calc(var(--offset)*-14deg))}.island-scene{height:235px;transform:scale(.9)}.world-nav{top:132px;width:40px;height:52px}.world-island-name{font-size:15px}.world-island-card.selected .world-island-name{font-size:18px}}
+@media(max-width:470px){.world-carousel-shell{padding-left:38px;padding-right:38px;min-height:370px}.world-carousel{height:295px}.world-island-card{width:200px;height:280px;margin-left:-100px;transform:translateX(calc(var(--offset)*145px)) translateY(calc(var(--abs)*15px)) scale(calc(1 - var(--abs)*.22))}.island-scene{height:218px;transform:scale(.82)}.world-nav{width:36px;height:48px;font-size:23px}.world-nav.prev{left:4px}.world-nav.next{right:4px}.world-island-info{bottom:-1px}}
 
 
 /* ===== Account / Battle Pass / Locker ===== */
@@ -667,7 +649,7 @@
 .compact-home-actions #menuStart{display:none}
 .compact-home-actions .menu-secondary{min-height:42px;padding:7px 14px}
 .home-world-select{margin:7px auto 4px;max-width:700px}
-.home-world-select .world-grid{max-height:330px;grid-template-columns:repeat(5,minmax(0,1fr))}
+.home-world-select{max-width:860px}.home-world-select .world-carousel-shell{width:100%}
 .worlds-stats{margin-top:9px}
 .home-spin-card{margin:5px auto 9px;width:min(700px,100%);padding:11px}
 .home-spin-card .daily-spin-body{grid-template-columns:220px 1fr;gap:13px}
@@ -686,7 +668,7 @@
   .home-mini-stats{right:0;top:0}
   .home-section-tabs{gap:4px}
   .home-section-tab{font-size:9px;padding:8px 2px}
-  .home-world-select .world-grid{grid-template-columns:repeat(3,minmax(0,1fr));max-height:380px}
+  .home-world-select .world-carousel-shell{width:100%}
   .home-spin-card .daily-spin-body{grid-template-columns:1fr}
   .home-spin-card .spin-wheel-wrap{width:190px;height:190px}
 }
@@ -695,7 +677,7 @@
   .sectioned-home .menu-sub{margin:6px auto 7px}
   .sectioned-home{padding-top:12px;padding-bottom:12px}
   .sectioned-home .mode-card{min-height:54px}
-  .home-world-select .world-grid{max-height:260px}
+  .home-world-select .world-carousel-shell{width:100%}
   .home-spin-card .spin-wheel-wrap{width:185px;height:185px}
   .home-spin-card .daily-spin-body{grid-template-columns:195px 1fr}
 }
@@ -798,6 +780,31 @@ body{min-height:100%;height:auto !important;overflow-x:hidden !important;overflo
 /* V20 tidy-up: leaderboard preview + 100-level pass */
 .home-leaderboard{margin-top:18px;padding:14px;border:3px solid #facc15;border-radius:10px;background:linear-gradient(180deg,rgba(14,31,52,.96),rgba(6,17,31,.96));box-shadow:inset 0 0 20px rgba(250,204,21,.08)}
 .home-leaderboard-head{display:flex;align-items:center;justify-content:space-between;gap:10px;color:#fef3c7;font-size:14px;letter-spacing:.5px}.home-leaderboard-head button{border:2px solid #38bdf8;background:#082f49;color:#e0f2fe;border-radius:6px;padding:7px 10px;font-weight:900;cursor:pointer}.home-leaderboard-meta{font-size:10px;color:#bae6fd;margin:7px 0}.home-leaderboard-list{display:grid;gap:5px}.home-leaderboard-row{display:grid;grid-template-columns:42px 1fr 90px;gap:8px;align-items:center;background:#071827;border:2px solid #244661;border-radius:6px;padding:7px 9px;font-size:11px;font-weight:900}.home-leaderboard-row.me{border-color:#facc15;background:#2b2308}.home-leaderboard-rank{color:#facc15}.home-leaderboard-score{text-align:right;color:#86efac;font-family:monospace}.home-leaderboard-empty{padding:12px;text-align:center;color:#94a3b8;font-size:11px}.bp-grid{max-height:64vh;overflow:auto;padding-right:4px}
+
+/* V25 locker 3D-style inspection viewer */
+.cosmetic-card{cursor:pointer}
+.locker-viewer{display:grid;grid-template-columns:minmax(280px,420px) 1fr;gap:18px;align-items:center;margin:0 0 16px;padding:16px;border:3px solid #6ee7ff;border-radius:18px;background:linear-gradient(135deg,#07182c,#172554 55%,#3b0764);box-shadow:inset 0 0 32px rgba(103,232,249,.12)}
+.locker-view-stage{min-height:300px;display:grid;place-items:center;perspective:900px;overflow:hidden;border-radius:14px;background:radial-gradient(circle at 50% 38%,rgba(255,255,255,.16),rgba(0,0,0,.38) 62%,rgba(0,0,0,.65));border:2px solid rgba(255,255,255,.18)}
+#locker3dCanvas{width:320px;height:260px;max-width:100%;image-rendering:auto;filter:drop-shadow(0 18px 14px rgba(0,0,0,.45))}
+.locker-view-info h3{font-size:26px;margin:0 0 5px}.locker-view-info p{color:#dbeafe;line-height:1.45}.locker-view-rarity{font-weight:1000;letter-spacing:1px;margin-bottom:8px}.locker-view-controls{display:none}.locker-view-hint{font-size:12px;color:#a5f3fc;margin-top:8px}.dance-badge{display:inline-flex;margin-top:10px;padding:7px 10px;border:2px solid #f0abfc;border-radius:999px;background:#32165a;color:#f5d0fe;font-size:11px;font-weight:1000;letter-spacing:.7px}
+@media(max-width:760px){.locker-viewer{grid-template-columns:1fr}.locker-view-stage{min-height:240px}#locker3dCanvas{width:280px;height:220px}}
+
+/* V32 vibrant home + rotating Item Shop */
+.menu-screen{background:linear-gradient(135deg,#ff5f6d 0%,#ffb347 24%,#34d399 52%,#22d3ee 74%,#a855f7 100%) !important;}
+.pixel-sky{background:linear-gradient(180deg,#8b5cf6 0%,#ec4899 34%,#fb923c 67%,#fde68a 100%) !important;}
+.pixel-sky:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 18% 18%,rgba(255,255,255,.36),transparent 20%),radial-gradient(circle at 78% 24%,rgba(34,211,238,.35),transparent 24%),linear-gradient(115deg,transparent 20%,rgba(255,255,255,.08) 45%,transparent 70%);mix-blend-mode:screen;pointer-events:none}
+.sectioned-home{background:linear-gradient(180deg,rgba(37,22,73,.94),rgba(18,44,68,.95)) !important;border-color:#f9a8d4 !important;box-shadow:0 22px 60px rgba(76,29,149,.34),inset 0 0 45px rgba(34,211,238,.08) !important}
+.sectioned-home .home-section-tabs{grid-template-columns:repeat(5,minmax(0,1fr)) !important}
+.home-section-tab{background:linear-gradient(180deg,#7c3aed,#4f46e5) !important;border-color:#c4b5fd !important}
+.home-section-tab.active{background:linear-gradient(135deg,#fef08a,#fb7185) !important;border-color:#fff !important;color:#431407 !important}
+.shop-hero{position:relative;padding:22px;border:3px solid #fde047;border-radius:20px;background:linear-gradient(125deg,#7c3aed 0%,#db2777 44%,#f97316 78%,#06b6d4 125%);box-shadow:inset 0 0 35px rgba(255,255,255,.14),0 10px 28px rgba(88,28,135,.22);margin-bottom:16px;text-align:left;overflow:hidden}
+.shop-hero:after{content:"";position:absolute;width:230px;height:230px;right:-70px;top:-120px;border-radius:50%;background:rgba(255,255,255,.14);box-shadow:-170px 125px 0 rgba(250,204,21,.09);pointer-events:none}
+.shop-hero-top{position:relative;z-index:1;display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap}.shop-title{font-size:28px;font-weight:1000;letter-spacing:1.5px;text-shadow:0 3px 0 rgba(76,29,149,.38)}.shop-timer{font-family:monospace;font-weight:1000;background:rgba(15,23,42,.88);border:2px solid #67e8f9;border-radius:12px;padding:10px 13px;color:#cffafe;box-shadow:0 0 18px rgba(34,211,238,.3)}.shop-sub{font-size:12px;color:#fff7ed;margin-top:6px;font-weight:800}
+.shop-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:11px}.shop-card{--shop-rgb:74,222,128;position:relative;min-height:255px;border:3px solid rgb(var(--shop-rgb));border-radius:17px;background:linear-gradient(165deg,rgba(var(--shop-rgb),.28),#172033 42%,#090f1d 100%);padding:10px 9px 11px;display:flex;flex-direction:column;align-items:center;text-align:center;overflow:hidden;box-shadow:inset 0 0 28px rgba(var(--shop-rgb),.13),0 8px 18px rgba(2,6,23,.28);transition:transform .18s ease,box-shadow .18s ease}.shop-card:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 28%,rgba(var(--shop-rgb),.34),transparent 39%);pointer-events:none}.shop-card.rarity-uncommon{--shop-rgb:74,222,128}.shop-card.rarity-rare{--shop-rgb:56,189,248}.shop-card.rarity-epic{--shop-rgb:192,132,252}.shop-card.rarity-mythic{--shop-rgb:245,158,11}.shop-card:hover{transform:translateY(-4px);box-shadow:inset 0 0 32px rgba(var(--shop-rgb),.18),0 12px 26px rgba(var(--shop-rgb),.18)}
+.shop-type{position:relative;z-index:1;font-size:9px;letter-spacing:1.4px;color:#f8fafc;font-weight:1000;background:rgba(var(--shop-rgb),.22);border:1px solid rgba(var(--shop-rgb),.7);padding:4px 8px;border-radius:999px}.shop-visual{position:relative;z-index:1;width:112px;height:112px;margin:7px auto 4px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 8px 8px rgba(0,0,0,.32))}.shop-visual svg{width:100%;height:100%;display:block}.shop-bike-art{position:relative;width:108px;height:82px;display:grid;place-items:center;font-size:58px;filter:drop-shadow(0 0 12px rgba(var(--shop-rgb),.75))}.shop-bike-art:before{content:"";position:absolute;width:96px;height:34px;bottom:5px;border-radius:50%;background:radial-gradient(ellipse,rgba(var(--shop-rgb),.42),transparent 68%);filter:blur(4px)}.shop-bike-glyph{position:relative;z-index:1}.shop-trail-art{position:relative;width:102px;height:72px;border-radius:50%;background:radial-gradient(circle,rgba(var(--shop-rgb),.55),rgba(var(--shop-rgb),.08) 55%,transparent 70%)}.shop-trail-art:before,.shop-trail-art:after{content:"";position:absolute;left:7px;right:7px;height:10px;border-radius:999px;background:linear-gradient(90deg,transparent,rgba(var(--shop-rgb),.65),rgb(var(--shop-rgb)),#fff,transparent);box-shadow:0 0 12px rgb(var(--shop-rgb))}.shop-trail-art:before{top:21px;transform:rotate(-8deg)}.shop-trail-art:after{top:43px;transform:rotate(7deg);opacity:.7}.shop-trail-glyph{position:absolute;inset:0;display:grid;place-items:center;font-size:35px;filter:drop-shadow(0 0 8px rgb(var(--shop-rgb)))}
+.shop-name{position:relative;z-index:1;font-size:13px;font-weight:1000;margin:4px 0 2px}.shop-rarity{position:relative;z-index:1;font-size:10px;font-weight:1000}.shop-discount{position:absolute;z-index:2;right:7px;top:7px;background:#facc15;color:#422006;border:2px solid #fff7ed;border-radius:8px;padding:4px 6px;font-size:9px;font-weight:1000;transform:rotate(3deg);box-shadow:0 3px 0 #a16207}.shop-price-line{position:relative;z-index:1;min-height:18px;font-size:10px;margin-top:4px;color:#fde68a;font-weight:1000}.shop-old-price{text-decoration:line-through;color:#94a3b8;margin-right:5px}.shop-buy{position:relative;z-index:1;margin-top:auto;width:100%;padding:10px 5px;border:2px solid rgba(255,255,255,.55);background:linear-gradient(135deg,#fde047,#fb923c);color:#3f1d05;box-shadow:0 4px 0 #9a3412}.shop-buy.owned{background:#16a34a;color:#f0fdf4;box-shadow:0 4px 0 #14532d}.shop-buy.equipped{background:#0891b2;color:#ecfeff;box-shadow:0 4px 0 #155e75}.shop-empty{grid-column:1/-1;padding:30px;color:#cbd5e1}
+@media(max-width:900px){.shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.shop-card:last-child{grid-column:span 2}.sectioned-home .home-section-tabs{grid-template-columns:repeat(3,minmax(0,1fr)) !important}}
+@media(max-width:520px){.shop-grid{grid-template-columns:1fr}.shop-card:last-child{grid-column:auto}.sectioned-home .home-section-tabs{grid-template-columns:repeat(2,minmax(0,1fr)) !important}}
 </style>
 </head>
 <body>
@@ -847,6 +854,7 @@ body{min-height:100%;height:auto !important;overflow-x:hidden !important;overflo
     <nav class="home-section-tabs" aria-label="Home sections">
       <button class="home-section-tab active" type="button" data-home-section="play">🚲 PLAY</button>
       <button class="home-section-tab" type="button" data-home-section="worlds">🌍 WORLDS</button>
+      <button class="home-section-tab" type="button" data-home-section="shop">🛒 ITEM SHOP</button>
       <button class="home-section-tab" type="button" data-home-section="profile">👤 PROFILE</button>
       <button class="home-section-tab" type="button" data-home-section="rewards">🎁 REWARDS</button>
     </nav>
@@ -896,7 +904,14 @@ body{min-height:100%;height:auto !important;overflow-x:hidden !important;overflo
         <div class="section-heading">🌍 WORLD SELECT</div>
         <div class="section-copy">Choose your starting biome or leave it on Random Run.</div>
         <section class="world-select home-world-select" aria-label="World Select">
-          <div id="worldGrid" class="world-grid"></div>
+          <div id="worldCarouselShell" class="world-carousel-shell">
+            <button id="worldPrev" class="world-nav prev" type="button" aria-label="Previous world">‹</button>
+            <div id="worldGrid" class="world-carousel" aria-live="polite"></div>
+            <button id="worldNext" class="world-nav next" type="button" aria-label="Next world">›</button>
+            <div id="worldDots" class="world-carousel-dots" aria-hidden="true"></div>
+            <button id="worldRandom" class="world-random" type="button">🌍 RANDOM RUN — ALL UNLOCKED WORLDS</button>
+            <div class="world-carousel-help">◀ ▶ SPIN THROUGH THE FLOATING WORLDS • CLICK THE CENTRE ISLAND TO SELECT</div>
+          </div>
         </section>
         <div class="menu-stats worlds-stats">
           <div><b>WORLDS</b><span>37</span></div>
@@ -923,6 +938,13 @@ body{min-height:100%;height:auto !important;overflow-x:hidden !important;overflo
           <button id="openBattlePassBtn" class="feature-btn pass" type="button">🎫 BATTLE PASS</button>
           <button id="openLockerBtn" class="feature-btn locker" type="button">🎒 LOCKER</button>
         </div>
+      </section>
+
+      <section class="home-section" data-home-panel="shop">
+        <div class="shop-hero">
+          <div class="shop-hero-top"><div><div class="shop-title">🛒 BIOME ITEM SHOP</div><div class="shop-sub">5 cosmetics rotate every 12 hours • 1–2 Locker characters get 25% OFF • exactly 2 trails • the rest are rides</div></div><div id="shopTimer" class="shop-timer">REFRESH 00:00:00</div></div>
+        </div>
+        <div id="itemShopGrid" class="shop-grid"><div class="shop-empty">Loading the next drop…</div></div>
       </section>
 
       <section class="home-section" data-home-panel="profile">
@@ -1054,6 +1076,16 @@ body{min-height:100%;height:auto !important;overflow-x:hidden !important;overflo
     <div class="account-bar" style="justify-content:flex-start">
       <div class="account-chip">🪙 COINS <b id="lockerCoins">0</b></div>
     </div>
+    <div id="lockerViewer" class="locker-viewer">
+      <div class="locker-view-stage"><canvas id="locker3dCanvas" width="420" height="320" aria-label="Animated cosmetic showcase"></canvas></div>
+      <div class="locker-view-info">
+        <div id="lockerViewRarity" class="locker-view-rarity">COMMON</div>
+        <h3 id="lockerViewName">Classic Rider</h3>
+        <p id="lockerViewDesc">Select a character to watch their unique victory dance.</p>
+        <div id="lockerDanceBadge" class="dance-badge">DANCE 1 • BOUNCE</div>
+        <div class="locker-view-hint">Character showcase • each rider has one of 7 animated victory dances.</div>
+      </div>
+    </div>
     <div class="locker-tabs">
       <button class="locker-tab active" type="button" data-locker-tab="characters">CHARACTERS</button>
       <button class="locker-tab" type="button" data-locker-tab="bikes">BIKES</button>
@@ -1182,6 +1214,8 @@ const DEFAULT_PROFILE={
   ownedCharacters:["rider"],
   ownedBikes:["classic"],
   ownedTrails:["none"],
+  ownedDances:["auto"],
+  equippedDance:"auto",
   equippedCharacter:"rider",
   equippedBike:"classic",
   equippedTrail:"none",
@@ -1194,13 +1228,14 @@ function loadProfile(){
     const raw=localStorage.getItem(SAVE_KEY)||localStorage.getItem(LEGACY_SAVE_KEY);
     if(!raw)return cloneDefault();
     const p=Object.assign(cloneDefault(),JSON.parse(raw));
-    for(const k of ["claimed","ownedCharacters","ownedBikes","ownedTrails"])if(!Array.isArray(p[k]))p[k]=cloneDefault()[k];
+    for(const k of ["claimed","ownedCharacters","ownedBikes","ownedTrails","ownedDances"])if(!Array.isArray(p[k]))p[k]=cloneDefault()[k];
     p.wallet=Math.max(0,Math.floor(Number(p.wallet)||0));
     p.passXp=Math.max(0,Math.floor(Number(p.passXp)||0));
     p.chestsCollected=Math.max(0,Math.floor(Number(p.chestsCollected)||0));
     p.lastFreeSpinDay=typeof p.lastFreeSpinDay==="string"?p.lastFreeSpinDay.slice(0,10):"";
     if(!p.ownedBikes.includes(p.equippedBike))p.equippedBike="classic";
     if(!p.ownedTrails.includes(p.equippedTrail))p.equippedTrail="none";
+    if(!p.ownedDances.includes(p.equippedDance))p.equippedDance="auto";
     if(!p.ownedCharacters.includes(p.equippedCharacter))p.equippedCharacter="rider";
     return p;
   }catch(e){return cloneDefault()}
@@ -1215,21 +1250,31 @@ function unlockedWorldIndexes(){return BIOMES.map((_,i)=>i).filter(worldUnlocked
 
 const CHARACTERS=[
  {id:"rider",name:"Classic Rider",icon:"🚴",cost:0,desc:"No crown. No prophecy. Just nerve, speed and a refusal to stay down."},
- {id:"knight",name:"Castle Knight",icon:"🛡️",cost:140,desc:"Swore loyalty to no kingdom — only to the road ahead and the steel on his back."},
- {id:"astronaut",name:"Moon Ranger",icon:"🧑‍🚀",cost:190,desc:"Left Earth chasing silence. Came back faster than anything the stars could throw at him."},
- {id:"samurai",name:"Ronin Rider",icon:"⚔️",cost:230,desc:"Masterless by choice. Every turn is measured, every strike already decided."},
- {id:"viking",name:"Fjord Raider",icon:"🪓",cost:260,desc:"Raised where the sea freezes and weak men disappear. He rides like winter is behind him."},
- {id:"alien",name:"Xeno Scout",icon:"👽",cost:320,desc:"No known homeworld. No known language. One universal message: keep up."},
- {id:"wizard",name:"Arcane Rider",icon:"🧙",cost:380,desc:"He does not predict the path. He bends it — rune by rune, world by world."},
+ {id:"knight",name:"Castle Knight",icon:"🛡️",cost:250,rarity:"uncommon",desc:"Swore loyalty to no kingdom — only to the road ahead and the steel on his back."},
+ {id:"astronaut",name:"Moon Ranger",icon:"🧑‍🚀",cost:250,rarity:"uncommon",desc:"Left Earth chasing silence. Came back faster than anything the stars could throw at him."},
+ {id:"samurai",name:"Ronin Rider",icon:"⚔️",cost:500,rarity:"rare",desc:"Masterless by choice. Every turn is measured, every strike already decided."},
+ {id:"viking",name:"Fjord Raider",icon:"🪓",cost:500,rarity:"rare",desc:"Raised where the sea freezes and weak men disappear. He rides like winter is behind him."},
+ {id:"alien",name:"Xeno Scout",icon:"👽",cost:1000,rarity:"epic",desc:"No known homeworld. No known language. One universal message: keep up."},
+ {id:"wizard",name:"Arcane Rider",icon:"🧙",cost:1000,rarity:"epic",desc:"He does not predict the path. He bends it — rune by rune, world by world."},
+ {id:"firefighter",name:"Blaze Responder",icon:"🧑‍🚒",cost:250,rarity:"uncommon",desc:"First through the smoke, last to leave the scene. Heat shield down, sirens behind him, no road too hot."},
+ {id:"policeofficer",name:"Metro Enforcer",icon:"👮",cost:250,rarity:"uncommon",desc:"City patrol elite. Clean uniform, steel badge, radio live — when the streets get wild, he gets faster."},
+ {id:"paramedic",name:"Rapid Medic",icon:"🚑",cost:250,rarity:"uncommon",desc:"Built for the golden minute. Trauma pack loaded, gloves on, and already moving before the call finishes."},
+ {id:"construction",name:"Iron Site Foreman",icon:"👷",cost:250,rarity:"uncommon",desc:"Hard hat, work boots and a thousand-yard stare from too many early starts. He builds the road, then owns it."},
+ {id:"pilot",name:"Skyline Pilot",icon:"✈️",cost:250,rarity:"uncommon",desc:"Flight jacket zipped, aviators down. Treats every straight like a runway and every jump like takeoff."},
+ {id:"chef",name:"Midnight Chef",icon:"👨‍🍳",cost:250,rarity:"uncommon",desc:"White coat spotless, knives sharper than the competition. Serves pressure hot and never misses the timing."},
+ {id:"lifeguard",name:"Redline Lifeguard",icon:"🛟",cost:250,rarity:"uncommon",desc:"Rescue red from head to toe. Watches the chaos from above, then dives straight into it when everyone else freezes."},
+ {id:"mechanic",name:"Pitlane Mechanic",icon:"🔧",cost:250,rarity:"uncommon",desc:"Oil on the gloves, wrench on the belt. If it has wheels, he can make it faster — usually past the safe limit."},
+ {id:"farmer",name:"Harvest Outrider",icon:"🌾",cost:250,rarity:"uncommon",desc:"Sunrise starts and storm-season nerve. Mud on the boots, straw under the brim, strength earned the slow way."},
+ {id:"mailcarrier",name:"Express Courier",icon:"📦",cost:250,rarity:"uncommon",desc:"Rain, snow, meteor shower — delivery still lands on time. Satchel locked, route memorised, zero excuses."},
  {id:"streetracer",name:"Street Racer",icon:"🏁",spin:true,desc:"Built under neon lights and bad decisions. If you see the visor, you are already behind."},
  {id:"mysticmage",name:"Mystic Mage",icon:"🔮",spin:true,desc:"Wears the night sky like armour. Every white star on the robe marks a spell nobody survived twice."},
  {id:"nightwatchranger",name:"Sugar Rush Sovereign",icon:"🍭",level:12,rarity:"rare",desc:"Candyland made a ruler out of pure sugar, bad manners and impossible speed. The crown is frosting. The attitude is permanent."},
  {id:"glacierscout",name:"Blacktide Captain",icon:"🏴‍☠️",level:17,rarity:"rare",desc:"Pirate Cove’s most wanted captain. One eye on the horizon, one hook on the bars, and a parrot that has seen too much."},
- {id:"ashenrevenant",name:"Ashen Revenant",icon:"🔥",cost:3000,desc:"Burned out of history and came back wearing the fire. Every scar on the armour belongs to someone who tried to stop him."},
- {id:"eclipsewarden",name:"Eclipse Warden",icon:"🌘",cost:3000,desc:"When the light disappears, he is already there. No footsteps. No warning. Just the edge of a blackened blade."},
- {id:"frosttyrant",name:"Frostbound Tyrant",icon:"❄️",cost:3000,desc:"A warlord carved from northern steel and dead winter. He does not survive the cold — the cold survives him."},
- {id:"bloodreaper",name:"Bloodmoon Reaper",icon:"🌑",cost:5000,mythic:true,desc:"The red moon is his signal, not his symbol. By the time the hood is seen, the hunt ended minutes ago."},
- {id:"starforgedarchon",name:"Starforged Archon",icon:"✦",cost:5000,mythic:true,desc:"Forged where dying stars collapse into silence. He rides like gravity, kings and worlds are all optional."},
+ {id:"ashenrevenant",name:"Ashen Revenant",icon:"🔥",cost:1000,rarity:"epic",desc:"Burned out of history and came back wearing the fire. Every scar on the armour belongs to someone who tried to stop him."},
+ {id:"eclipsewarden",name:"Eclipse Warden",icon:"🌘",cost:1000,rarity:"epic",desc:"When the light disappears, he is already there. No footsteps. No warning. Just the edge of a blackened blade."},
+ {id:"frosttyrant",name:"Frostbound Tyrant",icon:"❄️",cost:1000,rarity:"epic",desc:"A warlord carved from northern steel and dead winter. He does not survive the cold — the cold survives him."},
+ {id:"bloodreaper",name:"Bloodmoon Reaper",icon:"🌑",cost:2000,rarity:"mythic",mythic:true,desc:"The red moon is his signal, not his symbol. By the time the hood is seen, the hunt ended minutes ago."},
+ {id:"starforgedarchon",name:"Starforged Archon",icon:"✦",cost:2000,rarity:"mythic",mythic:true,desc:"Forged where dying stars collapse into silence. He rides like gravity, kings and worlds are all optional."},
  {id:"cosmicsovereign",name:"Secret Skin",icon:"?",spin:true,superRare:true,desc:"A hidden 1% Mythic. Its true form stays classified until the wheel chooses you."},
  {id:"voltrecon",name:"Clockwork Commander",icon:"🧸",level:55,rarity:"rare",desc:"Toy World’s parade leader wound one turn too far. Painted smile, brass key, perfect posture — absolutely no off switch."},
  {id:"runewarlord",name:"Prism Colossus",icon:"💎",level:65,rarity:"epic",desc:"A living shard broken from the heart of Crystal Cavern. No armour, no skin — just a walking gemstone that bends light around itself."},
@@ -1270,7 +1315,15 @@ const BIKES=[
  {id:"mantasurf",name:"Leviathan Hovercraft",icon:"🔱",level:68,desc:"Battle Pass level 68. Deep-sea assault hovercraft built around a glowing abyss core."},
  {id:"jadecycle",name:"Imperial Dragon Rider",icon:"🐉",level:78,desc:"Battle Pass level 78. Ride a fully armoured jade dragon with a blazing spirit core."},
  {id:"reactorboard",name:"Titan Reactor Mech",icon:"☢️",level:88,desc:"Battle Pass level 88. Heavy two-leg reactor mech with a toxic power core and armour plating."},
- {id:"tempestwing",name:"Stormbreaker Phoenix",icon:"🌩️",level:98,desc:"Battle Pass level 98. Mythic mechanical phoenix forged from thunder, plasma and stormfire."}
+ {id:"tempestwing",name:"Stormbreaker Phoenix",icon:"🌩️",level:98,desc:"Battle Pass level 98. Mythic mechanical phoenix forged from thunder, plasma and stormfire."},
+ {id:"streetbmx",name:"Streetline BMX",icon:"🚲",rarity:"uncommon",cost:250,shop:true,desc:"Item Shop ride • compact street BMX with reinforced pegs."},
+ {id:"rescuequad",name:"Rescue Quad",icon:"🚑",rarity:"uncommon",cost:250,shop:true,desc:"Item Shop ride • rugged emergency-response quad bike."},
+ {id:"policeinterceptor",name:"Police Interceptor",icon:"🚨",rarity:"rare",cost:500,shop:true,desc:"Item Shop ride • high-speed patrol bike with pulsing light bars."},
+ {id:"sharkcycle",name:"Shark Cycle",icon:"🦈",rarity:"rare",cost:500,shop:true,desc:"Item Shop ride • ocean predator bike with finned armour."},
+ {id:"royalchopper",name:"Royal Chopper",icon:"👑",rarity:"epic",cost:1000,shop:true,desc:"Item Shop ride • long-frame royal chopper with jeweled trim."},
+ {id:"neonphantom",name:"Neon Phantom",icon:"🏍️",rarity:"epic",cost:1000,shop:true,desc:"Item Shop ride • futuristic street machine wrapped in neon energy."},
+ {id:"infernodrake",name:"Inferno Drake Bike",icon:"🐲",rarity:"mythic",cost:2000,shop:true,desc:"Item Shop ride • dragon-forged superbike breathing sparks from its exhaust."},
+ {id:"galaxycruiser",name:"Galaxy Cruiser",icon:"🌌",rarity:"mythic",cost:2000,shop:true,desc:"Item Shop ride • cosmic superbike with a starfield energy core."}
 ];
 const TRAILS=[
  {id:"none",name:"No Trail",icon:"➖",source:"FREE",desc:"Clean wheels."},
@@ -1289,8 +1342,33 @@ const TRAILS=[
  {id:"abysswake",name:"Abyss Wake",icon:"🌊",level:63,desc:"Battle Pass L63 • animated bubbles, foam and deep-blue current."},
  {id:"jadefire",name:"Jade Fire",icon:"🐲",level:73,desc:"Battle Pass L73 • animated emerald dragon sparks."},
  {id:"radiation",name:"Radiation Pulse",icon:"☢️",level:83,desc:"Battle Pass L83 • animated toxic rings and particle bursts."},
- {id:"tempest",name:"Tempest Rift",icon:"🌩️",level:93,desc:"Battle Pass L93 • animated violet-white storm fractures."}
+ {id:"tempest",name:"Tempest Rift",icon:"🌩️",level:93,desc:"Battle Pass L93 • animated violet-white storm fractures."},
+ {id:"emeraldsmoke",name:"Emerald Smoke",icon:"💚",cost:250,rarity:"uncommon",shop:true,desc:"Shop trail • rolling green smoke puffs."},
+ {id:"policepulse",name:"Siren Pulse",icon:"🚨",cost:250,rarity:"uncommon",shop:true,desc:"Shop trail • alternating emergency light pulses."},
+ {id:"blueplasma",name:"Blue Plasma",icon:"🔷",cost:500,rarity:"rare",shop:true,desc:"Shop trail • electric blue plasma sparks."},
+ {id:"sharkwake",name:"Shark Wake",icon:"🦈",cost:500,rarity:"rare",shop:true,desc:"Shop trail • sharp ocean wake shards."},
+ {id:"royalrunes",name:"Royal Runes",icon:"🔮",cost:1000,rarity:"epic",shop:true,desc:"Shop trail • rotating purple rune fragments."},
+ {id:"galaxytear",name:"Galaxy Tear",icon:"🌌",cost:1000,rarity:"epic",shop:true,desc:"Shop trail • a ripped ribbon of starlight."},
+ {id:"solarflare",name:"Solar Flare",icon:"☀️",cost:2000,rarity:"mythic",shop:true,desc:"Shop trail • miniature solar explosions."},
+ {id:"blackhole",name:"Black Hole Wake",icon:"⚫",cost:2000,rarity:"mythic",shop:true,desc:"Shop trail • dark singularities edged in gold."}
 ];
+
+const DANCES=[
+ {id:"auto",name:"Auto Mix",icon:"🎲",rarity:"common",cost:0},
+ {id:"dab",name:"Dabbing",icon:"😎",rarity:"uncommon",cost:250,shop:true},
+ {id:"floss",name:"Floss",icon:"🪥",rarity:"uncommon",cost:250,shop:true},
+ {id:"disco",name:"Disco Point",icon:"🪩",rarity:"rare",cost:500,shop:true},
+ {id:"robot",name:"Robot",icon:"🤖",rarity:"rare",cost:500,shop:true},
+ {id:"moonwalk",name:"Moonwalk",icon:"🌙",rarity:"epic",cost:1000,shop:true},
+ {id:"macarena",name:"Macarena",icon:"🙌",rarity:"uncommon",cost:250,shop:true},
+ {id:"breakgroove",name:"Break Groove",icon:"💥",rarity:"epic",cost:1000,shop:true},
+ {id:"runningman",name:"Running Man",icon:"🏃",rarity:"rare",cost:500,shop:true},
+ {id:"salsastep",name:"Salsa Step",icon:"🌹",rarity:"epic",cost:1000,shop:true},
+ {id:"powerwave",name:"Power Wave",icon:"🌊",rarity:"rare",cost:500,shop:true},
+ {id:"zerogravity",name:"Zero Gravity",icon:"🪐",rarity:"mythic",cost:2000,shop:true},
+ {id:"crownvictory",name:"Crown Victory",icon:"👑",rarity:"mythic",cost:2000,shop:true}
+];
+const DANCE_POSE_INDEX={dab:0,floss:1,disco:2,robot:3,moonwalk:4,macarena:5,breakgroove:6,runningman:7,salsastep:8,powerwave:9,zerogravity:10,crownvictory:11};
 
 const PASS_REWARDS=Array.from({length:100},(_,i)=>{
   const l=i+1;
@@ -1495,14 +1573,14 @@ function applyAccountData(account){
 }
 function scheduleCloudSave(){
   if(cloudSyncPaused||!authToken||!authAccount)return;
-  clearTimeout(cloudSaveTimer);cloudSaveTimer=setTimeout(()=>flushCloudSave(),500);
+  clearTimeout(cloudSaveTimer);cloudSaveTimer=setTimeout(()=>flushCloudSave(),100);
 }
-async function flushCloudSave(){
+async function flushCloudSave(keepalive=false){
   if(cloudSyncPaused||!authToken||!authAccount)return;
   clearTimeout(cloudSaveTimer);cloudSaveTimer=0;
   try{
     if(accountCloudStatus)accountCloudStatus.textContent="Saving...";
-    const d=await apiRequest("/api/progress",{method:"POST",body:JSON.stringify({profile,bestScore:best})});
+    const d=await apiRequest("/api/progress",{method:"POST",body:JSON.stringify({profile,bestScore:best}),keepalive});
     authAccount=d.account||authAccount;
     if(accountCloudStatus)accountCloudStatus.textContent="Progress saved to your account.";
   }catch(e){if(accountCloudStatus)accountCloudStatus.textContent="Save issue: "+e.message;}
@@ -1528,13 +1606,25 @@ async function registerAccount(){
 async function loginAccount(){
   const username=document.getElementById("loginUsername").value.trim(),password=document.getElementById("loginPassword").value;
   setAuthMessage("Signing in...");
-  try{const d=await apiRequest("/api/login",{method:"POST",body:JSON.stringify({username,password})});authToken=d.token;try{localStorage.setItem("biomeBikeAuthToken",authToken);}catch(e){}applyAccountData(d.account);setAuthMessage("Signed in. Saved progress loaded.");}
+  try{
+    const localBackup=JSON.parse(JSON.stringify(profile)),localBest=best;
+    const d=await apiRequest("/api/login",{method:"POST",body:JSON.stringify({username,password})});authToken=d.token;try{localStorage.setItem("biomeBikeAuthToken",authToken);}catch(e){}
+    const cp=d.account&&d.account.profile?d.account.profile:{};
+    const cloudLooksBlank=(Number(cp.passXp||0)===0&&Number(cp.wallet||0)===0&&Number(cp.chestsCollected||0)===0&&(cp.ownedCharacters||[]).length<=1&&(cp.ownedBikes||[]).length<=1&&(cp.ownedTrails||[]).length<=1);
+    const localHasProgress=(Number(localBackup.passXp||0)>0||Number(localBackup.wallet||0)>0||Number(localBackup.chestsCollected||0)>0||(localBackup.ownedCharacters||[]).length>1||(localBackup.ownedBikes||[]).length>1||(localBackup.ownedTrails||[]).length>1);
+    if(cloudLooksBlank&&localHasProgress){authAccount=d.account;profile=localBackup;best=Math.max(localBest,Number(d.account.bestScore)||0);renderAuthState();await flushCloudSave();const me=await apiRequest("/api/me");applyAccountData(me.account);setAuthMessage("Signed in. Recovered your saved progress and synced it to your account.");}
+    else{applyAccountData(d.account);setAuthMessage("Signed in. Saved progress loaded.");}
+  }
   catch(e){setAuthMessage(e.message,true);}
 }
 async function logoutAccount(){
   try{await flushCloudSave();await apiRequest("/api/logout",{method:"POST",body:"{}"});}catch(e){}
   authToken="";authAccount=null;try{localStorage.removeItem("biomeBikeAuthToken");}catch(e){}renderAuthState();setAuthMessage("Signed out.");
 }
+// Do not lose the last progression changes when the tab/browser closes.
+window.addEventListener("pagehide",()=>{if(authToken&&authAccount)flushCloudSave(true);});
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden"&&authToken&&authAccount)flushCloudSave(true);});
+
 async function openLeaderboard(){
   leaderboardScreen.style.display="flex";leaderboardScreen.style.pointerEvents="auto";leaderboardScreen.setAttribute("aria-hidden","false");
   leaderboardMeta.textContent="Loading global scores...";leaderboardList.innerHTML="";
@@ -1589,6 +1679,16 @@ function characterPortraitSvg(id){
     viking:{bg:"#2a241f",body:"#654c3b",trim:"#9a6a42",skin:"#d6a37d",metal:"#b8c1c8",hair:"#8a5734",kind:"viking"},
     alien:{bg:"#0d302b",body:"#2d7a67",trim:"#65efbb",skin:"#75d9ad",metal:"#24574e",hair:"#173d35",kind:"alien"},
     wizard:{bg:"#21113a",body:"#48217c",trim:"#8b5cf6",skin:"#d1a486",metal:"#6f52a8",hair:"#c7c7d4",kind:"wizard"},
+    firefighter:{bg:"#10251d",body:"#171717",trim:"#f5c542",skin:"#d6a67a",metal:"#d8dee5",hair:"#3d2b23",kind:"firefighter"},
+    policeofficer:{bg:"#10251d",body:"#17365d",trim:"#7dd3fc",skin:"#d6a67a",metal:"#cbd5e1",hair:"#3d2b23",kind:"policeofficer"},
+    paramedic:{bg:"#10251d",body:"#0f766e",trim:"#f8fafc",skin:"#d6a67a",metal:"#d1d5db",hair:"#4a2d20",kind:"paramedic"},
+    construction:{bg:"#10251d",body:"#f59e0b",trim:"#facc15",skin:"#d6a67a",metal:"#475569",hair:"#4a2d20",kind:"construction"},
+    pilot:{bg:"#10251d",body:"#3f2f25",trim:"#d6b47a",skin:"#d6a67a",metal:"#64748b",hair:"#3a261b",kind:"pilot"},
+    chef:{bg:"#10251d",body:"#f1f5f9",trim:"#dc2626",skin:"#d6a67a",metal:"#94a3b8",hair:"#33251d",kind:"chef"},
+    lifeguard:{bg:"#10251d",body:"#dc2626",trim:"#f8fafc",skin:"#d6a67a",metal:"#0ea5e9",hair:"#5b3826",kind:"lifeguard"},
+    mechanic:{bg:"#10251d",body:"#334155",trim:"#f97316",skin:"#d6a67a",metal:"#94a3b8",hair:"#2d241f",kind:"mechanic"},
+    farmer:{bg:"#10251d",body:"#4d7c0f",trim:"#d6a85f",skin:"#d6a67a",metal:"#78716c",hair:"#6b4423",kind:"farmer"},
+    mailcarrier:{bg:"#10251d",body:"#2563eb",trim:"#facc15",skin:"#d6a67a",metal:"#64748b",hair:"#3d2b23",kind:"mailcarrier"},
     streetracer:{bg:"#121a25",body:"#202938",trim:"#e33c50",skin:"#c99676",metal:"#576477",hair:"#252525",kind:"racer"},
     mysticmage:{bg:"#071a3a",body:"#0d47a1",trim:"#ffffff",skin:"#cfa58a",metal:"#78a8d8",hair:"#e8e1ff",kind:"mage"},
     cosmicsovereign:{bg:"#090312",body:"#1b0c35",trim:"#c067ff",skin:"#c3a3d1",metal:"#6f45a4",hair:"#ece6ff",kind:"cosmic"},
@@ -1639,6 +1739,16 @@ function characterPortraitSvg(id){
   else if(p.kind==="frosttyrant") gear='<path d="M45 49 Q48 20 75 15 Q102 20 105 49 L99 69 H51Z" fill="url(#metal_'+uid+')" stroke="#5c7180" stroke-width="4"/><path d="M51 47 H99 L93 60 H57Z" fill="#0b2230"/><path d="M59 53 H70 M80 53 H91" stroke="#7dd3fc" stroke-width="3"/><path d="M52 35 L39 18 L58 29 M98 35 L111 18 L92 29" fill="#d8edf7" stroke="#6b7f8c" stroke-width="3"/><path d="M40 87 Q75 68 110 87 L101 146 H49Z" fill="#2b3942" stroke="#91a8b7" stroke-width="4"/><path d="M43 85 Q75 75 107 85" stroke="#d9e5ea" stroke-width="9"/><path d="M36 94 L18 119 L41 128 M114 94 L132 119 L109 128" fill="#4b5d68" stroke="#b7c4ce" stroke-width="5"/><path d="M62 99 L75 84 L88 99 L75 114Z" fill="#8be0ff"/><path d="M53 126 H97" stroke="#d6f3ff" stroke-width="3"/>';
   else if(p.kind==="bloodreaper") gear='<path d="M41 57 Q44 24 75 12 Q106 24 109 57 Q94 42 75 41 Q56 42 41 57Z" fill="#180b0e" stroke="#5f121c" stroke-width="4"/><path d="M54 47 Q75 37 96 47 L91 65 H59Z" fill="#090608"/><path d="M63 54 H70 M80 54 H87" stroke="#ef4444" stroke-width="3"/><path d="M43 86 Q75 69 107 86 L101 146 H49Z" fill="#211015" stroke="#641523" stroke-width="4"/><path d="M44 91 L22 113 L38 130 L55 112 M106 91 L128 113 L112 130 L95 112" fill="#301218" stroke="#4b4246" stroke-width="4"/><path d="M60 96 L75 111 L90 96" stroke="#dc2626" stroke-width="4" fill="none"/><path d="M116 67 Q133 82 121 108 Q115 120 103 129" stroke="#8d99a2" stroke-width="5" fill="none"/><path d="M116 67 Q128 62 132 71" stroke="#c1c8cc" stroke-width="3" fill="none"/>';
   else if(p.kind==="archon") gear='<circle cx="75" cy="31" r="25" fill="none" stroke="#f5d36a" stroke-width="4" opacity=".8"/><path d="M47 50 Q49 23 75 17 Q101 23 103 50 L97 68 H53Z" fill="#ece9df" stroke="#b59b4b" stroke-width="4"/><path d="M55 49 H95 L91 60 H59Z" fill="#132033"/><path d="M62 53 H70 M80 53 H88" stroke="#f8e69b" stroke-width="3"/><path d="M50 34 L61 14 L69 31 L76 9 L85 31 L96 14 L101 36" fill="#f1df9a" stroke="#a98a33" stroke-width="3"/><path d="M41 87 Q75 68 109 87 L101 146 H49Z" fill="#e9e7df" stroke="#b9a45e" stroke-width="4"/><path d="M38 90 L17 108 L36 132 L55 110 M112 90 L133 108 L114 132 L95 110" fill="#16223a" stroke="#d8d5c7" stroke-width="4"/><path d="M61 96 L75 82 L89 96 L75 113Z" fill="#f5d36a"/><path d="M50 122 H100" stroke="#1d2b47" stroke-width="4"/>';
+  else if(p.kind==="firefighter") gear='<path d="M47 48 Q49 23 75 18 Q101 23 103 48 L99 61 H51Z" fill="#facc15" stroke="#8a5a00" stroke-width="4"/><path d="M48 44 H102 L98 51 H52Z" fill="#111827"/><rect x="67" y="21" width="16" height="14" rx="4" fill="#ef4444" stroke="#fff" stroke-width="2"/><path d="M42 86 Q75 70 108 86 L102 146 H48Z" fill="#171717" stroke="#facc15" stroke-width="4"/><path d="M48 103 H102 M48 125 H102" stroke="#facc15" stroke-width="5"/><rect x="88" y="91" width="11" height="17" rx="2" fill="#475569"/><path d="M94 91 V82" stroke="#cbd5e1" stroke-width="3"/>';
+  else if(p.kind==="policeofficer") gear='<path d="M48 47 Q52 23 75 21 Q98 23 102 47 L97 57 H53Z" fill="#17365d" stroke="#93c5fd" stroke-width="4"/><path d="M47 35 H103 L98 43 H52Z" fill="#0f172a"/><path d="M75 26 L81 34 L75 42 L69 34Z" fill="#facc15"/><path d="M43 86 Q75 70 107 86 L101 146 H49Z" fill="#17365d" stroke="#0f172a" stroke-width="4"/><path d="M75 91 L82 101 L75 111 L68 101Z" fill="#facc15"/><rect x="48" y="117" width="54" height="7" fill="#111827"/><rect x="92" y="111" width="9" height="15" rx="2" fill="#334155"/>';
+  else if(p.kind==="paramedic") gear='<path d="M47 86 Q75 69 103 86 L98 146 H52Z" fill="#0f766e" stroke="#ecfeff" stroke-width="4"/><path d="M75 91 V119 M61 105 H89" stroke="#fff" stroke-width="8"/><path d="M46 125 H104" stroke="#ccfbf1" stroke-width="5"/><rect x="92" y="91" width="12" height="20" rx="3" fill="#ef4444"/><path d="M98 95 V107 M94 101 H102" stroke="#fff" stroke-width="3"/>';
+  else if(p.kind==="construction") gear='<path d="M45 48 Q48 22 75 19 Q102 22 105 48 H45Z" fill="#facc15" stroke="#9a6700" stroke-width="4"/><path d="M39 48 H111 V55 H39Z" fill="#f59e0b"/><path d="M75 20 V47" stroke="#fff3b0" stroke-width="4"/><path d="M43 86 Q75 70 107 86 L101 146 H49Z" fill="#f59e0b" stroke="#7c2d12" stroke-width="4"/><path d="M48 101 H102 M48 126 H102" stroke="#fef08a" stroke-width="6"/><path d="M93 90 L105 80 L111 86 L99 97" fill="#475569"/>';
+  else if(p.kind==="pilot") gear='<path d="M45 86 Q75 70 105 86 L100 146 H50Z" fill="#3f2f25" stroke="#d6b47a" stroke-width="4"/><path d="M55 91 L75 107 L95 91" stroke="#f1e0bd" stroke-width="5" fill="none"/><path d="M50 118 H100" stroke="#d6b47a" stroke-width="4"/><path d="M49 46 Q52 27 75 24 Q98 27 101 46" fill="#5b4637"/><path d="M54 42 H96" stroke="#d6b47a" stroke-width="4"/><circle cx="65" cy="54" r="8" fill="#17202a" stroke="#94a3b8" stroke-width="3"/><circle cx="85" cy="54" r="8" fill="#17202a" stroke="#94a3b8" stroke-width="3"/><path d="M73 54 H77" stroke="#94a3b8" stroke-width="3"/>';
+  else if(p.kind==="chef") gear='<path d="M50 44 Q42 36 49 28 Q50 17 61 19 Q68 9 76 18 Q87 10 91 21 Q104 21 101 34 Q107 43 98 48Z" fill="#fff" stroke="#cbd5e1" stroke-width="4"/><path d="M43 86 Q75 70 107 86 L101 146 H49Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="4"/><path d="M75 88 V145" stroke="#334155" stroke-width="3"/><circle cx="66" cy="103" r="3" fill="#111827"/><circle cx="84" cy="103" r="3" fill="#111827"/><path d="M94 91 L108 78" stroke="#94a3b8" stroke-width="5"/><path d="M108 78 L113 73" stroke="#e5e7eb" stroke-width="8"/>';
+  else if(p.kind==="lifeguard") gear='<path d="M45 86 Q75 70 105 86 L100 146 H50Z" fill="#dc2626" stroke="#fff" stroke-width="4"/><path d="M75 88 V145" stroke="#fff" stroke-width="5"/><path d="M48 110 H102" stroke="#fff" stroke-width="4"/><circle cx="102" cy="102" r="13" fill="none" stroke="#fff" stroke-width="6"/><path d="M46 46 Q53 27 75 26 Q97 27 104 46" fill="#ef4444"/><path d="M48 45 H102" stroke="#fff" stroke-width="4"/>';
+  else if(p.kind==="mechanic") gear='<path d="M43 86 Q75 70 107 86 L101 146 H49Z" fill="#334155" stroke="#f97316" stroke-width="4"/><path d="M57 87 V145 M93 87 V145" stroke="#f97316" stroke-width="4"/><rect x="61" y="99" width="28" height="15" rx="3" fill="#1f2937"/><path d="M95 93 L108 80 M102 78 L111 87" stroke="#cbd5e1" stroke-width="5"/><path d="M48 46 Q54 27 75 26 Q96 27 102 46" fill="#1f2937"/><path d="M52 42 H98" stroke="#f97316" stroke-width="4"/>';
+  else if(p.kind==="farmer") gear='<path d="M43 86 Q75 70 107 86 L101 146 H49Z" fill="#4d7c0f" stroke="#d6a85f" stroke-width="4"/><path d="M57 86 L62 146 M93 86 L88 146" stroke="#8b5e34" stroke-width="5"/><path d="M42 45 H108" stroke="#d6a85f" stroke-width="7"/><path d="M52 43 Q58 22 75 22 Q92 22 98 43Z" fill="#d6a85f" stroke="#8b5e34" stroke-width="3"/><path d="M100 92 L112 76" stroke="#8b5e34" stroke-width="4"/><path d="M112 76 L118 82 M112 76 L106 70" stroke="#eab308" stroke-width="3"/>';
+  else if(p.kind==="mailcarrier") gear='<path d="M43 86 Q75 70 107 86 L101 146 H49Z" fill="#2563eb" stroke="#facc15" stroke-width="4"/><path d="M53 89 L97 140" stroke="#6b4423" stroke-width="7"/><rect x="80" y="113" width="28" height="24" rx="4" fill="#8b5e34" stroke="#d6a85f" stroke-width="3"/><path d="M48 44 Q55 27 75 27 Q95 27 102 44" fill="#2563eb"/><path d="M47 43 H103" stroke="#facc15" stroke-width="4"/><rect x="91" y="92" width="13" height="9" fill="#fff"/><path d="M93 94 L97 97 L102 94" stroke="#2563eb" stroke-width="2" fill="none"/>';
   else gear=head+'<path d="M47 87 Q75 73 103 87 L98 146 H52Z" fill="'+p.body+'" stroke="#17324c" stroke-width="4"/><path d="M59 91 L75 103 L91 91" stroke="'+p.trim+'" stroke-width="4" fill="none"/>';
   const baseBody='<path d="M41 150 Q42 91 56 82 Q75 70 94 82 Q108 91 109 150Z" fill="'+p.body+'" stroke="'+p.bg+'" stroke-width="4"/><path d="M50 96 L28 127 L42 137 L58 112 M100 96 L122 127 L108 137 L92 112" fill="'+p.body+'" stroke="'+p.bg+'" stroke-width="4"/>';
   const useHead=!['knight','astronaut','samurai','chrome','viking','alien','racer','cosmic','void','solar','reef','serpent','dragon','nexus','revenant','eclipse','frosttyrant','bloodreaper','archon'].includes(p.kind);
@@ -1665,6 +1775,111 @@ function cosmeticRarity(item,tab){
   return "common";
 }
 function rarityLabel(r){return r.toUpperCase()}
+let lockerViewItem=null,lockerViewTab="characters",lockerDanceRaf=0,lockerDanceStart=performance.now();
+let lockerDancePose=null;
+const locker3dCanvas=document.getElementById("locker3dCanvas"),locker3dCtx=locker3dCanvas&&locker3dCanvas.getContext("2d");
+const LOCKER_DANCES=["DABBING","FLOSS","DISCO POINT","ROBOT","MOONWALK","MACARENA","BREAK GROOVE","RUNNING MAN","SALSA STEP","POWER WAVE","ZERO GRAVITY","CROWN VICTORY"];
+function lockerItemById(tab,id){const arr=tab==="characters"?CHARACTERS:tab==="bikes"?BIKES:TRAILS;return arr.find(x=>x.id===id)}
+function danceIndexFor(id){if(profile.equippedDance&&profile.equippedDance!=="auto"&&DANCE_POSE_INDEX[profile.equippedDance]!==undefined)return DANCE_POSE_INDEX[profile.equippedDance];let h=0;for(let i=0;i<id.length;i++)h=(h*31+id.charCodeAt(i))>>>0;return h%LOCKER_DANCES.length}
+function setLockerViewer(tab,item){
+  if(!item)return;lockerViewTab=tab;lockerViewItem=item;lockerDanceStart=performance.now();
+  const rarity=cosmeticRarity(item,tab),name=document.getElementById("lockerViewName"),desc=document.getElementById("lockerViewDesc"),rar=document.getElementById("lockerViewRarity"),badge=document.getElementById("lockerDanceBadge");
+  if(name)name.textContent=item.id==="cosmicsovereign"&&!profile.ownedCharacters.includes(item.id)?"SECRET SKIN":item.name;
+  if(desc)desc.textContent=item.id==="cosmicsovereign"&&!profile.ownedCharacters.includes(item.id)?"A Mythic presence hidden behind the Daily Spin. Unlock it to reveal its true form.":item.desc;
+  if(rar){rar.textContent=rarityLabel(rarity);rar.className="locker-view-rarity cosmetic-rarity rarity-"+rarity;}
+  if(badge){if(tab==="characters"){const d=danceIndexFor(item.id);badge.style.display="inline-flex";badge.textContent="DANCE "+(d+1)+" • "+LOCKER_DANCES[d];}else{badge.style.display="none";}}
+  if(!lockerDanceRaf)lockerDanceLoop();
+}
+function buildLockerDancePose(d,t){
+  const beat=Math.sin(t*3.4), beat2=Math.sin(t*6.8), side=Math.sin(t*2.2);
+  // Coordinates are local to the rider (body centred near x=22). Exactly two arms + two legs.
+  let p={
+    la:[[12,11],[7,19],[11,24]], ra:[[32,11],[38,19],[34,24]],
+    ll:[[18,23],[13,34],[7,38]], rr:[[26,23],[31,33],[39,38]],
+    lean:0, x:0, y:0
+  };
+  if(d===0){ // DAB: clean alternating dab pose
+    const f=Math.sin(t*1.8)>=0?1:-1;
+    if(f>0){p.la=[[12,11],[20,3],[29,1]];p.ra=[[32,11],[39,3],[46,-5]];p.lean=.09;}
+    else{p.ra=[[32,11],[24,3],[15,1]];p.la=[[12,11],[5,3],[-2,-5]];p.lean=-.09;}
+    p.ll=[[18,23],[15,33],[9,38]];p.rr=[[26,23],[30,32],[37,37]];
+  }else if(d===1){ // FLOSS: arms swing across hips, legs counter-step
+    const sw=Math.sin(t*4.8);
+    p.la=[[12,11],[18+sw*9,18],[25+sw*11,23]];
+    p.ra=[[32,11],[27+sw*9,18],[20+sw*11,23]];
+    p.ll=[[18,23],[13-sw*2,33],[7-sw*5,38]];p.rr=[[26,23],[31-sw*2,33],[39-sw*5,38]];
+    p.lean=-sw*.06;p.x=sw*1.5;
+  }else if(d===2){ // DISCO: alternating point to the sky with hip step
+    const f=Math.sin(t*2.6)>=0?1:-1;
+    if(f>0){p.ra=[[32,11],[37,1],[40,-11]];p.la=[[12,11],[17,20],[24,22]];}
+    else{p.la=[[12,11],[7,1],[4,-11]];p.ra=[[32,11],[27,20],[20,22]];}
+    p.ll=[[18,23],[13,32],[5+f*3,37]];p.rr=[[26,23],[31,33],[39+f*3,38]];p.lean=f*.07;
+  }else if(d===3){ // ROBOT: sharp locked angles, no bounce
+    const f=Math.sin(t*3.1)>=0?1:-1;
+    p.la=[[12,11],[4,11],[4,18+f*5]];p.ra=[[32,11],[40,11],[40,18-f*5]];
+    p.ll=[[18,23],[15+f*3,31],[8+f*6,38]];p.rr=[[26,23],[29+f*3,31],[36+f*6,38]];p.lean=f*.035;
+  }else if(d===4){ // MOONWALK: sliding feet + MJ-style arm swing
+    const c=(t*1.75)%1, slide=(c<.5?c*2:(1-c)*2);
+    p.la=[[12,11],[7,17],[3,13]];p.ra=[[32,11],[37,17],[42,14]];
+    p.ll=[[18,23],[15,31],[5-slide*7,37]];p.rr=[[26,23],[30,31],[40-slide*2,35]];
+    p.lean=-.07;p.x=Math.sin(t*1.75)*3;
+  }else if(d===5){ // MACARENA: hands cycle through forward/head/hips
+    const phase=Math.floor((t*2)%4);
+    if(phase===0){p.la=[[12,11],[8,8],[5,6]];p.ra=[[32,11],[36,8],[39,6]];}
+    if(phase===1){p.la=[[12,11],[15,1],[20,-5]];p.ra=[[32,11],[29,1],[24,-5]];}
+    if(phase===2){p.la=[[12,11],[17,18],[21,20]];p.ra=[[32,11],[27,18],[23,20]];}
+    if(phase===3){p.la=[[12,11],[7,16],[2,20]];p.ra=[[32,11],[37,16],[42,20]];}
+    p.ll=[[18,23],[14,33],[8,38]];p.rr=[[26,23],[30,33],[36,38]];p.lean=Math.sin(t*3)*.04;
+  }else if(d===6){ // BREAK GROOVE
+    const sw=Math.sin(t*3.6);p.la=[[12,11],[5,7-sw*5],[-2,11-sw*6]];p.ra=[[32,11],[39,15+sw*5],[46,12+sw*6]];p.ll=[[18,23],[10,31],[1,36]];p.rr=[[26,23],[34,30],[44,36]];p.lean=sw*.08;p.y=2;
+  }else if(d===7){ // RUNNING MAN
+    const sw=Math.sin(t*5);p.la=[[12,11],[7-sw*5,17],[3-sw*8,23]];p.ra=[[32,11],[37+sw*5,17],[41+sw*8,23]];p.ll=[[18,23],[13+sw*6,31],[7+sw*10,38]];p.rr=[[26,23],[31-sw*6,31],[38-sw*10,38]];p.lean=-sw*.05;
+  }else if(d===8){ // SALSA STEP
+    const sw=Math.sin(t*4);p.la=[[12,11],[6,14-sw*4],[2,9-sw*4]];p.ra=[[32,11],[38,14+sw*4],[42,9+sw*4]];p.ll=[[18,23],[14+sw*4,32],[8+sw*8,38]];p.rr=[[26,23],[30+sw*4,32],[36+sw*8,38]];p.x=sw*2.5;p.lean=sw*.05;
+  }else if(d===9){ // POWER WAVE
+    const wv=(Math.sin(t*4)+1)/2;p.la=[[12,11],[6,7-wv*7],[-1,12-wv*12]];p.ra=[[32,11],[38,17-wv*7],[45,10+wv*8]];p.ll=[[18,23],[14,33],[8,38]];p.rr=[[26,23],[30,33],[36,38]];p.lean=(wv-.5)*.12;
+  }else if(d===10){ // ZERO GRAVITY
+    const sw=Math.sin(t*2.4);p.la=[[12,11],[4,5+sw*5],[-2,-1+sw*7]];p.ra=[[32,11],[40,5-sw*5],[46,-1-sw*7]];p.ll=[[18,23],[10,28+sw*3],[3,25+sw*6]];p.rr=[[26,23],[34,28-sw*3],[41,25-sw*6]];p.y=-4+Math.sin(t*2)*4;p.lean=sw*.11;
+  }else{ // CROWN VICTORY
+    const sw=Math.sin(t*3);p.la=[[12,11],[7,1],[3,-9+sw*2]];p.ra=[[32,11],[37,1],[41,-9-sw*2]];p.ll=[[18,23],[14,33],[7,38]];p.rr=[[26,23],[30,33],[37,38]];p.y=-Math.max(0,Math.sin(t*3))*3;p.lean=sw*.03;
+  }
+  return p;
+}
+function strokeDanceLimb(points,color,width){
+  ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineCap="round";ctx.lineJoin="round";ctx.beginPath();ctx.moveTo(points[0][0],points[0][1]);ctx.lineTo(points[1][0],points[1][1]);ctx.lineTo(points[2][0],points[2][1]);ctx.stroke();ctx.lineCap="butt";
+}
+function drawLockerDanceLegs(color){if(!lockerDancePose)return false;strokeDanceLimb(lockerDancePose.ll,color,5);strokeDanceLimb(lockerDancePose.rr,color,5);return true}
+function drawLockerDanceArms(color){if(!lockerDancePose)return false;strokeDanceLimb(lockerDancePose.la,color,5);strokeDanceLimb(lockerDancePose.ra,color,5);return true}
+function drawLockerShowcase(now){
+  if(!locker3dCtx||!lockerViewItem)return;
+  const pc=locker3dCtx,w=locker3dCanvas.width,h=locker3dCanvas.height;pc.clearRect(0,0,w,h);
+  const g=pc.createRadialGradient(w/2,h*.40,20,w/2,h*.56,w*.56);g.addColorStop(0,"rgba(255,255,255,.26)");g.addColorStop(1,"rgba(0,0,0,.10)");pc.fillStyle=g;pc.fillRect(0,0,w,h);
+  // subtle floor so every character begins centred at the bottom of the showcase
+  pc.save();pc.globalAlpha=.32;pc.fillStyle="#020617";pc.beginPath();pc.ellipse(w/2,h-25,98,14,0,0,Math.PI*2);pc.fill();pc.restore();
+  if(lockerViewItem.id==="cosmicsovereign"&&lockerViewTab==="characters"&&!profile.ownedCharacters.includes(lockerViewItem.id)){
+    pc.fillStyle="#f59e0b";pc.font="900 150px system-ui";pc.textAlign="center";pc.textBaseline="middle";pc.fillText("?",w/2,h/2-10);return;
+  }
+  const saved=ctx.getImageData(0,0,canvas.width,canvas.height);ctx.save();ctx.clearRect(0,0,canvas.width,canvas.height);
+  if(lockerViewTab==="characters"){
+    // Character-only showcase: true articulated two-arm/two-leg dances. No vehicle and no extra overlay limbs.
+    const t=(now-lockerDanceStart)/1000,d=danceIndexFor(lockerViewItem.id);
+    lockerDancePose=buildLockerDancePose(d,t);
+    // Body centre is x=22, so anchor at 328 to place the character exactly on source centre x=350.
+    ctx.translate(328+lockerDancePose.x,178+lockerDancePose.y);ctx.scale(4.35,4.35);ctx.rotate(lockerDancePose.lean||0);
+    drawCharacterVisual(lockerViewItem.id,"skate",0);
+    lockerDancePose=null;
+  }else if(lockerViewTab==="bikes"){
+    ctx.translate(350,205);ctx.scale(4.0,4.0);drawRideVisual(lockerViewItem.id);
+  }else{
+    ctx.translate(350,205);ctx.scale(3.6,3.6);drawEquippedAvatar(profile.equippedCharacter,profile.equippedBike,0,lockerViewItem.id);
+  }
+  ctx.restore();
+  // Crop symmetrically around x=350 so the subject is genuinely centred rather than centre-right.
+  pc.drawImage(canvas,120,0,460,420,0,0,w,h);
+  ctx.putImageData(saved,0,0);
+}
+function lockerDanceLoop(now=performance.now()){drawLockerShowcase(now);lockerDanceRaf=requestAnimationFrame(lockerDanceLoop)}
+
 function renderLocker(){
   if(!lockerGrid)return;
   updateAccountUI();lockerGrid.innerHTML="";
@@ -1672,13 +1887,16 @@ function renderLocker(){
   if(lockerTab==="characters"){items=CHARACTERS;ownedKey="ownedCharacters";equipKey="equippedCharacter"}
   else if(lockerTab==="bikes"){items=BIKES;ownedKey="ownedBikes";equipKey="equippedBike"}
   else{items=TRAILS;ownedKey="ownedTrails";equipKey="equippedTrail"}
+  // Locker is always grouped from Common -> Uncommon -> Rare -> Epic -> Legendary -> Mythic.
+  const rarityOrder={common:0,uncommon:1,rare:2,epic:3,legendary:4,mythic:5};
+  items=[...items].sort((a,b)=>rarityOrder[cosmeticRarity(a,lockerTab)]-rarityOrder[cosmeticRarity(b,lockerTab)]);
   items.forEach(item=>{
     const owned=profile[ownedKey].includes(item.id);
     const equipped=profile[equipKey]===item.id;
     const levelLocked=item.level&&passLevel()<item.level;
     const rarity=cosmeticRarity(item,lockerTab);
     const card=document.createElement("div");
-    card.className="cosmetic-card rarity-"+rarity+(equipped?" equipped":"")+(item.mythic?" mythic-card":"");
+    card.className="cosmetic-card rarity-"+rarity+(equipped?" equipped":"")+(item.mythic?" mythic-card":"");card.dataset.previewId=item.id;card.dataset.previewTab=lockerTab;
     let action="";
     if(levelLocked){
       action='<div class="cosmetic-cost">BATTLE PASS LEVEL '+item.level+'</div><button type="button" disabled>LOCKED</button>';
@@ -1694,10 +1912,11 @@ function renderLocker(){
     const preview=lockerTab==="characters"?(item.id==="cosmicsovereign"?'<div class="secret-mythic-preview" aria-label="Secret Mythic skin"><span>?</span></div>':characterPortraitSvg(item.id)):'<div style="font-size:56px">'+item.icon+'</div>';
     const sourceText=item.mythic?"MYTHIC • 5,000 COINS":item.superRare?"MYTHIC • 1% WHEEL":item.spin?"DAILY SPIN":item.level?"BATTLE PASS":"";
     card.innerHTML='<div class="cosmetic-preview">'+preview+'</div><div class="cosmetic-rarity">'+rarityLabel(rarity)+(sourceText?' • '+sourceText:'')+'</div><div class="cosmetic-name">'+item.name+'</div><div class="cosmetic-desc">'+item.desc+'</div>'+action;
-    lockerGrid.appendChild(card);
+    lockerGrid.appendChild(card);card.addEventListener("click",e=>{if(e.target.closest("button"))return;setLockerViewer(card.dataset.previewTab,item);});
   });
   lockerGrid.querySelectorAll("[data-buy]").forEach(btn=>btn.addEventListener("click",()=>buyCharacter(btn.dataset.buy)));
   lockerGrid.querySelectorAll("[data-equip]").forEach(btn=>btn.addEventListener("click",()=>equipCosmetic(btn.dataset.equip)));
+  const selectedId=profile[equipKey]||items[0]?.id;setLockerViewer(lockerTab,lockerItemById(lockerTab,selectedId)||items[0]);
 }
 function buyCharacter(id){
   const item=CHARACTERS.find(x=>x.id===id);if(!item||profile.ownedCharacters.includes(id))return;
@@ -1787,36 +2006,33 @@ const WORLD_META=[
  ["☄️","#4b2a52","#130d1f"],["🪸","#0e7490","#083344"],["🎋","#3f7a4c","#173b2a"],["☢️","#5b7f25","#17210f"],["🌩️","#5065a8","#151b42"]
 ];
 
+let worldCarouselIndex=0;
+const WORLD_ISLAND_PROPS=[
+ ["🌲","🪨"],["🛰️","⭐"],["🌵","☀️"],["🐚","🌴"],["⛄","🧊"],["🔥","🌋"],["💿","🌃"],["🌴","🦜"],["🌵","🐎"],["🍭","🧁"],["🪦","🦇"],["🗼","⚔️"],["☁️","🌈"],["💾","⚡"],["🌿","🐊"],["🏺","🐫"],["⚓","🏴‍☠️"],["🌴","🦕"],["🚀","🌑"],["💀","🔥"],["🧸","🪀"],["💎","🔮"],["🌸","⛩️"],["🪓","🛡️"],["🍄","🧚"],["⚙️","🎩"],["👾","🛸"],["🔥","🐲"],["🪸","🏛️"],["☀️","✨"],["⚡","🕳️"],["🔷","🌀"],["☄️","🪨"],["🪸","🐠"],["🎋","🐼"],["☢️","🛢️"],["⚡","🌪️"]
+];
+const WORLD_LANDMARKS=["🏙️","🛸","🏜️","🌊","❄️","🌋","🌃","🌴","🤠","🏰","👻","🏰","☁️","💾","🐊","𓂀","🏴‍☠️","🦖","🌕","🔥","🧸","💎","⛩️","🛡️","🍄","⚙️","👽","🐉","🏛️","✨","☄️","🌀","☄️","🪸","🎋","☢️","🌩️"];
+function worldCarouselDistance(i,center){
+  const n=BIOMES.length;let d=i-center;if(d>n/2)d-=n;if(d<-n/2)d+=n;return d;
+}
 function renderWorldSelect(){
-  const host=document.getElementById("worldGrid");
-  if(!host)return;
+  const host=document.getElementById("worldGrid");if(!host)return;
+  if(selectedStartBiome!==null)worldCarouselIndex=selectedStartBiome;
+  worldCarouselIndex=((worldCarouselIndex%BIOMES.length)+BIOMES.length)%BIOMES.length;
   host.innerHTML="";
-  const random=document.createElement("button");
-  random.type="button";
-  random.className="world-btn world-random"+(selectedStartBiome===null?" selected":"");
-  random.innerHTML='<span class="world-icon">🌍</span>RANDOM RUN — ALL UNLOCKED WORLDS';
-  random.addEventListener("click",()=>selectStartWorld(null));
-  host.appendChild(random);
-
   BIOMES.forEach((name,i)=>{
-    const btn=document.createElement("button");
-    const unlocked=worldUnlocked(i),req=requiredPassForWorld(i);
-    btn.type="button";
-    btn.className="world-btn"+(selectedStartBiome===i?" selected":"")+(!unlocked?" locked-world":"");
-    btn.dataset.world=String(i);
-    const meta=WORLD_META[i]||["🌎","#3d6173","#203846"];
-    btn.style.setProperty("--w1",meta[1]);
-    btn.style.setProperty("--w2",meta[2]);
-    btn.innerHTML='<span class="world-icon">'+meta[0]+'</span>'+name+(unlocked?"":'<br><small>PASS '+req+'</small>');
-    btn.disabled=!unlocked;
-    if(unlocked)btn.addEventListener("click",()=>selectStartWorld(i));
-    host.appendChild(btn);
+    const d=worldCarouselDistance(i,worldCarouselIndex),abs=Math.abs(d);if(abs>3)return;
+    const unlocked=worldUnlocked(i),req=requiredPassForWorld(i),meta=WORLD_META[i]||[WORLD_LANDMARKS[i]||"🌎","#3d6173","#203846"],props=WORLD_ISLAND_PROPS[i]||["🌲","🪨"];
+    const btn=document.createElement("button");btn.type="button";btn.className="world-island-card"+(selectedStartBiome===i?" selected":"")+(!unlocked?" locked-world":"");btn.dataset.world=String(i);btn.style.setProperty("--offset",String(d));btn.style.setProperty("--abs",String(abs));btn.setAttribute("aria-label",name+(unlocked?"":" locked, Battle Pass level "+req));
+    btn.innerHTML='<div class="island-scene"><span class="island-cloud c1">☁️</span><span class="island-cloud c2">☁️</span><div class="island-top"></div><div class="island-bottom"></div><div class="island-props"><span>'+props[0]+'</span><span>'+props[1]+'</span></div><div class="island-landmark">'+(WORLD_LANDMARKS[i]||meta[0])+'</div></div><div class="world-island-info"><div class="world-island-number">WORLD '+String(i+1).padStart(2,"0")+'</div><div class="world-island-name">'+name+'</div>'+(!unlocked?'<div class="world-island-lock">🔒 PASS LEVEL '+req+'</div>':'')+'</div>';
+    btn.addEventListener("click",()=>{if(i!==worldCarouselIndex){worldCarouselIndex=i;renderWorldSelect();return}if(unlocked)selectStartWorld(i)});host.appendChild(btn);
   });
+  const dots=document.getElementById("worldDots");if(dots){dots.innerHTML="";BIOMES.forEach((_,i)=>{const dot=document.createElement("span");dot.className="world-dot"+(i===worldCarouselIndex?" active":"");dots.appendChild(dot)})}
+  const random=document.getElementById("worldRandom");if(random){random.classList.toggle("selected",selectedStartBiome===null);random.onclick=()=>selectStartWorld(null)}
 }
-function selectStartWorld(index){
-  selectedStartBiome=(Number.isInteger(index)&&index>=0&&index<BIOMES.length&&worldUnlocked(index))?index:null;
-  renderWorldSelect();
-}
+function moveWorldCarousel(dir){worldCarouselIndex=(worldCarouselIndex+dir+BIOMES.length)%BIOMES.length;renderWorldSelect()}
+function selectStartWorld(index){selectedStartBiome=(Number.isInteger(index)&&index>=0&&index<BIOMES.length&&worldUnlocked(index))?index:null;if(selectedStartBiome!==null)worldCarouselIndex=selectedStartBiome;renderWorldSelect()}
+document.addEventListener("click",e=>{if(e.target&&e.target.id==="worldPrev")moveWorldCarousel(-1);if(e.target&&e.target.id==="worldNext")moveWorldCarousel(1)});
+document.addEventListener("keydown",e=>{const panel=document.querySelector('.home-section[data-home-panel="worlds"].active');if(!panel)return;if(e.key==="ArrowLeft"){e.preventDefault();moveWorldCarousel(-1)}else if(e.key==="ArrowRight"){e.preventDefault();moveWorldCarousel(1)}else if(e.key==="Enter"){const i=worldCarouselIndex;if(worldUnlocked(i))selectStartWorld(i)}});
 
 let selectedDifficulty="normal";
 const DIFFICULTIES={
@@ -2665,16 +2881,19 @@ function drawCharacterVisual(character,ride,b){
   const boardLike=["skate","reef","hover","cloud","comet","voidwing","phantom","nexus","ufo","goldenrocket","dragonride","royal","meteor","mech","stormsled","mantasurf","jadecycle","reactorboard","tempestwing"].includes(ride);
   // Full body pose. Custom skins do NOT draw any Classic Rider body/head/helmet underneath.
   const legColor=character==="rider"?"#1f2937":"#111827";
-  ctx.strokeStyle=legColor;ctx.lineWidth=4;ctx.lineCap="round";
-  ctx.beginPath();
-  if(boardLike){ctx.moveTo(20,24);ctx.lineTo(13,34);ctx.lineTo(6,38);ctx.moveTo(24,24);ctx.lineTo(29,33);ctx.lineTo(38,38)}
-  else{ctx.moveTo(20,23);ctx.lineTo(16,31);ctx.lineTo(9,35);ctx.moveTo(24,23);ctx.lineTo(28,30);ctx.lineTo(33,35)}
-  ctx.stroke();ctx.lineCap="butt";
+  if(!lockerDancePose){
+    ctx.strokeStyle=legColor;ctx.lineWidth=4;ctx.lineCap="round";
+    ctx.beginPath();
+    if(boardLike){ctx.moveTo(20,24);ctx.lineTo(13,34);ctx.lineTo(6,38);ctx.moveTo(24,24);ctx.lineTo(29,33);ctx.lineTo(38,38)}
+    else{ctx.moveTo(20,23);ctx.lineTo(16,31);ctx.lineTo(9,35);ctx.moveTo(24,23);ctx.lineTo(28,30);ctx.lineTo(33,35)}
+    ctx.stroke();ctx.lineCap="butt";
+  }
 
   if(character==="rider"){
+    if(lockerDancePose)drawLockerDanceLegs(legColor);
     const shirtCols=["#2563eb","#f8fafc","#d97706","#0891b2","#0ea5e9","#dc2626","#22d3ee","#15803d","#92400e","#f472b6","#6d28d9","#1d4ed8","#f97316","#06b6d4","#4d7c0f","#ca8a04","#7c2d12","#365314","#e5e7eb","#b91c1c","#2563eb","#7c3aed","#7f1d1d","#4f6b7c","#315d36","#7b542f","#3ca886"];
     ctx.fillStyle=shirtCols[b]||"#2563eb";roundedRectPath(15,7,14,17,5);ctx.fill();
-    ctx.strokeStyle="#d6a67a";ctx.lineWidth=3.5;ctx.beginPath();ctx.moveTo(16,12);ctx.lineTo(10,20);ctx.lineTo(18,22);ctx.moveTo(28,12);ctx.lineTo(32,18);ctx.lineTo(30,20);ctx.stroke();
+    if(lockerDancePose)drawLockerDanceArms("#d6a67a");else{ctx.strokeStyle="#d6a67a";ctx.lineWidth=3.5;ctx.beginPath();ctx.moveTo(16,12);ctx.lineTo(10,20);ctx.lineTo(18,22);ctx.moveTo(28,12);ctx.lineTo(32,18);ctx.lineTo(30,20);ctx.stroke();}
     ctx.fillStyle="#d6a67a";ctx.fillRect(19,3,6,6);ctx.beginPath();ctx.arc(22,-1,7,0,Math.PI*2);ctx.fill();
     // Default rider alone can receive biome headwear.
     if(b===1||b===18){ctx.fillStyle="#e5e7eb";ctx.beginPath();ctx.arc(22,-1,9,Math.PI,0);ctx.fill();ctx.fillStyle="#1e293b";ctx.fillRect(16,-2,12,5)}
@@ -2694,6 +2913,11 @@ function drawCharacterVisual(character,ride,b){
     knight:["#9ca3af","#6b7280","#8b1e2d","#e5e7eb"], astronaut:["#f1f5f9","#94a3b8","#3b82f6","#0f172a"],
     samurai:["#27272a","#b91c1c","#111827","#f5d0c5"], viking:["#6b4b2f","#94a3b8","#7c2d12","#d6a67a"],
     alien:["#14532d","#72e6b2","#22d3ee","#0f172a"], wizard:["#312e81","#6d28d9","#facc15","#d6a67a"],
+    firefighter:["#171717","#facc15","#ef4444","#d8dee5"], policeofficer:["#17365d","#0f172a","#facc15","#93c5fd"],
+    paramedic:["#0f766e","#115e59","#ffffff","#ef4444"], construction:["#f59e0b","#7c2d12","#facc15","#475569"],
+    pilot:["#3f2f25","#5b4637","#d6b47a","#17202a"], chef:["#f8fafc","#cbd5e1","#dc2626","#334155"],
+    lifeguard:["#dc2626","#b91c1c","#ffffff","#0ea5e9"], mechanic:["#334155","#1f2937","#f97316","#cbd5e1"],
+    farmer:["#4d7c0f","#8b5e34","#d6a85f","#eab308"], mailcarrier:["#2563eb","#1e40af","#facc15","#8b5e34"],
     streetracer:["#111827","#1f2937","#ef4444","#67e8f9"], mysticmage:["#0d47a1","#082f72","#ffffff","#d6a67a"],
     cosmicsovereign:["#1d1438","#7c3aed","#ec4899","#67e8f9"], solarwarden:["#f8fafc","#fde047","#f59e0b","#38bdf8"],
     reefphantom:["#083344","#155e75","#22d3ee","#67e8f9"], ashenrevenant:["#211512","#44403c","#7c2d12","#ff5a1f"],
@@ -2709,12 +2933,11 @@ function drawCharacterVisual(character,ride,b){
   };
   const p=palettes[character]||["#1f2937","#374151","#6b7280","#e5e7eb"];
   // boots + full legs
-  ctx.strokeStyle=p[1];ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(18,23);ctx.lineTo(13,34);ctx.lineTo(7,38);ctx.moveTo(26,23);ctx.lineTo(31,33);ctx.lineTo(39,38);ctx.stroke();
-  ctx.fillStyle="#0b0f16";ctx.fillRect(3,36,9,4);ctx.fillRect(35,36,9,4);
+  if(lockerDancePose){drawLockerDanceLegs(p[1]);}else{ctx.strokeStyle=p[1];ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(18,23);ctx.lineTo(13,34);ctx.lineTo(7,38);ctx.moveTo(26,23);ctx.lineTo(31,33);ctx.lineTo(39,38);ctx.stroke();ctx.fillStyle="#0b0f16";ctx.fillRect(3,36,9,4);ctx.fillRect(35,36,9,4);}
   // torso/coat
   ctx.fillStyle=p[0];roundedRectPath(10,5,24,24,5);ctx.fill();ctx.strokeStyle=p[2];ctx.lineWidth=2;ctx.strokeRect(13,8,18,17);
   // arms
-  ctx.strokeStyle=p[1];ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(12,11);ctx.lineTo(5,20);ctx.lineTo(11,24);ctx.moveTo(32,11);ctx.lineTo(38,19);ctx.lineTo(34,24);ctx.stroke();
+  if(lockerDancePose)drawLockerDanceArms(p[1]);else{ctx.strokeStyle=p[1];ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(12,11);ctx.lineTo(5,20);ctx.lineTo(11,24);ctx.moveTo(32,11);ctx.lineTo(38,19);ctx.lineTo(34,24);ctx.stroke();}
   // head base - custom head, never default biome helmet
   const skin=["alien","cosmicsovereign","reefphantom"].includes(character)?p[1]:"#d6a67a";
   ctx.fillStyle=skin;ctx.beginPath();ctx.arc(22,-2,8,0,Math.PI*2);ctx.fill();
@@ -2731,6 +2954,16 @@ function drawCharacterVisual(character,ride,b){
     ctx.fillStyle="#72e6b2";ctx.beginPath();ctx.ellipse(22,-3,9,11,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#08111b";ctx.beginPath();ctx.ellipse(18,-4,3,5,0,0,Math.PI*2);ctx.ellipse(26,-4,3,5,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#22d3ee";ctx.lineWidth=2;ctx.strokeRect(13,9,18,14);
   }else if(character==="wizard"){
     ctx.fillStyle="#4c1d95";ctx.beginPath();ctx.moveTo(9,-1);ctx.lineTo(22,-22);ctx.lineTo(35,-1);ctx.closePath();ctx.fill();ctx.fillStyle="#facc15";ctx.fillRect(11,-4,22,3);ctx.fillStyle="#facc15";for(const [sx,sy] of [[18,-10],[24,-15],[28,-7]]){ctx.beginPath();ctx.arc(sx,sy,1.2,0,Math.PI*2);ctx.fill()}ctx.strokeStyle="#8b5e3c";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(39,22);ctx.lineTo(44,-13);ctx.stroke();
+  }else if(character==="firefighter"){ctx.fillStyle="#facc15";ctx.beginPath();ctx.arc(22,-3,11,Math.PI,0);ctx.fill();ctx.fillStyle="#ef4444";ctx.fillRect(17,-11,10,7);ctx.fillStyle="#111827";ctx.fillRect(12,-4,20,4);ctx.strokeStyle="#facc15";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(10,14);ctx.lineTo(34,14);ctx.stroke();
+  }else if(character==="policeofficer"){ctx.fillStyle="#17365d";ctx.beginPath();ctx.arc(22,-3,11,Math.PI,0);ctx.fill();ctx.fillStyle="#0f172a";ctx.fillRect(11,-5,22,4);ctx.fillStyle="#facc15";ctx.beginPath();ctx.moveTo(22,-12);ctx.lineTo(26,-5);ctx.lineTo(22,0);ctx.lineTo(18,-5);ctx.closePath();ctx.fill();
+  }else if(character==="paramedic"){ctx.fillStyle="#0f766e";ctx.beginPath();ctx.arc(22,-3,10,Math.PI,0);ctx.fill();ctx.fillStyle="#fff";ctx.fillRect(19,10,6,16);ctx.fillRect(14,15,16,6);
+  }else if(character==="construction"){ctx.fillStyle="#facc15";ctx.beginPath();ctx.arc(22,-3,11,Math.PI,0);ctx.fill();ctx.fillStyle="#f59e0b";ctx.fillRect(10,-4,24,5);ctx.strokeStyle="#fef08a";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(10,14);ctx.lineTo(34,14);ctx.stroke();
+  }else if(character==="pilot"){ctx.fillStyle="#5b4637";ctx.beginPath();ctx.arc(22,-3,10,Math.PI,0);ctx.fill();ctx.fillStyle="#17202a";ctx.beginPath();ctx.arc(18,-2,4,0,Math.PI*2);ctx.arc(26,-2,4,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#94a3b8";ctx.beginPath();ctx.moveTo(22,-2);ctx.lineTo(22,-2);ctx.stroke();
+  }else if(character==="chef"){ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(22,-10,7,0,Math.PI*2);ctx.arc(15,-7,6,0,Math.PI*2);ctx.arc(29,-7,6,0,Math.PI*2);ctx.fill();ctx.fillRect(14,-7,16,9);ctx.strokeStyle="#dc2626";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(22,10);ctx.lineTo(22,26);ctx.stroke();
+  }else if(character==="lifeguard"){ctx.fillStyle="#ef4444";ctx.beginPath();ctx.arc(22,-3,10,Math.PI,0);ctx.fill();ctx.fillStyle="#fff";ctx.fillRect(11,-4,22,3);ctx.strokeStyle="#fff";ctx.lineWidth=3;ctx.beginPath();ctx.arc(35,15,7,0,Math.PI*2);ctx.stroke();
+  }else if(character==="mechanic"){ctx.fillStyle="#1f2937";ctx.beginPath();ctx.arc(22,-3,10,Math.PI,0);ctx.fill();ctx.fillStyle="#f97316";ctx.fillRect(11,-4,22,3);ctx.strokeStyle="#cbd5e1";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(35,20);ctx.lineTo(43,8);ctx.stroke();
+  }else if(character==="farmer"){ctx.fillStyle="#d6a85f";ctx.fillRect(8,-7,28,4);ctx.beginPath();ctx.arc(22,-4,9,Math.PI,0);ctx.fill();ctx.strokeStyle="#8b5e34";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(37,22);ctx.lineTo(43,8);ctx.stroke();
+  }else if(character==="mailcarrier"){ctx.fillStyle="#2563eb";ctx.beginPath();ctx.arc(22,-3,10,Math.PI,0);ctx.fill();ctx.fillStyle="#facc15";ctx.fillRect(11,-4,22,3);ctx.strokeStyle="#8b5e34";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(10,8);ctx.lineTo(34,27);ctx.stroke();
   }else if(character==="streetracer"){
     ctx.fillStyle="#111827";ctx.beginPath();ctx.arc(22,-3,11,Math.PI,0);ctx.lineTo(31,4);ctx.lineTo(13,4);ctx.closePath();ctx.fill();ctx.strokeStyle="#ef4444";ctx.lineWidth=2;ctx.stroke();ctx.fillStyle="#67e8f9";ctx.fillRect(13,-5,18,4);ctx.fillStyle="#ef4444";ctx.fillRect(17,12,10,3);
   }else if(character==="mysticmage"){
@@ -2809,18 +3042,23 @@ function drawEquippedAvatar(character,ride,b,trail){
   // trail first so it stays behind the equipped ride/character
   if(trail&&trail!=="none"){
     const tt=performance.now()*.006;
-    const trailColors={spark:"#ffe45c",bubbles:"#8de9ff",embers:"#ff7438",petals:"#f9a8d4",stars:"#fff1a3",lightning:"#67e8f9",voiddust:"#a78bfa",souls:"#c4b5fd",rainbow:"#f0abfc",neoncomet:"#22d3ee",dragonfire:"#fb923c",stormchain:"#c4b5fd",abysswake:"#38bdf8",jadefire:"#4ade80",radiation:"#bef264",tempest:"#e879f9"};
+    const trailColors={spark:"#ffe45c",bubbles:"#8de9ff",embers:"#ff7438",petals:"#f9a8d4",stars:"#fff1a3",lightning:"#67e8f9",voiddust:"#a78bfa",souls:"#c4b5fd",rainbow:"#f0abfc",neoncomet:"#22d3ee",dragonfire:"#fb923c",stormchain:"#c4b5fd",abysswake:"#38bdf8",jadefire:"#4ade80",radiation:"#bef264",tempest:"#e879f9",emeraldsmoke:"#4ade80",policepulse:"#60a5fa",blueplasma:"#38bdf8",sharkwake:"#22d3ee",royalrunes:"#c084fc",galaxytear:"#a78bfa",solarflare:"#fbbf24",blackhole:"#f59e0b"};
     const col=trailColors[trail]||"#fff";
     ctx.save();ctx.lineCap="round";
     for(let i=0;i<9;i++){
       const phase=tt+i*.72, tx=-8-i*7-(phase%1)*5, ty=37+Math.sin(phase*1.7)*5;
       ctx.globalAlpha=.2+(i%4)*.13;ctx.fillStyle=col;ctx.strokeStyle=col;
-      if(trail==="lightning"||trail==="stormchain"||trail==="tempest"){ctx.lineWidth=1.6+(i%2);ctx.beginPath();ctx.moveTo(tx+6,ty-3);ctx.lineTo(tx,ty+2);ctx.lineTo(tx+4,ty+6);ctx.lineTo(tx-3,ty+10);ctx.stroke();}
-      else if(trail==="bubbles"||trail==="abysswake"){ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(tx,ty,2+(i%3),0,Math.PI*2);ctx.stroke();}
+      if(trail==="lightning"||trail==="stormchain"||trail==="tempest"||trail==="blueplasma"){ctx.lineWidth=1.6+(i%2);ctx.beginPath();ctx.moveTo(tx+6,ty-3);ctx.lineTo(tx,ty+2);ctx.lineTo(tx+4,ty+6);ctx.lineTo(tx-3,ty+10);ctx.stroke();}
+      else if(trail==="bubbles"||trail==="abysswake"||trail==="emeraldsmoke"){ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(tx,ty,2+(i%3),0,Math.PI*2);ctx.stroke();}
       else if(trail==="petals"){ctx.beginPath();ctx.ellipse(tx,ty,4,2,phase,0,Math.PI*2);ctx.fill();}
       else if(trail==="stars"||trail==="neoncomet"){ctx.save();ctx.translate(tx,ty);ctx.rotate(phase);ctx.beginPath();for(let k=0;k<8;k++){const a=k*Math.PI/4,r=k%2?1.8:4;k?ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r):ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r)}ctx.closePath();ctx.fill();ctx.restore();}
       else if(trail==="rainbow"){ctx.fillStyle=`hsl(${(i*42+performance.now()*.08)%360},95%,68%)`;ctx.beginPath();ctx.arc(tx,ty,3,0,Math.PI*2);ctx.fill();}
       else if(trail==="souls"){ctx.beginPath();ctx.ellipse(tx,ty,3,5,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha*=.6;ctx.beginPath();ctx.arc(tx-1,ty-1,1,0,Math.PI*2);ctx.fill();}
+      else if(trail==="royalrunes"){ctx.lineWidth=2;ctx.strokeRect(tx-3,ty-3,6,6);}
+      else if(trail==="solarflare"){ctx.beginPath();ctx.arc(tx,ty,3+2*Math.sin(phase*2),0,Math.PI*2);ctx.fill();}
+      else if(trail==="blackhole"){ctx.lineWidth=2;ctx.beginPath();ctx.arc(tx,ty,4,0,Math.PI*2);ctx.stroke();ctx.fillStyle="#020617";ctx.beginPath();ctx.arc(tx,ty,2,0,Math.PI*2);ctx.fill();}
+      else if(trail==="policepulse"){ctx.fillStyle=i%2?"#ef4444":"#3b82f6";ctx.fillRect(tx-3,ty-2,6,4);}
+      else if(trail==="sharkwake"||trail==="galaxytear"){ctx.beginPath();ctx.moveTo(tx-5,ty+3);ctx.lineTo(tx,ty-4);ctx.lineTo(tx+5,ty+3);ctx.closePath();ctx.fill();}
       else if(trail==="radiation"){ctx.lineWidth=2;ctx.beginPath();ctx.arc(tx,ty,3+2*Math.sin(phase),0,Math.PI*2);ctx.stroke();}
       else{ctx.beginPath();ctx.arc(tx,ty,2+(i%3),0,Math.PI*2);ctx.fill();}
     }
@@ -4226,6 +4464,35 @@ async function loadHomeLeaderboard(){
     list.innerHTML=leaders.map(x=>'<div class="home-leaderboard-row '+(authAccount&&x.username.toLowerCase()===authAccount.username.toLowerCase()?"me":"")+'"><span class="home-leaderboard-rank">#'+x.rank+'</span><span>'+escapeHtml(x.username)+'</span><span class="home-leaderboard-score">'+Math.floor(x.bestScore).toLocaleString()+'</span></div>').join("");
   }catch(e){meta.textContent="Leaderboard unavailable right now.";list.innerHTML='<div class="home-leaderboard-empty">'+escapeHtml(e.message)+'</div>';}
 }
+
+const SHOP_RARITY_PRICE={uncommon:250,rare:500,epic:1000,mythic:2000};
+function shopRarity(item,type){if(item.rarity)return item.rarity;if(type==="character")return cosmeticRarity(item,"characters");return "uncommon"}
+function shopBasePrice(item,type){return SHOP_RARITY_PRICE[shopRarity(item,type)]||250}
+function shopPrice(item,type){const base=shopBasePrice(item,type);return type==="character"?Math.round(base*.75):base}
+function shopSlot(){return Math.floor(Date.now()/(12*60*60*1000))}
+function seededShuffle(arr,seed){const a=arr.slice();let x=(seed>>>0)||1;function rnd(){x=(x*1664525+1013904223)>>>0;return x/4294967296}for(let i=a.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function shopCharacterPool(){return CHARACTERS.filter(x=>x.cost>0&&!x.level&&!x.spin).map(item=>({type:"character",item}))}
+function shopTrailPool(){return TRAILS.filter(x=>x.shop).map(item=>({type:"trail",item}))}
+function shopBikePool(){return BIKES.filter(x=>x.shop).map(item=>({type:"bike",item}))}
+function shopPool(){return shopCharacterPool().concat(shopTrailPool(),shopBikePool())}
+function currentShopItems(){
+  const seed=shopSlot()*7919+33026;
+  const chars=seededShuffle(shopCharacterPool(),seed+17),trails=seededShuffle(shopTrailPool(),seed+83),bikes=seededShuffle(shopBikePool(),seed+131),out=[];
+  const charCount=1+(seed%2); // 1–2 discounted Locker characters
+  const bikeCount=3-charCount; // with 2 trails this always totals exactly 5
+  out.push(...chars.slice(0,charCount));
+  out.push(...trails.slice(0,2));
+  out.push(...bikes.slice(0,bikeCount));
+  return seededShuffle(out,seed+211)
+}
+function ownsShopItem(x){if(x.type==="character")return profile.ownedCharacters.includes(x.item.id);if(x.type==="bike")return profile.ownedBikes.includes(x.item.id);return profile.ownedTrails.includes(x.item.id)}
+function equipShopItem(x){if(x.type==="character")profile.equippedCharacter=x.item.id;else if(x.type==="bike")profile.equippedBike=x.item.id;else profile.equippedTrail=x.item.id;saveProfile();renderItemShop();renderLocker()}
+function buyShopItem(type,id){const x=shopPool().find(v=>v.type===type&&v.item.id===id);if(!x||!currentShopItems().some(v=>v.type===type&&v.item.id===id))return;const rarity=shopRarity(x.item,x.type),price=shopPrice(x.item,x.type);if(ownsShopItem(x)){equipShopItem(x);return}if(profile.wallet<price){alert("You need "+price+" coins for this "+rarity+" item.");return}profile.wallet-=price;if(type==="character")profile.ownedCharacters.push(id);else if(type==="bike")profile.ownedBikes.push(id);else profile.ownedTrails.push(id);equipShopItem(x);updateAccountUI()}
+function shopVisualHtml(x){const it=x.item;if(x.type==="character"){try{return '<div class="shop-visual">'+characterPortraitSvg(it.id)+'</div>'}catch(e){return '<div class="shop-visual" style="font-size:58px">'+it.icon+'</div>'}}if(x.type==="bike")return '<div class="shop-visual"><div class="shop-bike-art"><span class="shop-bike-glyph">'+it.icon+'</span></div></div>';return '<div class="shop-visual"><div class="shop-trail-art"><span class="shop-trail-glyph">'+it.icon+'</span></div></div>'}
+function renderItemShop(){const grid=document.getElementById("itemShopGrid");if(!grid)return;grid.innerHTML="";for(const x of currentShopItems()){const it=x.item,r=shopRarity(it,x.type),base=shopBasePrice(it,x.type),price=shopPrice(it,x.type),owned=ownsShopItem(x),equipped=x.type==="character"?profile.equippedCharacter===it.id:x.type==="bike"?profile.equippedBike===it.id:profile.equippedTrail===it.id;const typeLabel=x.type==="character"?'LOCKER CHARACTER':x.type==="bike"?'FEATURED RIDE':'ANIMATED TRAIL';const card=document.createElement("article");card.className="shop-card rarity-"+r;card.innerHTML=(x.type==="character"?'<div class="shop-discount">25% OFF</div>':'')+'<div class="shop-type">'+typeLabel+'</div>'+shopVisualHtml(x)+'<div class="shop-name">'+escapeHtml(it.name)+'</div><div class="shop-rarity rarity-'+r+'">'+r.toUpperCase()+'</div><div class="shop-price-line">'+(x.type==="character"?'<span class="shop-old-price">🪙 '+base+'</span>':'')+(owned?'OWNED':'🪙 '+price)+'</div><button class="shop-buy '+(equipped?'equipped':owned?'owned':'')+'" type="button">'+(equipped?'✓ EQUIPPED':owned?'EQUIP':'BUY • 🪙 '+price)+'</button>';card.querySelector("button").addEventListener("click",()=>buyShopItem(x.type,it.id));grid.appendChild(card)}}
+function updateShopTimer(){const el=document.getElementById("shopTimer");if(!el)return;const span=12*60*60*1000,next=(shopSlot()+1)*span,ms=Math.max(0,next-Date.now()),h=Math.floor(ms/3600000),m=Math.floor(ms%3600000/60000),sec=Math.floor(ms%60000/1000);el.textContent="REFRESH "+String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":"+String(sec).padStart(2,"0");if(ms<1200)renderItemShop()}
+setInterval(updateShopTimer,1000);setTimeout(()=>{renderItemShop();updateShopTimer()},100);
+
 const refreshHomeLeaderboard=document.getElementById("refreshHomeLeaderboard");if(refreshHomeLeaderboard)refreshHomeLeaderboard.addEventListener("click",loadHomeLeaderboard);
 (function(){
   const tabs=Array.from(document.querySelectorAll('.home-section-tab'));
@@ -4234,7 +4501,7 @@ const refreshHomeLeaderboard=document.getElementById("refreshHomeLeaderboard");i
     tabs.forEach(btn=>btn.classList.toggle('active',btn.dataset.homeSection===name));
     panels.forEach(panel=>panel.classList.toggle('active',panel.dataset.homePanel===name));
   }
-  tabs.forEach(btn=>btn.addEventListener('click',()=>openHomeSection(btn.dataset.homeSection)));
+  tabs.forEach(btn=>btn.addEventListener('click',()=>{openHomeSection(btn.dataset.homeSection);if(btn.dataset.homeSection==='shop')renderItemShop()}));
   window.openHomeSection=openHomeSection;
   const landing=document.getElementById('landingScreen');
   const enterBtn=document.getElementById('enterGameMenuBtn');

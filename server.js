@@ -6,7 +6,7 @@ const WebSocket = require("ws");
 
 const PORT = process.env.PORT || 3000;
 const PUBLIC = path.join(__dirname, "public");
-const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "data");
+const DATA_DIR = process.env.DATA_DIR || (fs.existsSync("/var/data") ? "/var/data" : path.join(__dirname, "data"));
 const DB_FILE = path.join(DATA_DIR, "accounts.json");
 const rooms = new Map();
 
@@ -24,7 +24,7 @@ function saveDb(){
   fs.renameSync(tmp,DB_FILE);
 }
 function defaultProfile(){
-  return {wallet:0,passXp:0,claimed:[],ownedCharacters:["rider"],ownedBikes:["classic"],ownedTrails:["none"],equippedCharacter:"rider",equippedBike:"classic",equippedTrail:"none",chestsCollected:0,lastFreeSpinDay:""};
+  return {wallet:0,passXp:0,claimed:[],ownedCharacters:["rider"],ownedBikes:["classic"],ownedTrails:["none"],ownedDances:["auto"],equippedDance:"auto",equippedCharacter:"rider",equippedBike:"classic",equippedTrail:"none",chestsCollected:0,lastFreeSpinDay:""};
 }
 function uniqueStrings(v,allowedLen=40){
   if(!Array.isArray(v))return [];
@@ -35,13 +35,15 @@ function sanitizeProfile(v){
   const ownedCharacters=uniqueStrings(p.ownedCharacters); if(!ownedCharacters.includes("rider"))ownedCharacters.unshift("rider");
   const ownedBikes=uniqueStrings(p.ownedBikes); if(!ownedBikes.includes("classic"))ownedBikes.unshift("classic");
   const ownedTrails=uniqueStrings(p.ownedTrails); if(!ownedTrails.includes("none"))ownedTrails.unshift("none");
+  const ownedDances=uniqueStrings(p.ownedDances); if(!ownedDances.includes("auto"))ownedDances.unshift("auto");
   const out={
     wallet:Math.max(0,Math.min(100000000,Math.floor(Number(p.wallet)||0))),
     passXp:Math.max(0,Math.min(59999,Math.floor(Number(p.passXp)||0))),
     chestsCollected:Math.max(0,Math.min(100000000,Math.floor(Number(p.chestsCollected)||0))),
     lastFreeSpinDay:/^\d{4}-\d{2}-\d{2}$/.test(String(p.lastFreeSpinDay||""))?String(p.lastFreeSpinDay):"",
-    claimed:[...new Set((Array.isArray(p.claimed)?p.claimed:[]).map(Number).filter(n=>Number.isInteger(n)&&n>=1&&n<=50))],
-    ownedCharacters,ownedBikes,ownedTrails,
+    claimed:[...new Set((Array.isArray(p.claimed)?p.claimed:[]).map(Number).filter(n=>Number.isInteger(n)&&n>=1&&n<=100))],
+    ownedCharacters,ownedBikes,ownedTrails,ownedDances,
+    equippedDance:String(p.equippedDance||d.equippedDance).slice(0,40),
     equippedCharacter:String(p.equippedCharacter||d.equippedCharacter).slice(0,40),
     equippedBike:String(p.equippedBike||d.equippedBike).slice(0,40),
     equippedTrail:String(p.equippedTrail||d.equippedTrail).slice(0,40)
@@ -49,6 +51,7 @@ function sanitizeProfile(v){
   if(!out.ownedCharacters.includes(out.equippedCharacter))out.equippedCharacter="rider";
   if(!out.ownedBikes.includes(out.equippedBike))out.equippedBike="classic";
   if(!out.ownedTrails.includes(out.equippedTrail))out.equippedTrail="none";
+  if(!out.ownedDances.includes(out.equippedDance))out.equippedDance="auto";
   return out;
 }
 function usernameKey(v){return String(v||"").trim().toLowerCase();}
@@ -147,7 +150,7 @@ const server=http.createServer(async(req,res)=>{
   const pathname=req.url.split("?")[0];
   try{
     if(pathname==="/api/health"&&req.method==="GET"){
-      return json(res,200,{ok:true,accounts:true,multiplayer:true,version:"design-locker-daily-spin-v9"});
+      return json(res,200,{ok:true,accounts:true,multiplayer:true,version:"v32-item-shop-dances"});
     }
     if(pathname==="/api/register"&&req.method==="POST"){
       const b=await readJson(req), username=String(b.username||"").trim(), password=String(b.password||"");
