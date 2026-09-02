@@ -37,7 +37,7 @@ function sanitizeProfile(v){
   const ownedTrails=uniqueStrings(p.ownedTrails); if(!ownedTrails.includes("none"))ownedTrails.unshift("none");
   const out={
     wallet:Math.max(0,Math.min(100000000,Math.floor(Number(p.wallet)||0))),
-    passXp:Math.max(0,Math.min(12499,Math.floor(Number(p.passXp)||0))),
+    passXp:Math.max(0,Math.min(59999,Math.floor(Number(p.passXp)||0))),
     chestsCollected:Math.max(0,Math.min(100000000,Math.floor(Number(p.chestsCollected)||0))),
     lastFreeSpinDay:/^\d{4}-\d{2}-\d{2}$/.test(String(p.lastFreeSpinDay||""))?String(p.lastFreeSpinDay):"",
     claimed:[...new Set((Array.isArray(p.claimed)?p.claimed:[]).map(Number).filter(n=>Number.isInteger(n)&&n>=1&&n<=50))],
@@ -102,7 +102,7 @@ function roomCode(){
   return crypto.randomBytes(3).toString("hex").slice(0,4).toUpperCase();
 }
 function send(ws,obj){if(ws&&ws.readyState===WebSocket.OPEN)ws.send(JSON.stringify(obj));}
-function publicPlayer(p){return {id:p.id,name:p.name,isHost:p.isHost,ready:!!p.ready,x:p.x,y:p.y,w:p.w,h:p.h,score:p.score,coins:p.coins,biome:p.biome,equippedCharacter:p.equippedCharacter,equippedBike:p.equippedBike,alive:p.alive!==false,respawnAt:p.respawnAt||0,deathFlashUntil:p.deathFlashUntil||0};}
+function publicPlayer(p){return {id:p.id,name:p.name,isHost:p.isHost,ready:!!p.ready,x:p.x,y:p.y,w:p.w,h:p.h,score:p.score,coins:p.coins,biome:p.biome,equippedCharacter:p.equippedCharacter,equippedBike:p.equippedBike,equippedTrail:p.equippedTrail,alive:p.alive!==false,respawnAt:p.respawnAt||0,deathFlashUntil:p.deathFlashUntil||0};}
 function broadcast(room,obj,except=null){for(const p of room.players.values())if(p.ws&&p.ws!==except)send(p.ws,obj);}
 function broadcastRoomState(room){
   broadcast(room,{type:"room_state",roomCode:room.code,hostId:room.hostId,started:room.started,starting:!!room.starting,difficulty:room.difficulty||"normal",startWorld:Number.isInteger(room.startWorld)?room.startWorld:-1,roundId:room.roundId||0,startAt:room.startAt||0,players:[...room.players.values()].map(publicPlayer)});
@@ -222,7 +222,7 @@ function endRound(room, reason="ROUND_ENDED"){
 wss.on("connection",ws=>{
   ws.isAlive=true;
   ws.on("pong",()=>{ws.isAlive=true;});
-  const player={id:crypto.randomUUID(),ws,name:"Guest",roomCode:null,isHost:false,ready:false,x:null,y:null,w:44,h:52,score:0,coins:0,biome:0,equippedCharacter:"rider",equippedBike:"classic",alive:true,respawnAt:0,deathFlashUntil:0,respawnTimer:null};
+  const player={id:crypto.randomUUID(),ws,name:"Guest",roomCode:null,isHost:false,ready:false,x:null,y:null,w:44,h:52,score:0,coins:0,biome:0,equippedCharacter:"rider",equippedBike:"classic",equippedTrail:"none",alive:true,respawnAt:0,deathFlashUntil:0,respawnTimer:null};
   send(ws,{type:"hello",playerId:player.id,serverVersion:"multiplayer-ready-v8",maxPlayers:MAX_ROOM_PLAYERS});
 
   ws.on("message",raw=>{
@@ -341,7 +341,7 @@ wss.on("connection",ws=>{
       const num=(v,lo,hi,d)=>Number.isFinite(Number(v))?Math.max(lo,Math.min(hi,Number(v))):d;
       player.x=num(m.x,-100,1200,player.x);player.y=num(m.y,-100,520,player.y);player.w=num(m.w,20,90,44);player.h=num(m.h,20,100,52);
       player.score=num(m.score,0,1e9,0);player.coins=num(m.coins,0,1e9,0);player.biome=num(m.biome,0,100,0);
-      player.equippedCharacter=String(m.equippedCharacter||"rider").slice(0,30);player.equippedBike=String(m.equippedBike||"classic").slice(0,30);player.name=safeName(m.name||player.name);
+      player.equippedCharacter=String(m.equippedCharacter||"rider").slice(0,30);player.equippedBike=String(m.equippedBike||"classic").slice(0,30);player.equippedTrail=String(m.equippedTrail||"none").slice(0,30);player.name=safeName(m.name||player.name);
       broadcast(room,{type:"player_state",player:publicPlayer(player)},ws);
       return;
     }

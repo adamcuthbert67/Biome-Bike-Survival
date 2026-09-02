@@ -55,3 +55,6 @@ V16: homepage menu scrolling restored and homepage/landing colours made more vib
 
 
 V18 COSMETIC RENDER FIX: equipped character and ride now render as exclusive full replacements; remote multiplayer riders also use synced cosmetics.
+
+
+V24: Replaced six Battle Pass characters with unique map-themed skins (Candyland, Pirate Cove, Toy World, Crystal Cavern, Steampunk Empire, Ancient Egypt). Sunfall Emperor remains Mythic. Internal IDs preserved for save compatibility.

@@ -548,11 +548,16 @@
 .bp-level:not(.locked):hover{transform:translateY(-4px) scale(1.02);filter:brightness(1.12)}
 .bp-level .bp-rarity{font-size:9px;letter-spacing:1.4px;font-weight:1000;opacity:.8;margin:2px 0 4px}
 .bp-level .bp-icon{font-size:31px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.4))}
+.bp-character-preview{height:106px;margin:5px auto 7px;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:10px;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.16)}
+.bp-character-preview svg{height:105px;width:100%;max-width:118px;display:block;filter:drop-shadow(0 5px 5px rgba(0,0,0,.42))}
+.bp-level.rare .bp-character-preview{box-shadow:inset 0 0 22px rgba(56,189,248,.18)}
+.bp-level.epic .bp-character-preview{box-shadow:inset 0 0 24px rgba(192,132,252,.22)}
+.bp-level.mythic .bp-character-preview{box-shadow:inset 0 0 26px rgba(251,191,36,.26)}
 .bp-level.common{background:linear-gradient(180deg,#243042,#121a27)}
 .bp-level.rare{background:linear-gradient(180deg,#123c63,#10243e);border-color:#38bdf8}
 .bp-level.epic{background:linear-gradient(180deg,#55258a,#24133e);border-color:#c084fc;box-shadow:inset 0 0 20px rgba(192,132,252,.12)}
 .bp-level.legendary{background:linear-gradient(180deg,#7a4a0a,#2c1c08);border-color:#facc15;box-shadow:0 0 18px rgba(250,204,21,.18),inset 0 0 24px rgba(250,204,21,.12)}
-.bp-level.mythic{background:radial-gradient(circle at 50% 35%,#8725a8,#31104f 46%,#090513);border-color:#f0abfc;box-shadow:0 0 28px rgba(240,171,252,.45),inset 0 0 28px rgba(103,232,249,.15);animation:mythicPulse 1.8s ease-in-out infinite alternate}
+.bp-level.mythic{background:radial-gradient(circle at 50% 32%,#b76b0b,#5c2f05 48%,#160b02);border-color:#fbbf24;box-shadow:0 0 28px rgba(251,191,36,.45),inset 0 0 28px rgba(255,237,158,.16);animation:mythicPulse 1.8s ease-in-out infinite alternate}
 @keyframes mythicPulse{from{box-shadow:0 0 18px rgba(240,171,252,.3)}to{box-shadow:0 0 38px rgba(103,232,249,.6),0 0 55px rgba(240,171,252,.28)}}
 .bp-level.locked{filter:saturate(.35) brightness(.62)}
 .bp-level.current{outline:3px solid #fff3a3;outline-offset:2px}
@@ -789,6 +794,10 @@ body{min-height:100%;height:auto !important;overflow-x:hidden !important;overflo
   .sectioned-home{min-height:calc(100vh - 16px) !important;height:auto !important;overflow:visible !important}
 }
 
+
+/* V20 tidy-up: leaderboard preview + 100-level pass */
+.home-leaderboard{margin-top:18px;padding:14px;border:3px solid #facc15;border-radius:10px;background:linear-gradient(180deg,rgba(14,31,52,.96),rgba(6,17,31,.96));box-shadow:inset 0 0 20px rgba(250,204,21,.08)}
+.home-leaderboard-head{display:flex;align-items:center;justify-content:space-between;gap:10px;color:#fef3c7;font-size:14px;letter-spacing:.5px}.home-leaderboard-head button{border:2px solid #38bdf8;background:#082f49;color:#e0f2fe;border-radius:6px;padding:7px 10px;font-weight:900;cursor:pointer}.home-leaderboard-meta{font-size:10px;color:#bae6fd;margin:7px 0}.home-leaderboard-list{display:grid;gap:5px}.home-leaderboard-row{display:grid;grid-template-columns:42px 1fr 90px;gap:8px;align-items:center;background:#071827;border:2px solid #244661;border-radius:6px;padding:7px 9px;font-size:11px;font-weight:900}.home-leaderboard-row.me{border-color:#facc15;background:#2b2308}.home-leaderboard-rank{color:#facc15}.home-leaderboard-score{text-align:right;color:#86efac;font-family:monospace}.home-leaderboard-empty{padding:12px;text-align:center;color:#94a3b8;font-size:11px}.bp-grid{max-height:64vh;overflow:auto;padding-right:4px}
 </style>
 </head>
 <body>
@@ -825,10 +834,10 @@ body{min-height:100%;height:auto !important;overflow-x:hidden !important;overflo
       </div>
       <div class="home-mini-stats">
         <div>🪙 <b id="walletCoins">0</b></div>
-        <div>🎫 LV <b id="passLevelMain">1</b>/50</div>
+        <div>🎫 LV <b id="passLevelMain">1</b>/100</div>
       </div>
     </div>
-    <div class="menu-sub">Ride through 32 worlds • Dodge hazards • Collect +50</div>
+    <div class="menu-sub">Ride through 37 worlds • Dodge hazards • Collect +50</div>
 
     <div class="home-top-shortcuts" aria-label="Quick cosmetic menus">
       <button class="home-shortcut locker" type="button" onclick="openLocker()">🎒 LOCKER</button>
@@ -875,6 +884,12 @@ body{min-height:100%;height:auto !important;overflow-x:hidden !important;overflo
             <button class="diff-btn" type="button" data-difficulty="nightmare">NIGHTMARE<small>brutal</small></button>
           </div>
         </div>
+
+        <section class="home-leaderboard" aria-label="Global leaderboard preview">
+          <div class="home-leaderboard-head"><b>🏆 GLOBAL LEADERBOARD</b><button id="refreshHomeLeaderboard" type="button">REFRESH</button></div>
+          <div id="homeLeaderboardMeta" class="home-leaderboard-meta">Sign in or play online to load global scores.</div>
+          <div id="homeLeaderboardList" class="home-leaderboard-list"><div class="home-leaderboard-empty">Loading top riders…</div></div>
+        </section>
       </section>
 
       <section class="home-section" data-home-panel="worlds">
@@ -884,7 +899,7 @@ body{min-height:100%;height:auto !important;overflow-x:hidden !important;overflo
           <div id="worldGrid" class="world-grid"></div>
         </section>
         <div class="menu-stats worlds-stats">
-          <div><b>WORLDS</b><span>32</span></div>
+          <div><b>WORLDS</b><span>37</span></div>
           <div><b>NEW WORLD</b><span>EVERY 200</span></div>
           <div><b>ORDER</b><span>NO REPEATS</span></div>
         </div>
@@ -1019,11 +1034,11 @@ body{min-height:100%;height:auto !important;overflow-x:hidden !important;overflo
 <div id="battlePassScreen" class="overlay-screen" aria-hidden="true">
   <div class="overlay-panel">
     <div class="overlay-head">
-      <div><h2>BATTLE PASS</h2><div>50 harder-earned levels • exclusive rides, trails and a new world every 10 levels</div></div>
+      <div><h2>BATTLE PASS</h2><div>100 hard-earned levels • exclusive skins, animated trails, vehicles and a new world every 10 levels</div></div>
       <button id="closeBattlePassBtn" class="close-overlay" type="button">✕ BACK</button>
     </div>
     <div class="bp-progress">
-      <b>LEVEL <span id="bpLevel">1</span> / 50</b> · <span id="bpXpText">0 / 250 XP</span>
+      <b>LEVEL <span id="bpLevel">1</span> / 100</b> · <span id="bpXpText">0 / 600 XP</span>
       <div class="bp-bar"><div id="bpFill" class="bp-fill"></div></div>
     </div>
     <div id="battlePassGrid" class="bp-grid"></div>
@@ -1078,6 +1093,7 @@ body{min-height:100%;height:auto !important;overflow-x:hidden !important;overflo
 
 <script>
 "use strict";
+// V24 MAP-THEMED BATTLE PASS SKINS — six prior BP skins replaced; Sunfall Emperor preserved.
 
 const canvas=document.getElementById("game");
 const ctx=canvas.getContext("2d");
@@ -1157,7 +1173,8 @@ function pickupLaneWidth(){return Math.max(20,canvas.width-218)}
 const SAVE_KEY="biomeBikeProfileV4";
 const LEGACY_SAVE_KEY="biomeBikeProfileV3";
 const BEST_KEY="biomeBikeBestV1";
-const PASS_XP_PER_LEVEL=250;
+const PASS_XP_PER_LEVEL=600;
+const PASS_MAX_LEVEL=100;
 const DEFAULT_PROFILE={
   wallet:0,
   passXp:0,
@@ -1190,9 +1207,9 @@ function loadProfile(){
 }
 let profile=loadProfile();
 function saveProfile(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(profile))}catch(e){} scheduleCloudSave();}
-function passLevel(){return Math.max(1,Math.min(50,1+Math.floor(profile.passXp/PASS_XP_PER_LEVEL)))}
-function xpIntoLevel(){return passLevel()>=50?PASS_XP_PER_LEVEL:profile.passXp%PASS_XP_PER_LEVEL}
-function requiredPassForWorld(i){return i===27?10:i===28?20:i===29?30:i===30?40:i===31?50:0}
+function passLevel(){return Math.max(1,Math.min(PASS_MAX_LEVEL,1+Math.floor(profile.passXp/PASS_XP_PER_LEVEL)))}
+function xpIntoLevel(){return passLevel()>=PASS_MAX_LEVEL?PASS_XP_PER_LEVEL:profile.passXp%PASS_XP_PER_LEVEL}
+function requiredPassForWorld(i){return i===27?10:i===28?20:i===29?30:i===30?40:i===31?50:i===32?60:i===33?70:i===34?80:i===35?90:i===36?100:0}
 function worldUnlocked(i){return requiredPassForWorld(i)<=passLevel()}
 function unlockedWorldIndexes(){return BIOMES.map((_,i)=>i).filter(worldUnlocked)}
 
@@ -1206,14 +1223,19 @@ const CHARACTERS=[
  {id:"wizard",name:"Arcane Rider",icon:"🧙",cost:380,desc:"He does not predict the path. He bends it — rune by rune, world by world."},
  {id:"streetracer",name:"Street Racer",icon:"🏁",spin:true,desc:"Built under neon lights and bad decisions. If you see the visor, you are already behind."},
  {id:"mysticmage",name:"Mystic Mage",icon:"🔮",spin:true,desc:"Wears the night sky like armour. Every white star on the robe marks a spell nobody survived twice."},
- {id:"solarwarden",name:"Solar Warden",icon:"☀️",level:12,desc:"Forged in daylight so violent it became armour. Darkness does not survive his arrival."},
- {id:"reefphantom",name:"Reef Phantom",icon:"🐚",level:17,desc:"The ocean buried him once. It learned not to try twice."},
+ {id:"nightwatchranger",name:"Sugar Rush Sovereign",icon:"🍭",level:12,rarity:"rare",desc:"Candyland made a ruler out of pure sugar, bad manners and impossible speed. The crown is frosting. The attitude is permanent."},
+ {id:"glacierscout",name:"Blacktide Captain",icon:"🏴‍☠️",level:17,rarity:"rare",desc:"Pirate Cove’s most wanted captain. One eye on the horizon, one hook on the bars, and a parrot that has seen too much."},
  {id:"ashenrevenant",name:"Ashen Revenant",icon:"🔥",cost:3000,desc:"Burned out of history and came back wearing the fire. Every scar on the armour belongs to someone who tried to stop him."},
  {id:"eclipsewarden",name:"Eclipse Warden",icon:"🌘",cost:3000,desc:"When the light disappears, he is already there. No footsteps. No warning. Just the edge of a blackened blade."},
  {id:"frosttyrant",name:"Frostbound Tyrant",icon:"❄️",cost:3000,desc:"A warlord carved from northern steel and dead winter. He does not survive the cold — the cold survives him."},
  {id:"bloodreaper",name:"Bloodmoon Reaper",icon:"🌑",cost:5000,mythic:true,desc:"The red moon is his signal, not his symbol. By the time the hood is seen, the hunt ended minutes ago."},
  {id:"starforgedarchon",name:"Starforged Archon",icon:"✦",cost:5000,mythic:true,desc:"Forged where dying stars collapse into silence. He rides like gravity, kings and worlds are all optional."},
- {id:"cosmicsovereign",name:"Secret Skin",icon:"?",spin:true,superRare:true,desc:"A hidden 1% Mythic. Its true form stays classified until the wheel chooses you."}
+ {id:"cosmicsovereign",name:"Secret Skin",icon:"?",spin:true,superRare:true,desc:"A hidden 1% Mythic. Its true form stays classified until the wheel chooses you."},
+ {id:"voltrecon",name:"Clockwork Commander",icon:"🧸",level:55,rarity:"rare",desc:"Toy World’s parade leader wound one turn too far. Painted smile, brass key, perfect posture — absolutely no off switch."},
+ {id:"runewarlord",name:"Prism Colossus",icon:"💎",level:65,rarity:"epic",desc:"A living shard broken from the heart of Crystal Cavern. No armour, no skin — just a walking gemstone that bends light around itself."},
+ {id:"abysspaladin",name:"Brasswing Baron",icon:"⚙️",level:75,rarity:"epic",desc:"Steampunk Empire’s airborne inventor. Brass wings, pressure gauges and a top hat engineered to survive terminal velocity."},
+ {id:"phantomshogun",name:"Scarab Pharaoh",icon:"𓆣",level:85,rarity:"epic",desc:"Ancient Egypt buried him with a golden scarab over his heart. He came back wearing the tomb, the crown and the curse."},
+ {id:"sunfallemperor",name:"Sunfall Emperor",icon:"☀️",level:95,rarity:"mythic",mythic:true,desc:"Mythic armour forged from a dying sun. Gold plates, burning crown and a core bright enough to turn shadows into smoke."}
 ];
 const RETIRED_CHARACTER_IDS=["jadeserpent","dragonborn","chromeronin","voidmonarch","nexussentinel"];
 function normalizeRetiredCharacters(){
@@ -1243,7 +1265,12 @@ const BIKES=[
  {id:"voidwing",name:"Void Wing",icon:"🪽",level:38,desc:"Battle Pass level 38. Dark-energy glider."},
  {id:"phantom",name:"Phantom Speeder",icon:"👻",level:42,desc:"Battle Pass level 42. Ghost-tech hover machine."},
  {id:"meteor",name:"Meteor Chariot",icon:"🌠",level:45,desc:"Battle Pass level 45. Celestial war chariot."},
- {id:"nexus",name:"Nexus Hyperbike",icon:"💫",level:49,desc:"Battle Pass level 49. Legendary pre-Nexus ride."}
+ {id:"nexus",name:"Nexus Hyperbike",icon:"💫",level:49,desc:"Battle Pass level 49. Legendary pre-Nexus ride."},
+ {id:"stormsled",name:"Thunderfang Jetbike",icon:"⚡",level:58,desc:"Battle Pass level 58. Armoured turbine jetbike with twin lightning blades."},
+ {id:"mantasurf",name:"Leviathan Hovercraft",icon:"🔱",level:68,desc:"Battle Pass level 68. Deep-sea assault hovercraft built around a glowing abyss core."},
+ {id:"jadecycle",name:"Imperial Dragon Rider",icon:"🐉",level:78,desc:"Battle Pass level 78. Ride a fully armoured jade dragon with a blazing spirit core."},
+ {id:"reactorboard",name:"Titan Reactor Mech",icon:"☢️",level:88,desc:"Battle Pass level 88. Heavy two-leg reactor mech with a toxic power core and armour plating."},
+ {id:"tempestwing",name:"Stormbreaker Phoenix",icon:"🌩️",level:98,desc:"Battle Pass level 98. Mythic mechanical phoenix forged from thunder, plasma and stormfire."}
 ];
 const TRAILS=[
  {id:"none",name:"No Trail",icon:"➖",source:"FREE",desc:"Clean wheels."},
@@ -1257,10 +1284,15 @@ const TRAILS=[
  {id:"souls",name:"Phantom Souls",icon:"👻",level:43,desc:"Battle Pass level 43."},
  {id:"rainbow",name:"Prismatic Rift",icon:"🌈",level:47,desc:"Battle Pass level 47."},
  {id:"neoncomet",name:"Neon Comet",icon:"☄️",level:14,desc:"Battle Pass L14 • cyan-magenta comet sparks with a bright core."},
- {id:"dragonfire",name:"Dragonfire Wake",icon:"🔥",level:39,desc:"Battle Pass L39 • layered red, orange and gold flame fragments."}
+ {id:"dragonfire",name:"Dragonfire Wake",icon:"🔥",level:39,desc:"Battle Pass L39 • layered red, orange and gold flame fragments."},
+ {id:"stormchain",name:"Storm Chain",icon:"⚡",level:53,desc:"Battle Pass L53 • animated linked lightning arcs."},
+ {id:"abysswake",name:"Abyss Wake",icon:"🌊",level:63,desc:"Battle Pass L63 • animated bubbles, foam and deep-blue current."},
+ {id:"jadefire",name:"Jade Fire",icon:"🐲",level:73,desc:"Battle Pass L73 • animated emerald dragon sparks."},
+ {id:"radiation",name:"Radiation Pulse",icon:"☢️",level:83,desc:"Battle Pass L83 • animated toxic rings and particle bursts."},
+ {id:"tempest",name:"Tempest Rift",icon:"🌩️",level:93,desc:"Battle Pass L93 • animated violet-white storm fractures."}
 ];
 
-const PASS_REWARDS=Array.from({length:50},(_,i)=>{
+const PASS_REWARDS=Array.from({length:100},(_,i)=>{
   const l=i+1;
   const special={
     2:{type:"coins",amount:15,icon:"💰",name:"15 Coin Cache"},
@@ -1274,12 +1306,12 @@ const PASS_REWARDS=Array.from({length:50},(_,i)=>{
     10:{type:"map",map:27,icon:"🐉",name:"WORLD: Dragon Peak"},
 
     11:{type:"coins",amount:30,icon:"💰",name:"30 Coin Cache"},
-    12:{type:"character",id:"solarwarden",icon:"☀️",name:"SKIN: Solar Warden"},
+    12:{type:"character",id:"nightwatchranger",rarity:"rare",icon:"🍭",name:"RARE SKIN: Sugar Rush Sovereign"},
     13:{type:"bike",id:"ufo",icon:"🛸",name:"Mini UFO"},
     14:{type:"trail",id:"neoncomet",icon:"☄️",name:"Neon Comet Trail"},
     15:{type:"coins",amount:40,icon:"💎",name:"40 Coin Vault"},
     16:{type:"trail",id:"embers",icon:"🔥",name:"Fire Embers Trail"},
-    17:{type:"character",id:"reefphantom",icon:"🐚",name:"SKIN: Reef Phantom"},
+    17:{type:"character",id:"glacierscout",rarity:"rare",icon:"🏴‍☠️",name:"RARE SKIN: Blacktide Captain"},
     18:{type:"bike",id:"hover",icon:"⚡",name:"Hoverboard"},
     19:{type:"coins",amount:50,icon:"🪙",name:"50 Coin Jackpot"},
     20:{type:"map",map:28,icon:"🏛️",name:"WORLD: Sunken Ruins"},
@@ -1315,9 +1347,59 @@ const PASS_REWARDS=Array.from({length:50},(_,i)=>{
     47:{type:"trail",id:"rainbow",icon:"🌈",name:"Prismatic Rift Trail"},
     48:{type:"coins",amount:300,icon:"💰",name:"300 Coin MEGA Vault"},
     49:{type:"bike",id:"nexus",icon:"💫",name:"Nexus Hyperbike"},
-    50:{type:"map",map:31,icon:"🌀",name:"MYTHIC WORLD: THE ETERNAL NEXUS"}
+    50:{type:"map",map:31,icon:"🌀",name:"MYTHIC WORLD: THE ETERNAL NEXUS"},
+    51:{type:"coins",amount:120,icon:"🪙",name:"120 Coin Cache"},
+    52:{type:"coins",amount:140,icon:"💰",name:"140 Coin Cache"},
+    53:{type:"trail",id:"stormchain",icon:"⚡",name:"ANIMATED TRAIL: Storm Chain"},
+    54:{type:"coins",amount:160,icon:"💎",name:"160 Coin Vault"},
+    55:{type:"character",id:"voltrecon",rarity:"rare",icon:"🧸",name:"RARE SKIN: Clockwork Commander"},
+    56:{type:"coins",amount:180,icon:"🪙",name:"180 Coin Cache"},
+    57:{type:"coins",amount:200,icon:"💰",name:"200 Coin Cache"},
+    58:{type:"bike",id:"stormsled",icon:"⚡",name:"VEHICLE: Thunderfang Jetbike"},
+    59:{type:"coins",amount:225,icon:"💎",name:"225 Coin Vault"},
+    60:{type:"map",map:32,icon:"☄️",name:"WORLD: Meteor Crater"},
+    61:{type:"coins",amount:150,icon:"🪙",name:"150 Coin Cache"},
+    62:{type:"coins",amount:175,icon:"💰",name:"175 Coin Cache"},
+    63:{type:"trail",id:"abysswake",icon:"🌊",name:"ANIMATED TRAIL: Abyss Wake"},
+    64:{type:"coins",amount:200,icon:"💎",name:"200 Coin Vault"},
+    65:{type:"character",id:"runewarlord",rarity:"epic",icon:"💎",name:"EPIC SKIN: Prism Colossus"},
+    66:{type:"coins",amount:225,icon:"🪙",name:"225 Coin Cache"},
+    67:{type:"coins",amount:250,icon:"💰",name:"250 Coin Cache"},
+    68:{type:"bike",id:"mantasurf",icon:"🌊",name:"VEHICLE: Leviathan Hovercraft"},
+    69:{type:"coins",amount:275,icon:"💎",name:"275 Coin Vault"},
+    70:{type:"map",map:33,icon:"🪸",name:"WORLD: Coral Kingdom"},
+    71:{type:"coins",amount:180,icon:"🪙",name:"180 Coin Cache"},
+    72:{type:"coins",amount:210,icon:"💰",name:"210 Coin Cache"},
+    73:{type:"trail",id:"jadefire",icon:"🐲",name:"ANIMATED TRAIL: Jade Fire"},
+    74:{type:"coins",amount:240,icon:"💎",name:"240 Coin Vault"},
+    75:{type:"character",id:"abysspaladin",rarity:"epic",icon:"⚙️",name:"EPIC SKIN: Brasswing Baron"},
+    76:{type:"coins",amount:270,icon:"🪙",name:"270 Coin Cache"},
+    77:{type:"coins",amount:300,icon:"💰",name:"300 Coin Cache"},
+    78:{type:"bike",id:"jadecycle",icon:"🐉",name:"VEHICLE: Imperial Dragon Rider"},
+    79:{type:"coins",amount:330,icon:"💎",name:"330 Coin Vault"},
+    80:{type:"map",map:34,icon:"🎋",name:"WORLD: Bamboo Highlands"},
+    81:{type:"coins",amount:220,icon:"🪙",name:"220 Coin Cache"},
+    82:{type:"coins",amount:260,icon:"💰",name:"260 Coin Cache"},
+    83:{type:"trail",id:"radiation",icon:"☢️",name:"ANIMATED TRAIL: Radiation Pulse"},
+    84:{type:"coins",amount:300,icon:"💎",name:"300 Coin Vault"},
+    85:{type:"character",id:"phantomshogun",rarity:"epic",icon:"𓆣",name:"EPIC SKIN: Scarab Pharaoh"},
+    86:{type:"coins",amount:340,icon:"🪙",name:"340 Coin Cache"},
+    87:{type:"coins",amount:380,icon:"💰",name:"380 Coin Cache"},
+    88:{type:"bike",id:"reactorboard",icon:"☢️",name:"VEHICLE: Titan Reactor Mech"},
+    89:{type:"coins",amount:420,icon:"💎",name:"420 Coin Vault"},
+    90:{type:"map",map:35,icon:"☢️",name:"WORLD: Radioactive Wasteland"},
+    91:{type:"coins",amount:260,icon:"🪙",name:"260 Coin Cache"},
+    92:{type:"coins",amount:310,icon:"💰",name:"310 Coin Cache"},
+    93:{type:"trail",id:"tempest",icon:"🌩️",name:"ANIMATED TRAIL: Tempest Rift"},
+    94:{type:"coins",amount:360,icon:"💎",name:"360 Coin Vault"},
+    95:{type:"character",id:"sunfallemperor",rarity:"mythic",icon:"☀️",name:"MYTHIC SKIN: Sunfall Emperor"},
+    96:{type:"coins",amount:420,icon:"🪙",name:"420 Coin Cache"},
+    97:{type:"coins",amount:500,icon:"💰",name:"500 Coin Cache"},
+    98:{type:"bike",id:"tempestwing",icon:"🌩️",name:"VEHICLE: Stormbreaker Phoenix"},
+    99:{type:"coins",amount:600,icon:"💎",name:"600 Coin Vault"},
+    100:{type:"map",map:36,icon:"⚡",name:"MYTHIC WORLD: THUNDER PLAINS"}
   };
-  return special[l]||{type:"coins",amount:(l<20?12:l<30?18:l<40?28:45),icon:"🪙",name:(l<20?12:l<30?18:l<40?28:45)+" Coins"};
+  return special[l]||{type:"coins",amount:(l<20?12:l<30?18:l<40?28:l<50?45:l<70?80:l<90?120:180),icon:"🪙",name:(l<20?12:l<30?18:l<40?28:l<50?45:l<70?80:l<90?120:180)+" Coins"};
 });
 function ensurePassOwnership(){
   const lvl=passLevel();
@@ -1352,15 +1434,15 @@ function updateAccountUI(){
   if(lockerCoins)lockerCoins.textContent=profile.wallet;
   if(passLevelMain)passLevelMain.textContent=lvl;
   if(bpLevelEl)bpLevelEl.textContent=lvl;
-  if(bpXpText)bpXpText.textContent=(lvl>=50?"MAX LEVEL":xpIntoLevel()+" / "+PASS_XP_PER_LEVEL+" XP");
-  if(bpFill)bpFill.style.width=(lvl>=50?100:(xpIntoLevel()/PASS_XP_PER_LEVEL)*100)+"%";
+  if(bpXpText)bpXpText.textContent=(lvl>=PASS_MAX_LEVEL?"MAX LEVEL":xpIntoLevel()+" / "+PASS_XP_PER_LEVEL+" XP");
+  if(bpFill)bpFill.style.width=(lvl>=PASS_MAX_LEVEL?100:(xpIntoLevel()/PASS_XP_PER_LEVEL)*100)+"%";
 }
 function addWalletCoins(n){
   profile.wallet+=Math.max(0,Math.floor(n||0));saveProfile();updateAccountUI();
 }
 function addPassXp(n){
   const old=passLevel();
-  profile.passXp=Math.min(PASS_XP_PER_LEVEL*50-1,profile.passXp+Math.max(0,Math.floor(n||0)));
+  profile.passXp=Math.min(PASS_XP_PER_LEVEL*PASS_MAX_LEVEL-1,profile.passXp+Math.max(0,Math.floor(n||0)));
   claimAvailablePassRewards();saveProfile();updateAccountUI();renderWorldSelect();
   const now=passLevel();
   if(now>old){noticeText="BATTLE PASS LEVEL "+now+"!";noticeUntil=performance.now()+1500;}
@@ -1369,7 +1451,7 @@ let runBanked=false;
 function bankRunProgress(){
   if(runBanked||!Number.isFinite(score)||score<=0)return;
   runBanked=true;
-  addPassXp(Math.max(5,Math.floor(score/10 + runBonusXp)));
+  addPassXp(Math.max(4,Math.floor(score/18 + runBonusXp*.65)));
 }
 
 let authToken="";
@@ -1489,10 +1571,11 @@ function renderBattlePass(){
   const lvl=passLevel();battlePassGrid.innerHTML="";
   PASS_REWARDS.forEach((r,i)=>{
     const l=i+1,card=document.createElement("div");
-    const rarity=(r.type==="map"?(l===50?"mythic":"legendary"):r.type==="character"?"legendary":r.type==="bike"?"epic":r.type==="trail"?"rare":"common");
+    const rarity=r.rarity||(r.type==="map"?((l===50||l===100)?"mythic":"legendary"):r.type==="character"?"legendary":r.type==="bike"?"epic":r.type==="trail"?"rare":"common");
     card.className="bp-level "+rarity+" "+(l<lvl?"claimed":l===lvl?"current":"locked");
     const unlocked=l<=lvl;
-    card.innerHTML='<div class="bp-num">LEVEL '+l+'</div><div class="bp-rarity">'+rarity.toUpperCase()+'</div><div class="bp-icon">'+r.icon+'</div><div class="bp-reward">'+r.name+'</div><div class="bp-state">'+(unlocked?"✓ UNLOCKED":"🔒 LOCKED")+'</div>';
+    const rewardVisual=r.type==="character"?'<div class="bp-character-preview">'+characterPortraitSvg(r.id)+'</div>':'<div class="bp-icon">'+r.icon+'</div>';
+    card.innerHTML='<div class="bp-num">LEVEL '+l+'</div><div class="bp-rarity">'+rarity.toUpperCase()+'</div>'+rewardVisual+'<div class="bp-reward">'+r.name+'</div><div class="bp-state">'+(unlocked?"✓ UNLOCKED":"🔒 LOCKED")+'</div>';
     battlePassGrid.appendChild(card);
   });
   updateAccountUI();
@@ -1515,7 +1598,19 @@ function characterPortraitSvg(id){
     eclipsewarden:{bg:"#090b11",body:"#151922",trim:"#a78bfa",skin:"#a88f87",metal:"#77808d",hair:"#151519",kind:"eclipse"},
     frosttyrant:{bg:"#0a1a24",body:"#283945",trim:"#7dd3fc",skin:"#b7a092",metal:"#b7c4ce",hair:"#d3dde3",kind:"frosttyrant"},
     bloodreaper:{bg:"#17070a",body:"#241014",trim:"#dc2626",skin:"#9f7a72",metal:"#4b4246",hair:"#151012",kind:"bloodreaper"},
-    starforgedarchon:{bg:"#0b1020",body:"#e7e5df",trim:"#f5d36a",skin:"#b99a86",metal:"#d8d5c7",hair:"#d7d0c5",kind:"archon"}
+    starforgedarchon:{bg:"#0b1020",body:"#e7e5df",trim:"#f5d36a",skin:"#b99a86",metal:"#d8d5c7",hair:"#d7d0c5",kind:"archon"},
+    stormoracle:{bg:"#11152d",body:"#202d5d",trim:"#a78bfa",skin:"#cda68c",metal:"#94a3b8",hair:"#e2e8f0",kind:"cosmic"},
+    coralking:{bg:"#062b38",body:"#0b4b5c",trim:"#22d3ee",skin:"#8fb6b4",metal:"#67e8f9",hair:"#1b3d46",kind:"reef"},
+    jadeemperor:{bg:"#082c22",body:"#14532d",trim:"#4ade80",skin:"#cfa281",metal:"#86efac",hair:"#111827",kind:"samurai"},
+    hazardlord:{bg:"#1b2408",body:"#28320d",trim:"#bef264",skin:"#bfa182",metal:"#84cc16",hair:"#20250f",kind:"racer"},
+    skybreaker:{bg:"#17122f",body:"#312e81",trim:"#e879f9",skin:"#cda183",metal:"#c4b5fd",hair:"#e2e8f0",kind:"solar"},
+    nightwatchranger:{bg:"#3b124f",body:"#ff77c8",trim:"#fff4a8",skin:"#ffd6e8",metal:"#66e3ff",hair:"#b62f87",kind:"candy"},
+    glacierscout:{bg:"#09243b",body:"#173e66",trim:"#f4c95d",skin:"#c88e67",metal:"#caa76b",hair:"#2a1710",kind:"pirate"},
+    voltrecon:{bg:"#2b1616",body:"#c42f3a",trim:"#f5d66f",skin:"#d9a36f",metal:"#b08c53",hair:"#29170f",kind:"toy"},
+    runewarlord:{bg:"#17143a",body:"#6d5cff",trim:"#8ff7ff",skin:"#b8f7ff",metal:"#d7c8ff",hair:"#8ff7ff",kind:"crystal"},
+    abysspaladin:{bg:"#2a1b10",body:"#6f4726",trim:"#f1b85b",skin:"#c98f68",metal:"#c89349",hair:"#4a2b18",kind:"steampunk"},
+    phantomshogun:{bg:"#2d2108",body:"#151c2c",trim:"#e7bd52",skin:"#b9805d",metal:"#d9ad43",hair:"#121212",kind:"scarab"},
+    sunfallemperor:{bg:"#351b05",body:"#7c3f08",trim:"#fbbf24",skin:"#d4a17e",metal:"#ffd76a",hair:"#4a2811",kind:"sunfallemperor"}
   }[id]||null;
   const p=P||{bg:"#10283a",body:"#246aa2",trim:"#ef4444",skin:"#d9aa86",metal:"#d8e7ef",hair:"#4a2d20",kind:"rider"};
   const uid="cp_"+id;
@@ -1528,6 +1623,13 @@ function characterPortraitSvg(id){
   else if(p.kind==="alien") gear='<ellipse cx="75" cy="50" rx="28" ry="34" fill="'+p.skin+'" stroke="#2d705c" stroke-width="4"/><ellipse cx="64" cy="50" rx="7" ry="11" fill="#111827"/><ellipse cx="86" cy="50" rx="7" ry="11" fill="#111827"/><circle cx="62" cy="46" r="2" fill="#d7fff2"/><circle cx="84" cy="46" r="2" fill="#d7fff2"/><path d="M60 66 Q75 73 90 66" stroke="#296b58" stroke-width="2" fill="none"/><circle cx="48" cy="91" r="7" fill="#67efbd" opacity=".8"/><circle cx="103" cy="104" r="5" fill="#67efbd" opacity=".55"/>';
   else if(p.kind==="wizard") gear='<path d="M43 45 L75 5 L108 45 Q78 35 43 45Z" fill="url(#cloth_'+uid+')" stroke="#251242" stroke-width="4"/><path d="M53 41 Q75 30 101 41" stroke="'+p.trim+'" stroke-width="4" fill="none"/><circle cx="92" cy="26" r="3" fill="#ffe88a"/><path d="M58 82 Q75 72 92 82 L102 146 H48Z" fill="'+p.body+'" stroke="#22113e" stroke-width="4"/><path d="M62 92 L75 105 L88 92" stroke="'+p.trim+'" stroke-width="4" fill="none"/><path d="M116 61 L126 132" stroke="#755234" stroke-width="6"/><circle cx="115" cy="55" r="10" fill="#f6d365" stroke="#fff" stroke-width="2"/><path d="M48 115 L28 135 M102 115 L121 135" stroke="'+p.trim+'" stroke-width="6"/>';
   else if(p.kind==="mage") gear='<path d="M43 45 L75 5 L108 45 Q78 35 43 45Z" fill="#0d47a1" stroke="#ffffff" stroke-width="4"/><path d="M53 41 Q75 30 101 41" stroke="#ffffff" stroke-width="4" fill="none"/><circle cx="62" cy="25" r="2.4" fill="#ffffff"/><circle cx="81" cy="15" r="2" fill="#ffffff"/><circle cx="95" cy="29" r="2.6" fill="#ffffff"/><path d="M58 82 Q75 72 92 82 L102 146 H48Z" fill="#0d47a1" stroke="#ffffff" stroke-width="4"/><path d="M62 92 L75 105 L88 92" stroke="#dbeafe" stroke-width="4" fill="none"/><circle cx="66" cy="112" r="2.5" fill="#ffffff"/><circle cx="83" cy="124" r="2" fill="#ffffff"/><circle cx="72" cy="137" r="2.8" fill="#ffffff"/><path d="M116 61 L126 132" stroke="#755234" stroke-width="6"/><circle cx="115" cy="55" r="10" fill="#60a5fa" stroke="#fff" stroke-width="2"/><path d="M48 115 L28 135 M102 115 L121 135" stroke="#ffffff" stroke-width="6"/>';
+  else if(p.kind==="candy") gear='<path d="M42 48 Q47 31 58 26 Q75 10 92 26 Q103 31 108 48 Q100 41 94 46 Q86 38 75 44 Q64 38 56 46 Q50 41 42 48Z" fill="#ff77c8" stroke="#fff4a8" stroke-width="4"/><circle cx="55" cy="31" r="7" fill="#66e3ff"/><circle cx="75" cy="21" r="8" fill="#fff4a8"/><circle cx="95" cy="31" r="7" fill="#9cf59f"/><path d="M44 86 Q75 66 106 86 L101 148 H49Z" fill="#ff77c8" stroke="#fff4a8" stroke-width="4"/><path d="M50 93 Q75 77 100 93" stroke="#ffffff" stroke-width="5" fill="none"/><circle cx="60" cy="111" r="10" fill="#fff" stroke="#ff4d67" stroke-width="4"/><path d="M55 106 L65 116 M65 106 L55 116" stroke="#ff4d67" stroke-width="3"/><circle cx="92" cy="120" r="8" fill="#66e3ff" stroke="#fff" stroke-width="3"/><path d="M117 62 L125 141" stroke="#fff" stroke-width="8"/><path d="M114 72 L127 86 M116 94 L129 108 M118 116 L130 130" stroke="#ff4d67" stroke-width="4"/>';
+  else if(p.kind==="pirate") gear='<path d="M42 43 Q75 17 108 43 L96 50 Q75 43 54 50Z" fill="#17233b" stroke="#f4c95d" stroke-width="4"/><path d="M48 31 Q75 17 102 31 L96 42 H54Z" fill="#132033"/><path d="M57 51 H74" stroke="#111" stroke-width="5"/><path d="M62 48 L69 55" stroke="#111" stroke-width="3"/><path d="M58 70 Q75 82 92 70 Q88 84 75 88 Q62 84 58 70Z" fill="#4b2b1b"/><path d="M43 86 Q75 70 107 86 L101 148 H49Z" fill="#173e66" stroke="#f4c95d" stroke-width="4"/><path d="M55 91 L75 107 L95 91" stroke="#f4c95d" stroke-width="4" fill="none"/><path d="M40 98 L24 112" stroke="#c98f68" stroke-width="7"/><path d="M24 112 Q14 118 23 129 Q34 120 24 112Z" fill="none" stroke="#caa76b" stroke-width="5"/><path d="M108 87 Q124 74 132 86 Q125 100 112 95" fill="#39a85b" stroke="#173e66" stroke-width="3"/><circle cx="126" cy="84" r="3" fill="#f4c95d"/>';
+  else if(p.kind==="toy") gear='<path d="M51 49 L51 12 Q75 2 99 12 L99 49Z" fill="#181818" stroke="#f5d66f" stroke-width="4"/><path d="M47 15 H103 V24 H47Z" fill="#c42f3a" stroke="#f5d66f" stroke-width="3"/><path d="M55 8 Q75 -3 95 8" fill="#f5d66f"/><path d="M44 86 L58 76 H92 L106 86 L100 148 H50Z" fill="#c42f3a" stroke="#f5d66f" stroke-width="4"/><path d="M75 79 V145" stroke="#f5d66f" stroke-width="4"/><path d="M57 91 H93" stroke="#ffffff" stroke-width="4"/><circle cx="61" cy="110" r="5" fill="#f5d66f"/><circle cx="89" cy="110" r="5" fill="#f5d66f"/><path d="M108 105 C124 105 124 90 112 90" fill="none" stroke="#b08c53" stroke-width="5"/><rect x="118" y="86" width="9" height="18" rx="3" fill="#b08c53"/><path d="M35 93 H18 M18 93 V112 M18 112 H35" stroke="#f5d66f" stroke-width="4"/>';
+  else if(p.kind==="crystal") gear='<path d="M75 7 L103 43 L92 70 L75 78 L58 70 L47 43Z" fill="url(#visor_'+uid+')" stroke="#8ff7ff" stroke-width="4"/><path d="M75 7 L75 78 M47 43 L103 43 M58 70 L75 43 L92 70" stroke="#d7c8ff" stroke-width="2.5" opacity=".9"/><path d="M39 91 L56 74 L75 82 L94 74 L111 91 L100 149 H50Z" fill="#6d5cff" stroke="#8ff7ff" stroke-width="4"/><path d="M39 91 L23 104 L35 118 L51 106 M111 91 L127 104 L115 118 L99 106" fill="#93eaff" stroke="#d7c8ff" stroke-width="4"/><path d="M75 83 L91 110 L75 139 L59 110Z" fill="#5d4bda" stroke="#e5fbff" stroke-width="3"/><circle cx="75" cy="111" r="8" fill="#8ff7ff" opacity=".8"/>';
+  else if(p.kind==="steampunk") gear='<path d="M52 43 H98 V13 H58 V43Z" fill="#3b2416" stroke="#f1b85b" stroke-width="4"/><path d="M45 43 H105 V50 H45Z" fill="#2a1a10" stroke="#c89349" stroke-width="3"/><circle cx="65" cy="52" r="8" fill="#342116" stroke="#f1b85b" stroke-width="3"/><circle cx="86" cy="52" r="8" fill="#342116" stroke="#f1b85b" stroke-width="3"/><circle cx="65" cy="52" r="4" fill="#6ee7f9"/><circle cx="86" cy="52" r="4" fill="#6ee7f9"/><path d="M43 86 Q75 70 107 86 L101 148 H49Z" fill="#6f4726" stroke="#f1b85b" stroke-width="4"/><circle cx="75" cy="110" r="13" fill="#2d1b10" stroke="#c89349" stroke-width="4"/><path d="M75 97 V123 M62 110 H88 M66 101 L84 119 M84 101 L66 119" stroke="#f1b85b" stroke-width="3"/><path d="M45 94 L19 77 L27 116 L47 111 M105 94 L131 77 L123 116 L103 111" fill="#7a552d" stroke="#c89349" stroke-width="4"/><circle cx="28" cy="96" r="8" fill="#2d1b10" stroke="#f1b85b" stroke-width="3"/><circle cx="122" cy="96" r="8" fill="#2d1b10" stroke="#f1b85b" stroke-width="3"/>';
+  else if(p.kind==="scarab") gear='<path d="M45 52 Q48 22 75 15 Q102 22 105 52 L97 70 H53Z" fill="#0f1930" stroke="#e7bd52" stroke-width="4"/><path d="M48 37 L57 18 L65 34 L75 13 L85 34 L93 18 L102 37" fill="#e7bd52" stroke="#f7dc80" stroke-width="3"/><path d="M51 44 H99" stroke="#2d79b8" stroke-width="6"/><path d="M43 86 Q75 68 107 86 L101 149 H49Z" fill="#151c2c" stroke="#e7bd52" stroke-width="4"/><path d="M53 90 L75 106 L97 90" stroke="#2d79b8" stroke-width="5" fill="none"/><ellipse cx="75" cy="116" rx="15" ry="19" fill="#d9ad43" stroke="#f7dc80" stroke-width="3"/><path d="M75 98 V135 M60 113 H90" stroke="#1a4b73" stroke-width="4"/><path d="M60 103 L49 94 M90 103 L101 94 M60 128 L49 138 M90 128 L101 138" stroke="#d9ad43" stroke-width="5"/><path d="M115 66 Q129 86 119 107" fill="none" stroke="#e7bd52" stroke-width="6"/><path d="M112 65 Q122 53 126 69" fill="#e7bd52"/>';
+  else if(p.kind==="sunfallemperor") gear='<path d="M45 49 Q48 20 75 15 Q102 20 105 49 L99 68 H51Z" fill="#5d2e06" stroke="#fbbf24" stroke-width="5"/><path d="M52 44 H98 L94 58 H56Z" fill="#341604"/><path d="M44 32 L50 9 L62 25 L75 2 L88 25 L101 9 L106 32Z" fill="url(#cloth_'+uid+')" stroke="#fde68a" stroke-width="3"/><path d="M40 84 Q75 65 110 84 L101 149 H49Z" fill="#7c3f08" stroke="#f59e0b" stroke-width="5"/><path d="M48 88 L31 76 L20 98 L43 110 M102 88 L119 76 L130 98 L107 110" fill="#a85a0a" stroke="#fbbf24" stroke-width="4"/><circle cx="75" cy="108" r="13" fill="#3c1702" stroke="#fde68a" stroke-width="4"/><circle cx="75" cy="108" r="7" fill="#f59e0b"/><path d="M75 87 V95 M75 121 V134 M54 108 H62 M88 108 H96" stroke="#fff1b8" stroke-width="3"/>';
   else if(p.kind==="racer") gear='<path d="M48 48 Q50 22 75 17 Q100 22 102 48 L98 67 H52Z" fill="#161d26" stroke="#e33c50" stroke-width="4"/><path d="M53 47 H98 L94 61 H57Z" fill="url(#visor_'+uid+')"/><path d="M48 88 L62 80 H88 L103 88 L98 145 H52Z" fill="#202938" stroke="#111827" stroke-width="4"/><path d="M60 88 H90 M58 105 H92" stroke="#e33c50" stroke-width="4"/><path d="M46 92 L29 108 M104 92 L121 108" stroke="#e33c50" stroke-width="7"/>';
   else if(p.kind==="cosmic"||p.kind==="void") gear='<path d="M48 49 Q50 23 75 18 Q100 23 102 49 L97 67 H53Z" fill="#0b0712" stroke="'+p.trim+'" stroke-width="4"/><path d="M49 37 L55 14 L68 31 L76 7 L87 31 L99 13 L102 38Z" fill="url(#cloth_'+uid+')" stroke="'+p.trim+'" stroke-width="3"/><path d="M44 86 Q75 71 106 86 L100 146 H50Z" fill="url(#cloth_'+uid+')" stroke="#0a0612" stroke-width="4"/><path d="M60 92 L75 113 L90 92" stroke="'+p.trim+'" stroke-width="4" fill="none"/><circle cx="38" cy="112" r="5" fill="'+p.trim+'" opacity=".7"/><circle cx="111" cy="94" r="3" fill="#67e8f9" opacity=".8"/><circle cx="104" cy="128" r="4" fill="#f0abfc" opacity=".7"/>';
   else if(p.kind==="solar") gear='<path d="M48 48 Q50 22 75 17 Q100 22 102 48 L97 67 H53Z" fill="#f4f7f8" stroke="#d3aa2d" stroke-width="4"/><path d="M55 49 H95" stroke="#72d8ff" stroke-width="5"/><path d="M44 86 Q75 72 106 86 L100 146 H50Z" fill="#e8edf3" stroke="#c59a20" stroke-width="4"/><circle cx="39" cy="95" r="14" fill="#d7ad2f"/><circle cx="111" cy="95" r="14" fill="#d7ad2f"/><path d="M64 93 L75 77 L86 93 L75 106Z" fill="#f5d86d"/>';
@@ -1546,6 +1648,7 @@ function characterPortraitSvg(id){
 }
 
 function cosmeticRarity(item,tab){
+  if(item.rarity)return item.rarity;
   if(item.mythic||item.superRare)return "mythic";
   if(item.spin)return tab==="characters"?"epic":"rare";
   if(item.level){
@@ -1740,7 +1843,8 @@ const BIOMES=[
 "Jungle","Wild West","Candyland","Haunted","Medieval","Sky","Cyber Grid",
 "Swamp","Ancient Egypt","Pirate Cove","Dinosaur","Moon","Underworld",
 "Toy World","Crystal Cavern","Samurai Province","Frozen Viking Fjord","Enchanted Forest","Steampunk Empire","Alien Jungle",
-"Dragon Peak","Sunken Ruins","Celestial Temple","Voidstorm Citadel","The Eternal Nexus"
+"Dragon Peak","Sunken Ruins","Celestial Temple","Voidstorm Citadel","The Eternal Nexus",
+"Meteor Crater","Coral Kingdom","Bamboo Highlands","Radioactive Wasteland","Thunder Plains"
 ];
 
 const keys={left:false,right:false,up:false,down:false};
@@ -2483,26 +2587,82 @@ function drawRideVisual(ride){
   }else if(ride==="cloud"){
     ctx.fillStyle="#eefaff";for(const [rx,ry,r] of [[0,40,10],[12,36,13],[26,38,15],[40,40,10]]){ctx.beginPath();ctx.arc(rx,ry,r,0,Math.PI*2);ctx.fill()}ctx.fillStyle="#93c5fd";ctx.fillRect(1,48,38,3);
   }else if(ride==="royal"){
-    ctx.fillStyle="#d9bf59";roundedRectPath(2,29,37,18,5);ctx.fill();ctx.fillStyle="#7c3aed";ctx.fillRect(8,31,25,11);ctx.fillStyle="#f8df70";ctx.beginPath();ctx.moveTo(9,28);ctx.lineTo(14,20);ctx.lineTo(20,28);ctx.lineTo(26,19);ctx.lineTo(32,28);ctx.fill();
+    // Royal Hover Throne — unmistakable floating throne with crown backrest and energy base.
+    ctx.fillStyle="#5b21b6";roundedRectPath(5,24,31,24,6);ctx.fill();
+    ctx.fillStyle="#fbbf24";ctx.fillRect(7,25,5,22);ctx.fillRect(29,25,5,22);ctx.fillRect(11,42,19,5);
+    ctx.beginPath();ctx.moveTo(9,24);ctx.lineTo(14,13);ctx.lineTo(20,23);ctx.lineTo(26,12);ctx.lineTo(33,24);ctx.closePath();ctx.fill();
+    ctx.fillStyle="#fde68a";ctx.beginPath();ctx.ellipse(20,52,27,5,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="rgba(168,85,247,.55)";ctx.beginPath();ctx.ellipse(20,55,33,7,0,0,Math.PI*2);ctx.fill();
   }else if(ride==="dragonride"){
-    ctx.fillStyle="#9f352c";ctx.beginPath();ctx.ellipse(20,38,25,8,0,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.moveTo(9,36);ctx.lineTo(-13,20);ctx.lineTo(2,42);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(31,36);ctx.lineTo(54,20);ctx.lineTo(39,42);ctx.closePath();ctx.fill();ctx.fillStyle="#e6b94d";ctx.beginPath();ctx.moveTo(42,34);ctx.lineTo(54,29);ctx.lineTo(45,40);ctx.fill();
+    // Dragon Glider — full dragon mount: horned head, jaw, body, huge wings, tail and claws.
+    const flap=Math.sin(performance.now()/150)*3;
+    ctx.fillStyle="#7f1d1d";ctx.beginPath();ctx.ellipse(18,38,27,10,-.08,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="#b91c1c";ctx.beginPath();ctx.moveTo(36,35);ctx.quadraticCurveTo(48,27,59,32);ctx.lineTo(55,42);ctx.quadraticCurveTo(46,44,35,41);ctx.closePath();ctx.fill();
+    ctx.fillStyle="#facc15";ctx.beginPath();ctx.arc(52,34,2.4,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="#e5e7eb";ctx.beginPath();ctx.moveTo(48,29);ctx.lineTo(52,18);ctx.lineTo(56,30);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(57,31);ctx.lineTo(63,22);ctx.lineTo(62,34);ctx.closePath();ctx.fill();
+    ctx.fillStyle="#991b1b";ctx.beginPath();ctx.moveTo(8,34);ctx.lineTo(-18,13+flap);ctx.lineTo(-5,38);ctx.lineTo(7,42);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(26,34);ctx.lineTo(45,10-flap);ctx.lineTo(42,39);ctx.lineTo(28,43);ctx.closePath();ctx.fill();
+    ctx.strokeStyle="#ef4444";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-5,28+flap);ctx.lineTo(7,35);ctx.moveTo(39,24-flap);ctx.lineTo(28,35);ctx.stroke();
+    ctx.strokeStyle="#7f1d1d";ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(-6,39);ctx.quadraticCurveTo(-26,46,-31,31);ctx.stroke();
+    ctx.fillStyle="#dc2626";ctx.beginPath();ctx.moveTo(-31,31);ctx.lineTo(-38,25);ctx.lineTo(-32,38);ctx.closePath();ctx.fill();
+    ctx.strokeStyle="#4b1d1d";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(8,45);ctx.lineTo(4,53);ctx.moveTo(28,45);ctx.lineTo(34,53);ctx.stroke();
+    ctx.fillStyle="#fb923c";ctx.beginPath();ctx.moveTo(59,37);ctx.lineTo(73,33);ctx.lineTo(62,42);ctx.closePath();ctx.fill();
   }else if(ride==="mech"){
-    ctx.fillStyle="#475569";ctx.fillRect(3,31,36,13);ctx.fillStyle="#94a3b8";ctx.fillRect(8,27,26,8);ctx.strokeStyle="#cbd5e1";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(7,43);ctx.lineTo(1,51);ctx.moveTo(35,43);ctx.lineTo(42,51);ctx.stroke();ctx.fillStyle="#22d3ee";ctx.fillRect(12,35,18,3);
+    // Mech Strider — cockpit riding on two articulated mechanical legs.
+    ctx.fillStyle="#334155";roundedRectPath(3,24,36,20,5);ctx.fill();ctx.fillStyle="#22d3ee";ctx.fillRect(11,29,20,6);ctx.fillStyle="#94a3b8";ctx.fillRect(7,20,28,6);
+    ctx.strokeStyle="#64748b";ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(10,43);ctx.lineTo(3,52);ctx.lineTo(-1,59);ctx.moveTo(32,43);ctx.lineTo(39,52);ctx.lineTo(44,59);ctx.stroke();ctx.strokeStyle="#cbd5e1";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-7,59);ctx.lineTo(7,59);ctx.moveTo(37,59);ctx.lineTo(51,59);ctx.stroke();
   }else if(ride==="comet"){
-    ctx.fillStyle="#fb923c";ctx.beginPath();ctx.ellipse(20,40,31,6,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#fde68a";ctx.fillRect(4,38,33,2);ctx.fillStyle="#ef4444";ctx.beginPath();ctx.moveTo(-8,40);ctx.lineTo(-24,31);ctx.lineTo(-17,47);ctx.closePath();ctx.fill();
+    // Comet Board — glowing meteor core with a long animated fire tail.
+    const flick=Math.sin(performance.now()/90)*3;ctx.fillStyle="#f59e0b";ctx.beginPath();ctx.ellipse(22,40,28,7,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#fff7ed";ctx.beginPath();ctx.ellipse(27,39,12,3,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#ef4444";ctx.beginPath();ctx.moveTo(-4,37);ctx.lineTo(-31-flick,27);ctx.lineTo(-18,40);ctx.lineTo(-33+flick,49);ctx.lineTo(-4,43);ctx.closePath();ctx.fill();ctx.fillStyle="#fb923c";ctx.beginPath();ctx.moveTo(-7,38);ctx.lineTo(-24,34);ctx.lineTo(-13,42);ctx.closePath();ctx.fill();
   }else if(ride==="voidwing"){
-    ctx.fillStyle="#2e1065";ctx.beginPath();ctx.moveTo(20,37);ctx.lineTo(-19,22);ctx.lineTo(-3,43);ctx.lineTo(20,40);ctx.lineTo(45,43);ctx.lineTo(61,22);ctx.closePath();ctx.fill();ctx.strokeStyle="#a78bfa";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-10,28);ctx.lineTo(20,38);ctx.lineTo(52,28);ctx.stroke();
+    // Void Wing — bat-like dark energy wings wrapped around a glowing core.
+    const vg=ctx.createRadialGradient(20,38,2,20,38,19);vg.addColorStop(0,"#e879f9");vg.addColorStop(.35,"#7c3aed");vg.addColorStop(1,"#1e0b38");ctx.fillStyle=vg;ctx.beginPath();ctx.arc(20,38,12,0,Math.PI*2);ctx.fill();ctx.fillStyle="#24103f";ctx.beginPath();ctx.moveTo(15,37);ctx.lineTo(-25,15);ctx.lineTo(-10,39);ctx.lineTo(-25,51);ctx.lineTo(12,43);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(25,37);ctx.lineTo(67,15);ctx.lineTo(50,39);ctx.lineTo(67,51);ctx.lineTo(28,43);ctx.closePath();ctx.fill();ctx.strokeStyle="#a78bfa";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-17,22);ctx.lineTo(14,38);ctx.moveTo(58,22);ctx.lineTo(27,38);ctx.stroke();
   }else if(ride==="phantom"){
-    ctx.fillStyle="rgba(196,181,253,.72)";roundedRectPath(-7,35,57,10,6);ctx.fill();ctx.strokeStyle="#ede9fe";ctx.lineWidth=2;ctx.strokeRect(1,37,40,5);ctx.fillStyle="rgba(139,92,246,.42)";ctx.fillRect(-10,47,63,3);
+    // Phantom Speeder — transparent ghost machine with spectral nose and trailing wisps.
+    ctx.fillStyle="rgba(196,181,253,.7)";ctx.beginPath();ctx.moveTo(-8,40);ctx.quadraticCurveTo(7,27,36,30);ctx.lineTo(55,39);ctx.lineTo(36,46);ctx.lineTo(5,47);ctx.closePath();ctx.fill();ctx.fillStyle="rgba(255,255,255,.75)";ctx.beginPath();ctx.arc(42,36,3,0,Math.PI*2);ctx.fill();ctx.strokeStyle="rgba(167,139,250,.7)";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-5,44);ctx.quadraticCurveTo(-19,50,-31,43);ctx.moveTo(2,48);ctx.quadraticCurveTo(-11,57,-24,54);ctx.stroke();
   }else if(ride==="meteor"){
-    ctx.fillStyle="#92400e";roundedRectPath(-2,31,45,16,5);ctx.fill();ctx.strokeStyle="#f59e0b";ctx.lineWidth=3;ctx.strokeRect(2,34,37,10);ctx.fillStyle="#f97316";ctx.beginPath();ctx.moveTo(-3,38);ctx.lineTo(-18,29);ctx.lineTo(-12,47);ctx.closePath();ctx.fill();
+    // Meteor Chariot — armoured celestial chariot pulled by a blazing meteor orb.
+    ctx.fillStyle="#78350f";roundedRectPath(5,29,34,18,4);ctx.fill();ctx.strokeStyle="#fbbf24";ctx.lineWidth=3;ctx.strokeRect(9,32,26,11);ctx.strokeStyle="#d97706";ctx.beginPath();ctx.arc(9,50,7,0,Math.PI*2);ctx.arc(35,50,7,0,Math.PI*2);ctx.stroke();ctx.fillStyle="#f97316";ctx.beginPath();ctx.arc(-7,36,8,0,Math.PI*2);ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.arc(-7,36,3,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#f59e0b";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(0,36);ctx.lineTo(8,35);ctx.stroke();ctx.fillStyle="#ef4444";ctx.beginPath();ctx.moveTo(-15,36);ctx.lineTo(-30,27);ctx.lineTo(-24,43);ctx.closePath();ctx.fill();
   }else if(ride==="nexus"){
-    const nr=ctx.createLinearGradient(-6,36,49,43);nr.addColorStop(0,"#22d3ee");nr.addColorStop(.5,"#a855f7");nr.addColorStop(1,"#f0abfc");ctx.fillStyle=nr;roundedRectPath(-6,35,56,9,6);ctx.fill();ctx.fillStyle="#f8fafc";ctx.fillRect(2,38,40,2);ctx.strokeStyle="#67e8f9";ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(21,40,34,10,0,0,Math.PI*2);ctx.stroke();
+    // Nexus Hyperbike — futuristic enclosed hyperbike with twin energy rings.
+    const nr=ctx.createLinearGradient(-8,30,54,47);nr.addColorStop(0,"#22d3ee");nr.addColorStop(.5,"#7c3aed");nr.addColorStop(1,"#f0abfc");ctx.fillStyle=nr;ctx.beginPath();ctx.moveTo(-4,40);ctx.lineTo(8,30);ctx.lineTo(37,29);ctx.lineTo(54,39);ctx.lineTo(37,47);ctx.lineTo(7,47);ctx.closePath();ctx.fill();ctx.strokeStyle="#f8fafc";ctx.lineWidth=2;ctx.beginPath();ctx.arc(4,42,12,0,Math.PI*2);ctx.arc(43,42,12,0,Math.PI*2);ctx.stroke();ctx.strokeStyle="#67e8f9";ctx.beginPath();ctx.arc(4,42,16,0,Math.PI*2);ctx.arc(43,42,16,0,Math.PI*2);ctx.stroke();ctx.fillStyle="#0f172a";ctx.fillRect(12,34,22,8);
+  }else if(ride==="stormsled"){
+    // Thunderfang Jetbike — long armoured turbine body, energy nose and twin exhausts.
+    const g=ctx.createLinearGradient(-12,29,56,46);g.addColorStop(0,"#111827");g.addColorStop(.55,"#334155");g.addColorStop(1,"#0f172a");ctx.fillStyle=g;
+    ctx.beginPath();ctx.moveTo(-10,39);ctx.lineTo(3,30);ctx.lineTo(37,29);ctx.lineTo(55,38);ctx.lineTo(37,45);ctx.lineTo(2,45);ctx.closePath();ctx.fill();
+    ctx.fillStyle="#60a5fa";ctx.beginPath();ctx.moveTo(47,35);ctx.lineTo(64,39);ctx.lineTo(47,42);ctx.closePath();ctx.fill();
+    ctx.fillStyle="#f8fafc";ctx.fillRect(8,33,22,3);ctx.fillStyle="#7c3aed";ctx.beginPath();ctx.arc(1,39,7,0,Math.PI*2);ctx.arc(38,39,7,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle="#c4b5fd";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-9,33);ctx.lineTo(-20,27);ctx.moveTo(-9,44);ctx.lineTo(-22,49);ctx.stroke();
+  }else if(ride==="mantasurf"){
+    // Leviathan Hovercraft — broad predatory hull with fins and abyss core.
+    const g=ctx.createLinearGradient(-20,28,62,46);g.addColorStop(0,"#082f49");g.addColorStop(.5,"#0e7490");g.addColorStop(1,"#164e63");ctx.fillStyle=g;
+    ctx.beginPath();ctx.moveTo(21,28);ctx.lineTo(57,36);ctx.lineTo(43,41);ctx.lineTo(59,48);ctx.lineTo(25,44);ctx.lineTo(8,48);ctx.lineTo(-20,42);ctx.lineTo(-4,35);ctx.closePath();ctx.fill();
+    ctx.fillStyle="#22d3ee";ctx.beginPath();ctx.arc(21,37,7,0,Math.PI*2);ctx.fill();ctx.fillStyle="#ecfeff";ctx.beginPath();ctx.arc(21,37,3,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle="#67e8f9";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-8,40);ctx.lineTo(8,38);ctx.moveTo(35,38);ctx.lineTo(50,40);ctx.stroke();
+  }else if(ride==="jadecycle"){
+    // Imperial Dragon Rider — unmistakable dragon mount, not a bicycle.
+    ctx.fillStyle="#166534";ctx.beginPath();ctx.ellipse(21,39,27,10,-.08,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="#22c55e";ctx.beginPath();ctx.moveTo(39,36);ctx.lineTo(57,29);ctx.lineTo(50,42);ctx.lineTo(39,43);ctx.closePath();ctx.fill();
+    ctx.fillStyle="#fde68a";ctx.beginPath();ctx.arc(52,34,2.5,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="#15803d";ctx.beginPath();ctx.moveTo(7,36);ctx.lineTo(-18,21);ctx.lineTo(-4,42);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(27,35);ctx.lineTo(39,18);ctx.lineTo(42,40);ctx.closePath();ctx.fill();
+    ctx.strokeStyle="#86efac";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-5,42);ctx.quadraticCurveTo(-22,51,-28,38);ctx.stroke();
+    ctx.fillStyle="#d4af37";ctx.fillRect(12,31,17,4);
+  }else if(ride==="reactorboard"){
+    // Titan Reactor Mech — bulky cockpit and articulated legs.
+    ctx.fillStyle="#1f2937";roundedRectPath(1,25,42,20,6);ctx.fill();ctx.fillStyle="#3f6212";roundedRectPath(7,29,30,12,4);ctx.fill();
+    ctx.fillStyle="#bef264";ctx.beginPath();ctx.arc(22,35,7,0,Math.PI*2);ctx.fill();ctx.fillStyle="#ecfccb";ctx.beginPath();ctx.arc(22,35,3,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle="#64748b";ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(8,43);ctx.lineTo(0,53);ctx.lineTo(-8,53);ctx.moveTo(36,43);ctx.lineTo(44,53);ctx.lineTo(52,53);ctx.stroke();
+    ctx.strokeStyle="#a3e635";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(3,28);ctx.lineTo(-8,22);ctx.moveTo(41,28);ctx.lineTo(52,22);ctx.stroke();
+  }else if(ride==="tempestwing"){
+    // Stormbreaker Phoenix — huge mechanical wings, beaked nose and stormfire tail.
+    const g=ctx.createLinearGradient(-25,18,66,48);g.addColorStop(0,"#312e81");g.addColorStop(.5,"#7c3aed");g.addColorStop(1,"#0ea5e9");ctx.fillStyle=g;
+    ctx.beginPath();ctx.moveTo(20,35);ctx.lineTo(-27,14);ctx.lineTo(-12,35);ctx.lineTo(-24,45);ctx.lineTo(12,40);ctx.lineTo(20,46);ctx.lineTo(28,40);ctx.lineTo(62,45);ctx.lineTo(50,35);ctx.lineTo(67,14);ctx.closePath();ctx.fill();
+    ctx.fillStyle="#f8fafc";ctx.beginPath();ctx.moveTo(39,32);ctx.lineTo(58,36);ctx.lineTo(40,40);ctx.closePath();ctx.fill();
+    ctx.strokeStyle="#67e8f9";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-18,23);ctx.lineTo(17,36);ctx.lineTo(57,23);ctx.stroke();
+    ctx.fillStyle="#f59e0b";ctx.beginPath();ctx.moveTo(2,40);ctx.lineTo(-18,51);ctx.lineTo(8,46);ctx.closePath();ctx.fill();
   }
 }
 
 function drawCharacterVisual(character,ride,b){
-  const boardLike=["skate","reef","hover","cloud","comet","voidwing","phantom","nexus","ufo","goldenrocket","dragonride","royal","meteor","mech"].includes(ride);
+  const boardLike=["skate","reef","hover","cloud","comet","voidwing","phantom","nexus","ufo","goldenrocket","dragonride","royal","meteor","mech","stormsled","mantasurf","jadecycle","reactorboard","tempestwing"].includes(ride);
   // Full body pose. Custom skins do NOT draw any Classic Rider body/head/helmet underneath.
   const legColor=character==="rider"?"#1f2937":"#111827";
   ctx.strokeStyle=legColor;ctx.lineWidth=4;ctx.lineCap="round";
@@ -2538,7 +2698,14 @@ function drawCharacterVisual(character,ride,b){
     cosmicsovereign:["#1d1438","#7c3aed","#ec4899","#67e8f9"], solarwarden:["#f8fafc","#fde047","#f59e0b","#38bdf8"],
     reefphantom:["#083344","#155e75","#22d3ee","#67e8f9"], ashenrevenant:["#211512","#44403c","#7c2d12","#ff5a1f"],
     eclipsewarden:["#151922","#0d1118","#6b7280","#c4b5fd"], frosttyrant:["#2b3942","#b7c4ce","#0b2230","#7dd3fc"],
-    bloodreaper:["#211015","#14090c","#641523","#ef4444"], starforgedarchon:["#ece9df","#b59b4b","#132033","#f5d36a"]
+    bloodreaper:["#211015","#14090c","#641523","#ef4444"], starforgedarchon:["#ece9df","#b59b4b","#132033","#f5d36a"],
+    stormoracle:["#202d5d","#11152d","#a78bfa","#f8fafc"], coralking:["#0b4b5c","#062b38","#22d3ee","#67e8f9"],
+    jadeemperor:["#14532d","#082c22","#4ade80","#d1fae5"], hazardlord:["#28320d","#1b2408","#bef264","#d9f99d"],
+    skybreaker:["#312e81","#17122f","#e879f9","#67e8f9"],
+    nightwatchranger:["#ff77c8","#b62f87","#fff4a8","#66e3ff"], glacierscout:["#173e66","#2a1710","#f4c95d","#39a85b"],
+    voltrecon:["#c42f3a","#181818","#f5d66f","#b08c53"], runewarlord:["#6d5cff","#342d80","#8ff7ff","#d7c8ff"],
+    abysspaladin:["#6f4726","#3b2416","#f1b85b","#6ee7f9"], phantomshogun:["#151c2c","#0f1930","#e7bd52","#2d79b8"],
+    sunfallemperor:["#7c3f08","#3c1b03","#fbbf24","#fde68a"]
   };
   const p=palettes[character]||["#1f2937","#374151","#6b7280","#e5e7eb"];
   // boots + full legs
@@ -2584,14 +2751,80 @@ function drawCharacterVisual(character,ride,b){
     ctx.fillStyle="#14090c";ctx.beginPath();ctx.moveTo(7,2);ctx.quadraticCurveTo(22,-22,37,2);ctx.lineTo(31,6);ctx.lineTo(13,6);ctx.closePath();ctx.fill();ctx.fillStyle="#ef4444";ctx.fillRect(14,-4,6,2);ctx.fillRect(24,-4,6,2);ctx.strokeStyle="#a4acb2";ctx.lineWidth=3;ctx.beginPath();ctx.arc(39,4,12,-1.4,1.2);ctx.stroke();
   }else if(character==="starforgedarchon"){
     ctx.fillStyle="#ece9df";ctx.beginPath();ctx.arc(22,-3,11,Math.PI,0);ctx.fill();ctx.fillStyle="#132033";ctx.fillRect(12,-5,20,4);ctx.fillStyle="#f5d36a";ctx.fillRect(14,-4,16,2);ctx.strokeStyle="#f5d36a";ctx.lineWidth=2;ctx.beginPath();ctx.arc(22,-7,15,0,Math.PI*2);ctx.stroke();
+  }else if(character==="nightwatchranger"){
+    // Sugar Rush Sovereign — Candyland: frosting crown, gumdrop body, peppermint shields.
+    ctx.fillStyle="#ff77c8";ctx.beginPath();ctx.arc(22,-3,11,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="#fff4a8";ctx.beginPath();ctx.moveTo(10,-8);ctx.lineTo(14,-18);ctx.lineTo(19,-11);ctx.lineTo(22,-21);ctx.lineTo(27,-11);ctx.lineTo(33,-18);ctx.lineTo(36,-8);ctx.closePath();ctx.fill();
+    ctx.fillStyle="#66e3ff";ctx.beginPath();ctx.arc(14,-12,3,0,Math.PI*2);ctx.arc(30,-12,3,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(8,15,6,0,Math.PI*2);ctx.arc(36,15,6,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#ff4d67";ctx.lineWidth=2;ctx.stroke();
+    ctx.strokeStyle="#fff";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(40,24);ctx.lineTo(45,-10);ctx.stroke();ctx.strokeStyle="#ff4d67";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(41,19);ctx.lineTo(44,14);ctx.moveTo(42,7);ctx.lineTo(45,2);ctx.stroke();
+}else if(character==="glacierscout"){
+    // Blacktide Captain — Pirate Cove: tricorn, eyepatch, hook and shoulder parrot.
+    ctx.fillStyle="#17233b";ctx.beginPath();ctx.moveTo(8,-5);ctx.quadraticCurveTo(22,-18,36,-5);ctx.lineTo(30,1);ctx.quadraticCurveTo(22,-3,14,1);ctx.closePath();ctx.fill();ctx.strokeStyle="#f4c95d";ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle="#111";ctx.fillRect(14,-4,9,3);ctx.strokeStyle="#111";ctx.beginPath();ctx.moveTo(18,-4);ctx.lineTo(24,2);ctx.stroke();
+    ctx.fillStyle="#4b2b1b";ctx.beginPath();ctx.moveTo(16,4);ctx.lineTo(22,10);ctx.lineTo(28,4);ctx.closePath();ctx.fill();
+    ctx.strokeStyle="#caa76b";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(7,14);ctx.lineTo(2,22);ctx.quadraticCurveTo(4,29,10,23);ctx.stroke();
+    ctx.fillStyle="#39a85b";ctx.beginPath();ctx.arc(36,8,5,0,Math.PI*2);ctx.fill();ctx.fillStyle="#f4c95d";ctx.beginPath();ctx.moveTo(40,8);ctx.lineTo(45,10);ctx.lineTo(40,12);ctx.closePath();ctx.fill();
+}else if(character==="voltrecon"){
+    // Clockwork Commander — Toy World: tall parade hat, painted face and wind-up key.
+    ctx.fillStyle="#181818";ctx.fillRect(13,-18,18,17);ctx.fillStyle="#c42f3a";ctx.fillRect(11,-7,22,5);ctx.fillStyle="#f5d66f";ctx.fillRect(15,-17,14,3);
+    ctx.fillStyle="#d9a36f";ctx.beginPath();ctx.arc(22,0,8,0,Math.PI*2);ctx.fill();ctx.fillStyle="#111";ctx.beginPath();ctx.arc(19,-1,1,0,Math.PI*2);ctx.arc(25,-1,1,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#111";ctx.beginPath();ctx.moveTo(18,4);ctx.lineTo(26,4);ctx.stroke();
+    ctx.fillStyle="#f5d66f";ctx.beginPath();ctx.arc(17,14,3,0,Math.PI*2);ctx.arc(27,14,3,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle="#b08c53";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(36,14);ctx.lineTo(43,14);ctx.lineTo(43,6);ctx.moveTo(39,6);ctx.lineTo(47,6);ctx.stroke();
+}else if(character==="runewarlord"){
+    // Prism Colossus — Crystal Cavern: fully faceted crystal being, no human helmet/face.
+    ctx.fillStyle="#8ff7ff";ctx.beginPath();ctx.moveTo(22,-16);ctx.lineTo(34,-4);ctx.lineTo(29,7);ctx.lineTo(22,11);ctx.lineTo(15,7);ctx.lineTo(10,-4);ctx.closePath();ctx.fill();ctx.strokeStyle="#d7c8ff";ctx.lineWidth=2;ctx.stroke();
+    ctx.beginPath();ctx.moveTo(22,-16);ctx.lineTo(22,11);ctx.moveTo(10,-4);ctx.lineTo(34,-4);ctx.moveTo(15,7);ctx.lineTo(22,-4);ctx.lineTo(29,7);ctx.stroke();
+    ctx.fillStyle="#93eaff";ctx.beginPath();ctx.moveTo(8,8);ctx.lineTo(1,15);ctx.lineTo(10,21);ctx.lineTo(15,13);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(36,8);ctx.lineTo(43,15);ctx.lineTo(34,21);ctx.lineTo(29,13);ctx.closePath();ctx.fill();
+    ctx.fillStyle="#d7c8ff";ctx.beginPath();ctx.moveTo(22,9);ctx.lineTo(28,18);ctx.lineTo(22,27);ctx.lineTo(16,18);ctx.closePath();ctx.fill();
+}else if(character==="abysspaladin"){
+    // Brasswing Baron — Steampunk Empire: top hat, brass goggles, gear chest and mechanical wings.
+    ctx.fillStyle="#3b2416";ctx.fillRect(15,-15,14,13);ctx.fillRect(11,-3,22,4);ctx.strokeStyle="#f1b85b";ctx.lineWidth=2;ctx.strokeRect(15,-15,14,13);
+    ctx.fillStyle="#6ee7f9";ctx.beginPath();ctx.arc(18,-1,4,0,Math.PI*2);ctx.arc(26,-1,4,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#c89349";ctx.stroke();
+    ctx.fillStyle="#f1b85b";ctx.beginPath();ctx.arc(22,15,6,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#3b2416";ctx.beginPath();ctx.moveTo(22,10);ctx.lineTo(22,20);ctx.moveTo(17,15);ctx.lineTo(27,15);ctx.stroke();
+    ctx.fillStyle="#7a552d";ctx.beginPath();ctx.moveTo(9,9);ctx.lineTo(-2,3);ctx.lineTo(4,20);ctx.lineTo(12,16);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(35,9);ctx.lineTo(46,3);ctx.lineTo(40,20);ctx.lineTo(32,16);ctx.closePath();ctx.fill();
+}else if(character==="phantomshogun"){
+    // Scarab Pharaoh — Ancient Egypt: nemes crown, cobra crest and scarab chest.
+    ctx.fillStyle="#0f1930";ctx.beginPath();ctx.moveTo(11,-8);ctx.lineTo(22,-16);ctx.lineTo(33,-8);ctx.lineTo(31,7);ctx.lineTo(13,7);ctx.closePath();ctx.fill();
+    ctx.strokeStyle="#e7bd52";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(13,-6);ctx.lineTo(31,4);ctx.moveTo(31,-6);ctx.lineTo(13,4);ctx.stroke();
+    ctx.fillStyle="#e7bd52";ctx.beginPath();ctx.moveTo(20,-14);ctx.quadraticCurveTo(22,-22,25,-14);ctx.lineTo(22,-8);ctx.closePath();ctx.fill();
+    ctx.fillStyle="#d9ad43";ctx.beginPath();ctx.ellipse(22,16,7,9,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#2d79b8";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(22,8);ctx.lineTo(22,24);ctx.moveTo(15,15);ctx.lineTo(29,15);ctx.stroke();
+    ctx.strokeStyle="#e7bd52";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(37,22);ctx.quadraticCurveTo(43,9,39,0);ctx.stroke();
+}else if(character==="sunfallemperor"){
+    ctx.fillStyle="#5d2e06";ctx.beginPath();ctx.arc(22,-3,11,Math.PI,0);ctx.fill();ctx.fillStyle="#fde68a";ctx.fillRect(12,-5,20,3);ctx.fillStyle="#fbbf24";ctx.beginPath();ctx.moveTo(9,-8);ctx.lineTo(13,-19);ctx.lineTo(19,-11);ctx.lineTo(22,-22);ctx.lineTo(27,-11);ctx.lineTo(33,-19);ctx.lineTo(36,-8);ctx.closePath();ctx.fill();ctx.strokeStyle="#fde68a";ctx.lineWidth=2;ctx.beginPath();ctx.arc(22,16,8,0,Math.PI*2);ctx.stroke();ctx.fillStyle="#f59e0b";ctx.beginPath();ctx.arc(22,16,4,0,Math.PI*2);ctx.fill();
+  }else if(character==="stormoracle"){
+    ctx.fillStyle="#11152d";ctx.beginPath();ctx.arc(22,-3,11,Math.PI,0);ctx.fill();ctx.fillStyle="#f8fafc";ctx.fillRect(13,-5,18,2);ctx.strokeStyle="#a78bfa";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(9,-7);ctx.lineTo(15,-18);ctx.lineTo(22,-10);ctx.lineTo(29,-20);ctx.lineTo(35,-7);ctx.stroke();
+  }else if(character==="coralking"){
+    ctx.fillStyle="#064e5b";ctx.beginPath();ctx.arc(22,-3,11,Math.PI,0);ctx.fill();ctx.fillStyle="#67e8f9";ctx.fillRect(13,-4,18,3);ctx.strokeStyle="#22d3ee";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(9,-10);ctx.lineTo(14,-19);ctx.moveTo(22,-11);ctx.lineTo(22,-22);ctx.moveTo(35,-10);ctx.lineTo(30,-19);ctx.stroke();
+  }else if(character==="jadeemperor"){
+    ctx.fillStyle="#14532d";ctx.beginPath();ctx.arc(22,-3,11,Math.PI,0);ctx.fill();ctx.fillStyle="#86efac";ctx.fillRect(12,-5,20,3);ctx.strokeStyle="#4ade80";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(10,-8);ctx.quadraticCurveTo(22,-20,34,-8);ctx.stroke();
+  }else if(character==="hazardlord"){
+    ctx.fillStyle="#1f2909";ctx.beginPath();ctx.arc(22,-3,11,Math.PI,0);ctx.fill();ctx.fillStyle="#bef264";ctx.fillRect(13,-5,18,3);ctx.strokeStyle="#84cc16";ctx.lineWidth=2;ctx.beginPath();ctx.arc(22,-3,15,0,Math.PI*2);ctx.stroke();
+  }else if(character==="skybreaker"){
+    ctx.fillStyle="#23194a";ctx.beginPath();ctx.arc(22,-3,11,Math.PI,0);ctx.fill();ctx.fillStyle="#67e8f9";ctx.fillRect(13,-5,18,3);ctx.strokeStyle="#e879f9";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(12,-10);ctx.lineTo(18,-19);ctx.lineTo(22,-12);ctx.lineTo(29,-21);ctx.lineTo(34,-10);ctx.stroke();
   }
 }
 
 function drawEquippedAvatar(character,ride,b,trail){
   // trail first so it stays behind the equipped ride/character
   if(trail&&trail!=="none"){
-    const trailColors={spark:"#ffe45c",bubbles:"#8de9ff",embers:"#ff7438",petals:"#f9a8d4",stars:"#fff1a3",lightning:"#67e8f9",voiddust:"#a78bfa",souls:"#c4b5fd",rainbow:"#f0abfc",neoncomet:"#22d3ee",dragonfire:"#fb923c"};
-    ctx.fillStyle=trailColors[trail]||"#fff";for(let i=0;i<5;i++){ctx.globalAlpha=.28+i*.12;ctx.beginPath();ctx.arc(-8-i*8,35+(i%2)*4,2+(i%3),0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;
+    const tt=performance.now()*.006;
+    const trailColors={spark:"#ffe45c",bubbles:"#8de9ff",embers:"#ff7438",petals:"#f9a8d4",stars:"#fff1a3",lightning:"#67e8f9",voiddust:"#a78bfa",souls:"#c4b5fd",rainbow:"#f0abfc",neoncomet:"#22d3ee",dragonfire:"#fb923c",stormchain:"#c4b5fd",abysswake:"#38bdf8",jadefire:"#4ade80",radiation:"#bef264",tempest:"#e879f9"};
+    const col=trailColors[trail]||"#fff";
+    ctx.save();ctx.lineCap="round";
+    for(let i=0;i<9;i++){
+      const phase=tt+i*.72, tx=-8-i*7-(phase%1)*5, ty=37+Math.sin(phase*1.7)*5;
+      ctx.globalAlpha=.2+(i%4)*.13;ctx.fillStyle=col;ctx.strokeStyle=col;
+      if(trail==="lightning"||trail==="stormchain"||trail==="tempest"){ctx.lineWidth=1.6+(i%2);ctx.beginPath();ctx.moveTo(tx+6,ty-3);ctx.lineTo(tx,ty+2);ctx.lineTo(tx+4,ty+6);ctx.lineTo(tx-3,ty+10);ctx.stroke();}
+      else if(trail==="bubbles"||trail==="abysswake"){ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(tx,ty,2+(i%3),0,Math.PI*2);ctx.stroke();}
+      else if(trail==="petals"){ctx.beginPath();ctx.ellipse(tx,ty,4,2,phase,0,Math.PI*2);ctx.fill();}
+      else if(trail==="stars"||trail==="neoncomet"){ctx.save();ctx.translate(tx,ty);ctx.rotate(phase);ctx.beginPath();for(let k=0;k<8;k++){const a=k*Math.PI/4,r=k%2?1.8:4;k?ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r):ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r)}ctx.closePath();ctx.fill();ctx.restore();}
+      else if(trail==="rainbow"){ctx.fillStyle=`hsl(${(i*42+performance.now()*.08)%360},95%,68%)`;ctx.beginPath();ctx.arc(tx,ty,3,0,Math.PI*2);ctx.fill();}
+      else if(trail==="souls"){ctx.beginPath();ctx.ellipse(tx,ty,3,5,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha*=.6;ctx.beginPath();ctx.arc(tx-1,ty-1,1,0,Math.PI*2);ctx.fill();}
+      else if(trail==="radiation"){ctx.lineWidth=2;ctx.beginPath();ctx.arc(tx,ty,3+2*Math.sin(phase),0,Math.PI*2);ctx.stroke();}
+      else{ctx.beginPath();ctx.arc(tx,ty,2+(i%3),0,Math.PI*2);ctx.fill();}
+    }
+    ctx.restore();ctx.globalAlpha=1;
   }
   drawRideVisual(ride||"classic");
   drawCharacterVisual(character||"rider",ride||"classic",Number.isFinite(b)?b:0);
@@ -3400,9 +3633,8 @@ function gameOver(){
 function deathLoop(now){
   const e=now-deathStart,p=Math.min(1,e/850);
   draw();
-  ctx.save();ctx.translate(deathX,deathY+55*p);ctx.rotate(p*7);ctx.globalAlpha=1-p*.45;
-  ctx.strokeStyle="#ef4444";ctx.lineWidth=3;ctx.beginPath();ctx.arc(-9,7,8,0,Math.PI*2);ctx.arc(9,7,8,0,Math.PI*2);ctx.stroke();
-  ctx.strokeStyle="#fff";ctx.beginPath();ctx.moveTo(-9,7);ctx.lineTo(0,-2);ctx.lineTo(9,7);ctx.stroke();
+  ctx.save();ctx.translate(deathX-21,deathY-18+55*p);ctx.rotate(p*7);ctx.globalAlpha=1-p*.45;
+  drawEquippedAvatar(profile.equippedCharacter,profile.equippedBike,biomeIndex(),profile.equippedTrail);
   ctx.restore();
   if(p<1)requestAnimationFrame(deathLoop);else{deathAnimating=false;statusEl.textContent="Game over — score "+Math.floor(score)+". Press Restart."}
 }
@@ -3887,7 +4119,7 @@ function sendLocalPlayerState(dt){
   sendOnline("player_state",{
     x:player.x,y:player.y,w:player.w,h:player.h,
     score:Math.floor(score),coins:coins,biome:biomeIndex(),
-    equippedCharacter:profile.equippedCharacter,equippedBike:profile.equippedBike,
+    equippedCharacter:profile.equippedCharacter,equippedBike:profile.equippedBike,equippedTrail:profile.equippedTrail,
     name:playerName,alive:!multiplayerEliminated
   });
 }
@@ -3902,7 +4134,7 @@ function drawRemotePlayers(){
     ctx.globalAlpha=dead?.95:.82;
     ctx.translate(p.x,p.y);
     if(flashing){ctx.fillStyle="rgba(239,68,68,.48)";ctx.strokeStyle="#ff1f1f";ctx.lineWidth=6;roundedRectPath(-9,-22,62,72,12);ctx.fill();ctx.stroke();}
-    drawEquippedAvatar(p.equippedCharacter||"rider",p.equippedBike||"classic",Number.isFinite(p.biome)?p.biome:0,"none");
+    drawEquippedAvatar(p.equippedCharacter||"rider",p.equippedBike||"classic",Number.isFinite(p.biome)?p.biome:0,p.equippedTrail||"none");
     ctx.fillStyle=flashing?"#fecaca":"#fff";ctx.font="900 10px monospace";ctx.textAlign="center";ctx.strokeStyle="#000";ctx.lineWidth=3;
     const nm=(p.name||"Player").slice(0,12)+(dead?" • OUT":"");ctx.strokeText(nm,21,-14);ctx.fillText(nm,21,-14);
     ctx.restore();
@@ -3981,6 +4213,20 @@ showMenu();
 </script>
 
 <script>
+
+async function loadHomeLeaderboard(){
+  const meta=document.getElementById("homeLeaderboardMeta"),list=document.getElementById("homeLeaderboardList");
+  if(!meta||!list)return;
+  if(!hostedBackendAvailable()){meta.textContent="Global leaderboard appears on the hosted game.";list.innerHTML='<div class="home-leaderboard-empty">Deploy to Render to see live rankings.</div>';return;}
+  meta.textContent="Loading global scores…";
+  try{
+    const d=await apiRequest("/api/leaderboard",{method:"GET"});const leaders=(d.leaders||[]).slice(0,5);
+    meta.textContent=(d.totalPlayers||0)+" registered players • top 5";
+    if(!leaders.length){list.innerHTML='<div class="home-leaderboard-empty">No scores yet. Be the first.</div>';return;}
+    list.innerHTML=leaders.map(x=>'<div class="home-leaderboard-row '+(authAccount&&x.username.toLowerCase()===authAccount.username.toLowerCase()?"me":"")+'"><span class="home-leaderboard-rank">#'+x.rank+'</span><span>'+escapeHtml(x.username)+'</span><span class="home-leaderboard-score">'+Math.floor(x.bestScore).toLocaleString()+'</span></div>').join("");
+  }catch(e){meta.textContent="Leaderboard unavailable right now.";list.innerHTML='<div class="home-leaderboard-empty">'+escapeHtml(e.message)+'</div>';}
+}
+const refreshHomeLeaderboard=document.getElementById("refreshHomeLeaderboard");if(refreshHomeLeaderboard)refreshHomeLeaderboard.addEventListener("click",loadHomeLeaderboard);
 (function(){
   const tabs=Array.from(document.querySelectorAll('.home-section-tab'));
   const panels=Array.from(document.querySelectorAll('.home-section'));
@@ -3993,7 +4239,7 @@ showMenu();
   const landing=document.getElementById('landingScreen');
   const enterBtn=document.getElementById('enterGameMenuBtn');
   if(enterBtn&&landing){
-    enterBtn.addEventListener('click',()=>{landing.style.display='none';});
+    enterBtn.addEventListener('click',()=>{landing.style.display='none';setTimeout(loadHomeLeaderboard,50);});
   }
 })();
 </script>
